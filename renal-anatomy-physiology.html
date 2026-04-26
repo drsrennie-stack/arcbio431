@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Renal Anatomy &amp; Physiology</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #1B2845;
+  --navy-soft: #2A3A5C;
+  --navy-light: #3D4D6F;
+  --tan: #B8946B;
+  --tan-soft: #D4B594;
+  --tan-deep: #8C6E4A;
+  --cream: #F4EDDC;
+  --cream-pale: #FAF6EC;
+  --bg: #FFFFFF;
+  --text: #2E2E2E;
+  --text-muted: #6B6B6B;
+  --text-soft: #8A8A8A;
+  --border: #E5E0D5;
+  --border-soft: #EFEBE0;
+
+  --pri-rec: var(--navy);
+  --pri-lab: #8B4A3A;
+  --pri-support: #5C5750;
+  --pri-add: var(--tan-deep);
+
+  --shadow: 0 4px 18px rgba(27, 40, 69, 0.08);
+  --shadow-lg: 0 8px 28px rgba(27, 40, 69, 0.12);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.5;
+  padding: 28px 16px 48px;
+  -webkit-font-smoothing: antialiased;
+}
+.container { max-width: 1200px; margin: 0 auto; }
+
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--navy);
+  color: white;
+  padding: 8px 16px;
+  text-decoration: none;
+  font-size: 0.85rem;
+  z-index: 9999;
+  border-radius: 0 0 6px 0;
+}
+.skip-link:focus { top: 0; }
+
+.page-header {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-soft) 100%);
+  color: white;
+  border-radius: 16px;
+  padding: 36px 36px 32px;
+  margin-bottom: 18px;
+  position: relative;
+  overflow: hidden;
+}
+.page-header::before {
+  content: "";
+  position: absolute;
+  top: 0; right: 0;
+  width: 280px; height: 280px;
+  background: radial-gradient(circle at 100% 0%, rgba(184,148,107,0.22), transparent 65%);
+  pointer-events: none;
+}
+.breadcrumb {
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  color: var(--tan-soft);
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  position: relative;
+}
+.page-header h1 {
+  font-size: 2.4rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  margin-bottom: 10px;
+  position: relative;
+  line-height: 1.1;
+}
+.page-header .subtitle {
+  font-family: 'Lora', Georgia, serif;
+  font-style: italic;
+  font-size: 1.05rem;
+  color: rgba(255,255,255,0.85);
+  max-width: 720px;
+  position: relative;
+  line-height: 1.55;
+}
+
+.priority-legend {
+  background: var(--cream-pale);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 22px;
+  margin-bottom: 28px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px 22px;
+  font-size: 0.85rem;
+}
+.priority-legend .label {
+  color: var(--tan-deep);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  font-size: 0.74rem;
+  text-transform: uppercase;
+}
+.priority-legend .item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text);
+  font-size: 0.85rem;
+}
+.tag {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 4px 11px;
+  border-radius: 999px;
+  color: white;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.tag-rec { background: var(--pri-rec); }
+.tag-lab { background: var(--pri-lab); }
+.tag-support { background: var(--pri-support); }
+.tag-add { background: var(--pri-add); }
+
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 28px 0 16px;
+}
+.section-label .pill {
+  display: inline-block;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  padding: 7px 16px;
+  border-radius: 999px;
+  color: white;
+  text-transform: uppercase;
+}
+.section-label .line { flex: 1; height: 1px; background: var(--border); }
+
+.resource-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 18px;
+  align-items: start;
+}
+
+.card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: var(--shadow);
+}
+.card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+.card.priority-rec { border-top: 4px solid var(--pri-rec); }
+.card.priority-lab { border-top: 4px solid var(--pri-lab); }
+.card.priority-support { border-top: 4px solid var(--pri-support); }
+.card.priority-add { border-top: 4px solid var(--pri-add); }
+
+.card-header {
+  padding: 20px 22px 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.card-num {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: white;
+  font-weight: 800;
+  font-size: 1.05rem;
+}
+.priority-rec .card-num { background: var(--pri-rec); }
+.priority-lab .card-num { background: var(--pri-lab); }
+.priority-support .card-num { background: var(--pri-support); }
+.priority-add .card-num { background: var(--pri-add); }
+.card-num.icon-only { padding: 9px; }
+.card-num.icon-only svg { width: 100%; height: 100%; }
+
+.card-title-block { flex: 1; padding-top: 2px; }
+.card-eyebrow {
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-bottom: 3px;
+}
+.priority-rec .card-eyebrow { color: var(--pri-rec); }
+.priority-lab .card-eyebrow { color: var(--pri-lab); }
+.priority-support .card-eyebrow { color: var(--pri-support); }
+.priority-add .card-eyebrow { color: var(--pri-add); }
+.card-title {
+  font-size: 1.12rem;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1.3;
+}
+
+.card-body {
+  padding: 0 22px 4px;
+  font-size: 0.9rem;
+  color: var(--text);
+  line-height: 1.6;
+}
+.card-body p { margin-bottom: 12px; }
+.card-body strong { color: var(--navy); font-weight: 700; }
+
+.tip-box {
+  background: var(--cream-pale);
+  border-left: 3px solid var(--tan);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 0.82rem;
+  color: var(--text);
+  font-family: 'Lora', Georgia, serif;
+  font-style: italic;
+  line-height: 1.55;
+  margin: 6px 0 14px;
+}
+
+.resource-list {
+  list-style: none;
+  margin: 0;
+  padding: 4px 22px 18px;
+}
+.resource-list .group-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 800;
+  color: var(--tan-deep);
+  padding: 14px 0 4px;
+  border-top: 1px solid var(--border-soft);
+  margin-top: 2px;
+}
+.resource-list li.group-label:first-child { border-top: none; padding-top: 4px; margin-top: 0; }
+.resource-list .item {
+  border-top: 1px solid var(--border-soft);
+  padding: 10px 0;
+}
+.resource-list .item:first-child { border-top: none; }
+.resource-list a, .resource-list .static-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  font-size: 0.88rem;
+  color: var(--navy);
+  text-decoration: none;
+  line-height: 1.45;
+}
+.resource-list a:hover { color: var(--tan-deep); }
+.resource-list .arrow {
+  flex-shrink: 0;
+  color: var(--tan);
+  font-weight: 800;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+.priority-lab .resource-list .arrow { color: var(--pri-lab); }
+.priority-support .resource-list .arrow { color: var(--pri-support); }
+.priority-add .resource-list .arrow { color: var(--pri-add); }
+.resource-list .item-note {
+  margin: 5px 0 0 19px;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-style: italic;
+  line-height: 1.5;
+}
+.resource-list .inline-link {
+  color: var(--tan-deep);
+  text-decoration: underline;
+}
+.coming-pill {
+  display: inline-block;
+  background: var(--cream);
+  color: var(--tan-deep);
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 2px 8px;
+  border-radius: 999px;
+  margin-left: 6px;
+  vertical-align: middle;
+  text-transform: uppercase;
+}
+
+.assignments-banner {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-soft) 100%);
+  border-radius: 16px;
+  padding: 32px;
+  margin: 32px 0;
+  position: relative;
+  overflow: hidden;
+}
+.assignments-banner::before {
+  content: "";
+  position: absolute;
+  top: 0; right: 0;
+  width: 240px; height: 240px;
+  background: radial-gradient(circle at 100% 0%, rgba(184,148,107,0.18), transparent 65%);
+  pointer-events: none;
+}
+.assignments-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 22px;
+  position: relative;
+  flex-wrap: wrap;
+}
+.assignments-header .pill {
+  background: var(--tan);
+  color: var(--navy);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  text-transform: uppercase;
+}
+.assignments-header p {
+  color: rgba(255,255,255,0.85);
+  font-size: 0.9rem;
+  font-style: italic;
+  font-family: 'Lora', Georgia, serif;
+}
+.assignments-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  position: relative;
+}
+.assignment-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px 22px;
+  border-left: 5px solid var(--tan);
+  display: flex;
+  flex-direction: column;
+}
+.assignment-card .num {
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 800;
+  color: var(--tan-deep);
+  margin-bottom: 6px;
+}
+.assignment-card h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 8px;
+}
+.assignment-card .desc {
+  font-size: 0.88rem;
+  color: var(--text);
+  line-height: 1.55;
+  margin-bottom: 14px;
+  flex: 1;
+}
+.assignment-card .badge {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  padding: 3px 10px;
+  border-radius: 999px;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  align-self: flex-start;
+}
+.badge-required { background: #FBE9E7; color: #8B2E2A; }
+.badge-practice { background: var(--cream); color: var(--tan-deep); }
+.assignment-card .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--navy);
+  color: white;
+  font-size: 0.88rem;
+  font-weight: 700;
+  padding: 9px 16px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background 0.2s ease;
+  align-self: flex-start;
+}
+.assignment-card .btn:hover { background: var(--navy-soft); }
+.assignment-card .btn::after { content: "→"; transition: transform 0.2s ease; }
+.assignment-card .btn:hover::after { transform: translateX(3px); }
+
+.study-sequence {
+  background: var(--cream-pale);
+  border: 1px solid var(--border);
+  border-top: 4px solid var(--navy);
+  border-radius: 14px;
+  padding: 28px 30px;
+  margin-top: 32px;
+}
+.study-sequence h2 {
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--navy);
+  margin-bottom: 16px;
+}
+.study-sequence ol {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
+  list-style: none;
+}
+.study-sequence li {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 8px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.study-sequence li .num {
+  width: 28px;
+  height: 28px;
+  background: var(--navy);
+  color: white;
+  border-radius: 50%;
+  font-size: 0.82rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.study-sequence li .step-text {
+  font-size: 0.82rem;
+  color: var(--text);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.footer-note {
+  margin-top: 26px;
+  text-align: center;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+@media (max-width: 700px) {
+  body { padding: 18px 12px 40px; }
+  .page-header { padding: 28px 22px 26px; }
+  .page-header h1 { font-size: 1.7rem; }
+  .page-header .subtitle { font-size: 0.95rem; }
+  .priority-legend { padding: 12px 16px; gap: 10px 14px; }
+  .priority-legend .item { font-size: 0.8rem; }
+  .resource-grid { grid-template-columns: 1fr; }
+  .assignments-banner { padding: 24px 22px; }
+  .assignments-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to main content</a>
+<div class="container" id="main-content">
+
+<header class="page-header">
+  <div class="breadcrumb">Renal &middot; Anatomy &amp; Physiology</div>
+  <h1>Renal Anatomy &amp; Physiology</h1>
+  <p class="subtitle">Complete learning resources for renal anatomy and physiology, including structures, nephron function, lab work, urinalysis, and assessment preparation.</p>
+</header>
+
+<div class="priority-legend">
+  <span class="label">Priority Guide:</span>
+  <span class="item"><span class="tag tag-rec">Highly Recommended</span> Core materials, do these first</span>
+  <span class="item"><span class="tag tag-lab">Lab</span> Physiology lab work</span>
+  <span class="item"><span class="tag tag-support">Support</span> Reinforcement &amp; practice</span>
+  <span class="item"><span class="tag tag-add">Additional</span> Enrichment &amp; assessment prep</span>
+</div>
+
+<!-- ============== HIGHLY RECOMMENDED ============== -->
+<section>
+  <div class="section-label">
+    <span class="pill tag-rec">Highly Recommended &middot; Start Here</span>
+    <div class="line"></div>
+  </div>
+
+  <div class="resource-grid">
+
+    <!-- Card 1: Lecture Videos -->
+    <article class="card priority-rec">
+      <div class="card-header">
+        <div class="card-num">1</div>
+        <div class="card-title-block">
+          <div class="card-eyebrow">Video Lectures</div>
+          <div class="card-title">Lecture Videos</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <p>Work through each video series <strong>before</strong> attempting the cognitive trainers. Use the concept sheets to guide your notes as you watch.</p>
+      </div>
+      <ul class="resource-list">
+        <li class="group-label">Renal Anatomy</li>
+        <li class="item"><a href="https://share.articulate.com/DNVLJUp-g9_keZlZSbPM7" target="_blank" rel="noopener"><span class="arrow">▶</span><span>Renal Anatomy Videos</span></a></li>
+
+        <li class="group-label">Renal Physiology</li>
+        <li class="item"><a href="https://youtu.be/KWHasxDRf54" target="_blank" rel="noopener"><span class="arrow">▶</span><span>Nephrology: Kidney Physiology Overview</span></a></li>
+        <li class="item"><a href="https://youtu.be/Ioir82UA9x4" target="_blank" rel="noopener"><span class="arrow">▶</span><span>Kidney and Nephron Overview</span></a></li>
+        <li class="item"><a href="https://youtu.be/8Mn0IUCTg3U" target="_blank" rel="noopener"><span class="arrow">▶</span><span>Glomerular Filtration</span></a></li>
+        <li class="item"><a href="https://youtu.be/ko_XD4jPEo8" target="_blank" rel="noopener"><span class="arrow">▶</span><span>Reabsorption and Secretion</span></a></li>
+        <li class="item"><a href="https://youtu.be/DPpOR3-s17w" target="_blank" rel="noopener"><span class="arrow">▶</span><span>Renin Release</span></a></li>
+        <li class="item"><a href="https://youtu.be/FzeL1fcBwnE" target="_blank" rel="noopener"><span class="arrow">▶</span><span>Hormones in Body Fluid Regulation</span></a></li>
+        <li class="item"><a href="https://youtu.be/JwaeWXhklio" target="_blank" rel="noopener"><span class="arrow">▶</span><span>Physiology of Micturition</span></a></li>
+        <li class="item"><a href="https://youtu.be/NzdvoGZquIk" target="_blank" rel="noopener"><span class="arrow">▶</span><span>Diuretics</span></a></li>
+
+        <li class="group-label">Fluid &amp; Electrolyte</li>
+        <li class="item"><a href="https://youtu.be/raW6b5kQHPY" target="_blank" rel="noopener"><span class="arrow">▶</span><span>Fluid &amp; Electrolytes Overview</span></a></li>
+
+        <li class="group-label">Acid-Base</li>
+        <li class="item"><div class="static-item"><span class="arrow">›</span><span>Acid-Base videos are embedded inside the <a class="inline-link" href="https://share.articulate.com/EJl13e9fHAHhtDauyk0fg" target="_blank" rel="noopener">Notes: Acid-Base</a>. Open the notes to access them.</span></div></li>
+
+        <li class="group-label">Urinalysis</li>
+        <li class="item"><a href="https://drive.google.com/file/d/1agUOcTu8jukdzxwA_RXU8Nk3T77t83am/view?usp=sharing" target="_blank" rel="noopener"><span class="arrow">▶</span><span>Urinalysis Lecture Video</span></a></li>
+      </ul>
+      <div style="padding: 0 22px 18px;">
+        <div class="tip-box">Tip: Watch Renal Physiology videos first, then Fluid &amp; Electrolyte. Acid-Base videos are inside the Acid-Base notes.</div>
+      </div>
+    </article>
+
+    <!-- Card 2: Cognitive Trainers -->
+    <article class="card priority-rec">
+      <div class="card-header">
+        <div class="card-num">2</div>
+        <div class="card-title-block">
+          <div class="card-eyebrow">Active Recall</div>
+          <div class="card-title">Cognitive Trainers</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <p>Retrieval, drawing, and predict-and-apply questions. <strong>Handwrite your answers</strong>, don't type. Complete after watching the corresponding videos.</p>
+      </div>
+      <ul class="resource-list">
+        <li class="item"><a href="https://drive.google.com/file/d/1PwVt3REZRq4us21c1AB2bJHhUjpkBaSG/view?usp=sharing" target="_blank" rel="noopener"><span class="arrow">›</span><span>Cognitive Trainer: Renal Anatomy</span></a></li>
+        <li class="item"><a href="https://drive.google.com/file/d/1x_Zob3TkvvZuh1WUZl8T7Blhs2p-o1bz/view?usp=sharing" target="_blank" rel="noopener"><span class="arrow">›</span><span>Cognitive Trainer: Renal Physiology</span></a></li>
+        <li class="item"><a href="https://drive.google.com/file/d/1FrnLu9zyY0-FRtldyZzTHJ4ZObbk3bTU/view?usp=sharing" target="_blank" rel="noopener"><span class="arrow">›</span><span>Cognitive Trainer: Fluid &amp; Electrolytes</span></a></li>
+        <li class="item"><a href="https://drive.google.com/file/d/1hjEkn5Au_AqJcTRu8BDgm3d-bqmwH-UW/view?usp=sharing" target="_blank" rel="noopener"><span class="arrow">›</span><span>Cognitive Trainer: Acid-Base</span></a></li>
+        <li class="item"><a href="https://drive.google.com/file/d/1ZKDyu5S99vJFybvQqCwoYgeyFnsT8V-g/view?usp=sharing" target="_blank" rel="noopener"><span class="arrow">›</span><span>How to Use the Cognitive Trainer</span></a></li>
+      </ul>
+    </article>
+
+    <!-- Card 3: Notes -->
+    <article class="card priority-rec">
+      <div class="card-header">
+        <div class="card-num">3</div>
+        <div class="card-title-block">
+          <div class="card-eyebrow">Reference Materials</div>
+          <div class="card-title">Notes</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <p>Interactive study notes for each topic. Use alongside the videos and cognitive trainers to reinforce key concepts.</p>
+      </div>
+      <ul class="resource-list">
+        <li class="item"><a href="https://share.articulate.com/beKtd4jiK7t8EzD9eI2FP" target="_blank" rel="noopener"><span class="arrow">›</span><span>Notes: Renal Anatomy</span></a></li>
+        <li class="item"><a href="https://share.articulate.com/diZzvDOgNXkks7DQCPYV0" target="_blank" rel="noopener"><span class="arrow">›</span><span>Notes: Renal Physiology</span></a></li>
+        <li class="item"><a href="https://share.articulate.com/ABtudAVIdo6-XMLKY-gRS" target="_blank" rel="noopener"><span class="arrow">›</span><span>Notes: Fluid &amp; Electrolyte</span></a></li>
+        <li class="item"><a href="https://share.articulate.com/EJl13e9fHAHhtDauyk0fg" target="_blank" rel="noopener"><span class="arrow">›</span><span>Notes: Acid-Base</span></a></li>
+      </ul>
+    </article>
+
+  </div>
+</section>
+
+<!-- ============== LAB RESOURCES ============== -->
+<section>
+  <div class="section-label">
+    <span class="pill tag-lab">Lab Resources</span>
+    <div class="line"></div>
+  </div>
+
+  <div class="resource-grid">
+
+    <!-- Card 4: Renal A&P Lab -->
+    <article class="card priority-lab">
+      <div class="card-header">
+        <div class="card-num">4</div>
+        <div class="card-title-block">
+          <div class="card-eyebrow">Lab: Physiology</div>
+          <div class="card-title">Renal Anatomy &amp; Physiology Lab</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <p>Virtual simulation lab exercises and the structure list for the renal practical.</p>
+      </div>
+      <ul class="resource-list">
+        <li class="item">
+          <div class="static-item"><span class="arrow">›</span><span>PhysioEx: Renal Physiology</span></div>
+          <p class="item-note">Log into PhysioEx first, then find the link in the course Modules.</p>
+        </li>
+        <li class="item">
+          <a href="https://drsrennie-stack.github.io/anatomy-structure-lists/module-4.html" target="_blank" rel="noopener"><span class="arrow">›</span><span>Anatomy: Renal Structure List</span></a>
+          <p class="item-note">Use this structure list (Reproductive is not on this exam).</p>
+        </li>
+      </ul>
+    </article>
+
+    <!-- Card 5: Urinalysis -->
+    <article class="card priority-lab">
+      <div class="card-header">
+        <div class="card-num icon-only" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
+            <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+          </svg>
+        </div>
+        <div class="card-title-block">
+          <div class="card-eyebrow">Lab: Clinical Application</div>
+          <div class="card-title">Urinalysis</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <p>Clinical applications of renal physiology through urine testing. Covers physical, chemical, and microscopic examination of urine.</p>
+      </div>
+      <ul class="resource-list">
+        <li class="item"><a href="https://drive.google.com/file/d/1agUOcTu8jukdzxwA_RXU8Nk3T77t83am/view?usp=sharing" target="_blank" rel="noopener"><span class="arrow">›</span><span>Urinalysis Lecture Video</span></a></li>
+        <li class="item">
+          <div class="static-item"><span class="arrow">›</span><span>Urinalysis Study Packet <span class="coming-pill">Link Coming</span></span></div>
+          <p class="item-note">Clinical Applications of Renal Physiology, Urine Testing.</p>
+        </li>
+      </ul>
+    </article>
+
+    <!-- Card 6: Digital Atlas -->
+    <article class="card priority-lab">
+      <div class="card-header">
+        <div class="card-num">6</div>
+        <div class="card-title-block">
+          <div class="card-eyebrow">Lab: Visual Reference</div>
+          <div class="card-title">Digital Atlas</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <p>Labeled images and 3D models of renal and urinary anatomy structures.</p>
+      </div>
+      <ul class="resource-list">
+        <li class="item"><a href="https://share.articulate.com/UOHEe3p6DmTC4nXuUTE02" target="_blank" rel="noopener"><span class="arrow">›</span><span>Digital Atlas: Renal Anatomy</span></a></li>
+      </ul>
+    </article>
+
+  </div>
+</section>
+
+<!-- ============== SUPPORT RESOURCES ============== -->
+<section>
+  <div class="section-label">
+    <span class="pill tag-support">Support Resources</span>
+    <div class="line"></div>
+  </div>
+
+  <div class="resource-grid">
+
+    <!-- Card 7: DSM -->
+    <article class="card priority-support">
+      <div class="card-header">
+        <div class="card-num">7</div>
+        <div class="card-title-block">
+          <div class="card-eyebrow">Adaptive Learning</div>
+          <div class="card-title">Dynamic Study Modules</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <p>Adaptive practice that identifies what you know and focuses study time on your gaps. Best used <strong>after</strong> videos and cognitive trainers.</p>
+        <div class="tip-box">Second-pass review tool, not a replacement for primary study.</div>
+      </div>
+      <ul class="resource-list">
+        <li class="item"><div class="static-item"><span class="arrow">›</span><span>DSM: Renal Physiology. Find the link in the course Modules.</span></div></li>
+        <li class="item"><div class="static-item"><span class="arrow">›</span><span>DSM: Acid-Base &amp; Fluid &amp; Electrolyte Regulation. Find the link in the course Modules.</span></div></li>
+      </ul>
+    </article>
+
+  </div>
+</section>
+
+<!-- ============== ADDITIONAL RESOURCES ============== -->
+<section>
+  <div class="section-label">
+    <span class="pill tag-add">Additional Resources</span>
+    <div class="line"></div>
+  </div>
+
+  <div class="resource-grid">
+
+    <!-- Card 8: Kahoot -->
+    <article class="card priority-add">
+      <div class="card-header">
+        <div class="card-num">8</div>
+        <div class="card-title-block">
+          <div class="card-eyebrow">Interactive Quiz Games</div>
+          <div class="card-title">Kahoot Review</div>
+        </div>
+      </div>
+      <ul class="resource-list">
+        <li class="item"><a href="https://create.kahoot.it/share/renal-physiology-cycle-1/9c43f55f-e32c-47d5-94e3-c79e4bd5bfc4" target="_blank" rel="noopener"><span class="arrow">›</span><span>Kahoot: Renal Physiology 1</span></a></li>
+        <li class="item"><a href="https://create.kahoot.it/share/renal-physiology-cycle-2/0e9283c0-611b-4d7a-b10e-016eda645b73" target="_blank" rel="noopener"><span class="arrow">›</span><span>Kahoot: Renal Physiology 2</span></a></li>
+        <li class="item"><a href="https://create.kahoot.it/share/renal-system-lecture-material/5918a3c6-038c-4bfe-8f9b-f04fe4668bb6" target="_blank" rel="noopener"><span class="arrow">›</span><span>Kahoot: Renal Anatomy Review</span></a></li>
+        <li class="item"><a href="https://create.kahoot.it/share/fluid-electrolyte-physiology/f2ae7dd6-4dea-497f-9ec3-5704115f1f51" target="_blank" rel="noopener"><span class="arrow">›</span><span>Kahoot: Fluid &amp; Electrolyte 1</span></a></li>
+        <li class="item"><a href="https://create.kahoot.it/share/fluid-electrolyte-physiology-cycle-2/ae555116-a204-4ba3-9050-754ae3719a86" target="_blank" rel="noopener"><span class="arrow">›</span><span>Kahoot: Fluid &amp; Electrolyte 2</span></a></li>
+      </ul>
+    </article>
+
+    <!-- Card 9: DOK Questions -->
+    <article class="card priority-add">
+      <div class="card-header">
+        <div class="card-num">9</div>
+        <div class="card-title-block">
+          <div class="card-eyebrow">Depth of Knowledge Practice</div>
+          <div class="card-title">DOK Questions</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <p>Depth of knowledge questions to push your thinking past recall.</p>
+      </div>
+      <ul class="resource-list">
+        <li class="item"><a href="https://drive.google.com/file/d/1aattDYjC1KAjqjcFd6uAqqXmyVN8hGOa/view?usp=sharing" target="_blank" rel="noopener"><span class="arrow">›</span><span>DOK Questions: Renal Anatomy</span></a></li>
+        <li class="item"><a href="https://www.medmasterscollaborative.com/student-dok-question-generator" target="_blank" rel="noopener"><span class="arrow">›</span><span>DOK AI Question Generator</span></a></li>
+      </ul>
+    </article>
+
+    <!-- Card 10: Practice Exam Generator -->
+    <article class="card priority-add">
+      <div class="card-header">
+        <div class="card-num">10</div>
+        <div class="card-title-block">
+          <div class="card-eyebrow">AI-Generated Exam Prep</div>
+          <div class="card-title">Practice Exam Generator</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <p>AI-generated exam-style practice questions calibrated to course content.</p>
+      </div>
+      <ul class="resource-list">
+        <li class="item"><a href="https://www.medmasterscollaborative.com/student-interactive-ai-exam-generator" target="_blank" rel="noopener"><span class="arrow">›</span><span>Interactive Practice Exam Generator</span></a></li>
+      </ul>
+    </article>
+
+    <!-- Card 11: Textbook -->
+    <article class="card priority-add">
+      <div class="card-header">
+        <div class="card-num">11</div>
+        <div class="card-title-block">
+          <div class="card-eyebrow">Free Open-Access Reading</div>
+          <div class="card-title">Textbook</div>
+        </div>
+      </div>
+      <ul class="resource-list">
+        <li class="item">
+          <a href="https://openstax.org/details/books/anatomy-and-physiology-2e" target="_blank" rel="noopener"><span class="arrow">›</span><span>OpenStax A&amp;P 2e (Free)</span></a>
+          <p class="item-note">Chapters 25 and 26 cover renal and fluid/electrolyte.</p>
+        </li>
+      </ul>
+    </article>
+
+  </div>
+</section>
+
+<!-- ============== ASSIGNMENTS BANNER ============== -->
+<section class="assignments-banner" aria-label="Major assignments">
+  <div class="assignments-header">
+    <span class="pill">Major Assignments</span>
+    <p>Complete and submit these as directed by your instructor.</p>
+  </div>
+  <div class="assignments-grid">
+
+    <div class="assignment-card">
+      <span class="badge badge-required">Submission Required</span>
+      <div class="num">Assignment 1</div>
+      <h3>Nephron Map</h3>
+      <p class="desc">Complete the nephron map and renal structure list for anatomy.</p>
+      <a class="btn" href="https://www.medmasterscollaborative.com/nephron-map-assignment" target="_blank" rel="noopener">Open Assignment</a>
+    </div>
+
+    <div class="assignment-card">
+      <span class="badge badge-practice">Practice Only</span>
+      <div class="num">Assignment 2</div>
+      <h3>ABG Case</h3>
+      <p class="desc">Complete the arterial blood gas interactive case tool. No turn-in, just practice.</p>
+      <a class="btn" href="https://www.medmasterscollaborative.com/arterial-blood-gas-interaction-case-tool" target="_blank" rel="noopener">Open Assignment</a>
+    </div>
+
+    <div class="assignment-card">
+      <span class="badge badge-practice">Practice Only</span>
+      <div class="num">Assignment 3</div>
+      <h3>Urinary Lab Cases</h3>
+      <p class="desc">Complete the urinalysis clinical case lab activity. No submission, just go through the material.</p>
+      <a class="btn" href="https://drive.google.com/file/d/1agUOcTu8jukdzxwA_RXU8Nk3T77t83am/view?usp=sharing" target="_blank" rel="noopener">Open Assignment</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============== STUDY SEQUENCE ============== -->
+<section class="study-sequence">
+  <h2>Recommended Study Sequence</h2>
+  <ol>
+    <li><span class="num">1</span><span class="step-text">Watch Videos</span></li>
+    <li><span class="num">2</span><span class="step-text">Read Notes</span></li>
+    <li><span class="num">3</span><span class="step-text">Cognitive Trainers</span></li>
+    <li><span class="num">4</span><span class="step-text">Lab Work</span></li>
+    <li><span class="num">5</span><span class="step-text">DSM Review</span></li>
+    <li><span class="num">6</span><span class="step-text">Kahoot &amp; DOK</span></li>
+  </ol>
+</section>
+
+<div class="footer-note">Dr. Sharilyn Rennie</div>
+
+</div>
+
+<!-- Iframe height sender for Kajabi or Canvas embedding -->
+<script>
+(function() {
+  function sendHeight() {
+    var height = Math.max(
+      document.body.scrollHeight,
+      document.documentElement.scrollHeight,
+      document.body.offsetHeight,
+      document.documentElement.offsetHeight
+    );
+    var id = '';
+    try { id = window.frameElement && window.frameElement.id ? window.frameElement.id : ''; } catch(e) {}
+    try { window.parent.postMessage({ type: 'iframeHeight', id: id, height: height }, '*'); } catch(e) {}
+  }
+  if ('ResizeObserver' in window) {
+    try { var ro = new ResizeObserver(sendHeight); ro.observe(document.body); } catch(e) {}
+  }
+  window.addEventListener('load', sendHeight);
+  window.addEventListener('resize', sendHeight);
+  setTimeout(sendHeight, 100);
+  setTimeout(sendHeight, 500);
+})();
+</script>
+
+</body>
+</html>
