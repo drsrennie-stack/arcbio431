@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GI Structure List</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #1B2845;
+  --navy-soft: #2A3A5C;
+  --tan: #B8946B;
+  --tan-soft: #D4B594;
+  --tan-deep: #8C6E4A;
+  --cream: #F4EDDC;
+  --cream-pale: #FAF6EC;
+  --bg: #FFFFFF;
+  --text: #2E2E2E;
+  --text-muted: #6B6B6B;
+  --border: #E5E0D5;
+  --border-soft: #EFEBE0;
+  --green: #2E7D5C;
+  --red: #B6402F;
+  --shadow: 0 4px 18px rgba(27, 40, 69, 0.08);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 17px; }
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.55;
+  padding: 24px 14px 48px;
+  -webkit-font-smoothing: antialiased;
+}
+.container { max-width: 1100px; margin: 0 auto; }
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+
+.skip-link {
+  position: absolute; top: -40px; left: 0;
+  background: var(--navy); color: white;
+  padding: 8px 16px; text-decoration: none;
+  font-size: 0.85rem; z-index: 9999;
+  border-radius: 0 0 6px 0;
+}
+.skip-link:focus { top: 0; }
+
+/* ===== Header ===== */
+.page-header {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-soft) 100%);
+  color: white;
+  border-radius: 14px;
+  padding: 30px 32px 26px;
+  margin-bottom: 18px;
+  position: relative;
+  overflow: hidden;
+}
+.page-header::before {
+  content: ""; position: absolute; top: 0; right: 0;
+  width: 240px; height: 240px;
+  background: radial-gradient(circle at 100% 0%, rgba(184,148,107,0.22), transparent 65%);
+  pointer-events: none;
+}
+.breadcrumb {
+  font-size: 0.78rem; letter-spacing: 0.08em;
+  color: var(--tan-soft); font-weight: 700;
+  text-transform: uppercase; margin-bottom: 10px;
+  position: relative;
+}
+.page-header h1 {
+  font-size: 2rem; font-weight: 800;
+  letter-spacing: -0.01em; margin-bottom: 8px;
+  position: relative; line-height: 1.15;
+}
+.page-header .subtitle {
+  font-family: 'Lora', Georgia, serif;
+  font-style: italic; font-size: 1rem;
+  color: rgba(255,255,255,0.86);
+  max-width: 720px; position: relative;
+}
+
+/* ===== Tabs ===== */
+.tabs-wrap {
+  background: var(--cream-pale);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 8px;
+  margin-bottom: 14px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+[role="tablist"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+[role="tab"] {
+  flex: 1 1 auto;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 700;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: center;
+  white-space: nowrap;
+}
+[role="tab"]:hover { background: white; color: var(--navy); }
+[role="tab"][aria-selected="true"] {
+  background: var(--navy);
+  color: white;
+  box-shadow: var(--shadow);
+}
+[role="tab"]:focus-visible {
+  outline: 2px solid var(--tan);
+  outline-offset: 2px;
+}
+[role="tabpanel"] { padding: 8px 0 0; }
+[role="tabpanel"][hidden] { display: none; }
+
+/* ===== Filter chips ===== */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0 18px;
+  align-items: center;
+}
+.filter-bar .label {
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--tan-deep);
+  margin-right: 4px;
+}
+.chip {
+  background: white;
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+.chip:hover { border-color: var(--tan); }
+.chip[aria-pressed="true"] {
+  background: var(--navy);
+  color: white;
+  border-color: var(--navy);
+}
+
+/* ===== Section card ===== */
+.section-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-top: 4px solid var(--navy);
+  border-radius: 12px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.section-card.trace-card { border-top-color: var(--tan-deep); }
+
+.section-toggle {
+  width: 100%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 18px 22px;
+  text-align: left;
+  font-family: inherit;
+}
+.section-toggle:hover { background: var(--cream-pale); }
+.section-toggle:focus-visible {
+  outline: 2px solid var(--tan);
+  outline-offset: -2px;
+}
+.section-eyebrow {
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 800;
+  color: var(--tan-deep);
+  margin-bottom: 3px;
+}
+.section-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1.3;
+}
+.section-meta {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+  font-weight: 500;
+}
+.toggle-icon {
+  flex-shrink: 0;
+  font-size: 1.4rem;
+  color: var(--tan-deep);
+  font-weight: 800;
+  transition: transform 0.2s ease;
+  line-height: 1;
+}
+.section-card[data-open="true"] .toggle-icon { transform: rotate(45deg); }
+
+.section-body {
+  padding: 0 22px 20px;
+  border-top: 1px solid var(--border-soft);
+}
+.section-card[data-open="false"] .section-body { display: none; }
+
+.subsection {
+  margin-top: 16px;
+}
+.subsection-title {
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 800;
+  color: var(--navy);
+  padding: 8px 0 6px;
+  border-bottom: 1px solid var(--border-soft);
+  margin-bottom: 6px;
+}
+
+/* ===== Checkbox structures ===== */
+.struct-list { list-style: none; padding: 0; margin: 6px 0; }
+.struct-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 4px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+.struct-item:hover { background: var(--cream-pale); }
+.struct-item input[type="checkbox"] {
+  margin-top: 4px;
+  width: 18px; height: 18px;
+  accent-color: var(--navy);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.struct-item .struct-text {
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: var(--text);
+}
+.struct-item input:checked + .struct-text {
+  color: var(--text-muted);
+  text-decoration: line-through;
+}
+.struct-item .struct-text strong {
+  color: var(--navy);
+  font-weight: 700;
+}
+.struct-note {
+  font-family: 'Lora', Georgia, serif;
+  font-style: italic;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  display: block;
+  margin-top: 2px;
+  line-height: 1.45;
+}
+
+/* ===== Tip & callout boxes ===== */
+.tip-box {
+  background: var(--cream-pale);
+  border-left: 3px solid var(--tan);
+  border-radius: 6px;
+  padding: 12px 16px;
+  font-family: 'Lora', Georgia, serif;
+  font-style: italic;
+  font-size: 0.92rem;
+  color: var(--text);
+  line-height: 1.55;
+  margin: 12px 0;
+}
+.tip-box strong {
+  font-style: normal;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: var(--navy);
+  font-weight: 700;
+}
+
+.fillin-box {
+  background: var(--cream-pale);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin: 14px 0 6px;
+}
+.fillin-box .q {
+  font-size: 0.95rem;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+.fillin-box .q strong { color: var(--navy); }
+.reveal-btn {
+  background: var(--navy);
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.reveal-btn:hover { background: var(--navy-soft); }
+.reveal-answer {
+  margin-top: 10px;
+  padding: 10px 14px;
+  background: white;
+  border-left: 3px solid var(--tan-deep);
+  border-radius: 4px;
+  font-size: 0.92rem;
+  color: var(--navy);
+  font-weight: 600;
+}
+.reveal-answer[hidden] { display: none; }
+
+/* ===== Trace quiz ===== */
+.trace-intro {
+  font-family: 'Lora', Georgia, serif;
+  font-style: italic;
+  color: var(--text);
+  font-size: 0.95rem;
+  line-height: 1.55;
+  margin: 12px 0 16px;
+}
+.trace-controls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+  align-items: center;
+}
+.trace-btn {
+  background: var(--navy);
+  color: white;
+  border: none;
+  padding: 9px 18px;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.trace-btn:hover { background: var(--navy-soft); }
+.trace-btn.secondary {
+  background: white;
+  color: var(--navy);
+  border: 1px solid var(--border);
+}
+.trace-btn.secondary:hover { border-color: var(--tan); }
+.trace-score {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--navy);
+  padding: 8px 14px;
+  background: var(--cream-pale);
+  border-radius: 8px;
+  display: none;
+}
+.trace-score[data-shown="true"] { display: inline-block; }
+.trace-list { list-style: none; padding: 0; margin: 0; }
+.trace-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  background: white;
+}
+.trace-row.correct {
+  background: #E9F5EF;
+  border-color: var(--green);
+}
+.trace-row.incorrect {
+  background: #FDECE9;
+  border-color: var(--red);
+}
+.trace-row select {
+  flex-shrink: 0;
+  font-family: inherit;
+  font-size: 0.9rem;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: white;
+  cursor: pointer;
+  width: 64px;
+}
+.trace-row .trace-name {
+  flex: 1;
+  font-size: 0.95rem;
+  color: var(--navy);
+  font-weight: 600;
+}
+.trace-row .trace-mark {
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+.trace-row.correct .trace-mark { color: var(--green); }
+.trace-row.incorrect .trace-mark { color: var(--red); }
+
+.flow-diagram {
+  background: var(--cream-pale);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin: 12px 0;
+  font-size: 0.92rem;
+  line-height: 1.7;
+  color: var(--text);
+}
+.flow-diagram strong { color: var(--navy); font-weight: 700; }
+.flow-arrow { color: var(--tan-deep); font-weight: 800; padding: 0 4px; }
+
+/* ===== Read First specific ===== */
+.intro-block {
+  background: var(--cream-pale);
+  border: 1px solid var(--border);
+  border-top: 4px solid var(--navy);
+  border-radius: 12px;
+  padding: 22px 26px;
+  margin-bottom: 16px;
+}
+.intro-block h2 {
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 800;
+  color: var(--navy);
+  margin-bottom: 12px;
+}
+.intro-block h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin: 14px 0 8px;
+}
+.intro-block ul, .intro-block ol {
+  margin: 8px 0 8px 22px;
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+.intro-block ul li, .intro-block ol li { margin-bottom: 4px; }
+.intro-block p { margin-bottom: 10px; font-size: 0.95rem; }
+
+.abbr-table {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 8px;
+  margin: 8px 0;
+}
+.abbr-item {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 0.88rem;
+}
+.abbr-item strong {
+  color: var(--navy);
+  font-weight: 800;
+  margin-right: 6px;
+}
+
+.rt-rules {
+  background: white;
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin: 8px 0;
+  font-size: 0.9rem;
+}
+
+.footer-note {
+  margin-top: 26px;
+  text-align: center;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+@media (max-width: 700px) {
+  body { padding: 18px 10px 40px; }
+  .page-header { padding: 24px 22px 22px; }
+  .page-header h1 { font-size: 1.55rem; }
+  [role="tab"] { font-size: 0.82rem; padding: 9px 10px; }
+  .section-toggle { padding: 16px; }
+  .section-body { padding: 0 16px 18px; }
+  .intro-block { padding: 18px; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to main content</a>
+<div class="container" id="main-content">
+
+<header class="page-header">
+  <div class="breadcrumb">Lab Practical Prep</div>
+  <h1>GI Structure List</h1>
+  <p class="subtitle">Identification structures for the GI lab practical, organized by abdominal region. Check off structures as you master them. Your progress saves automatically.</p>
+</header>
+
+<div class="tabs-wrap">
+  <div role="tablist" aria-label="GI Structure List sections">
+    <button role="tab" id="tab-read" aria-selected="true" aria-controls="panel-read">Read First</button>
+    <button role="tab" id="tab-r1" aria-selected="false" aria-controls="panel-r1" tabindex="-1">Region I</button>
+    <button role="tab" id="tab-r2" aria-selected="false" aria-controls="panel-r2" tabindex="-1">Region II</button>
+  </div>
+</div>
+
+<!-- ============== READ FIRST ============== -->
+<div role="tabpanel" id="panel-read" aria-labelledby="tab-read">
+
+  <div class="intro-block">
+    <h2>Welcome</h2>
+    <p>This list covers all the structures you need to identify for the GI lab practical, split into <strong>Region I</strong> (abdominal muscles, body cavities and peritoneum, GI tract) and <strong>Region II</strong> (accessory organs, lymphatic structures, abdominal vasculature).</p>
+    <p>Use the tabs to move between regions. Each section has expandable cards. Tick boxes as you master structures, your progress saves to this device automatically.</p>
+  </div>
+
+  <div class="intro-block">
+    <h2>Abbreviations</h2>
+    <div class="abbr-table">
+      <div class="abbr-item"><strong>L</strong> Left</div>
+      <div class="abbr-item"><strong>R</strong> Right</div>
+      <div class="abbr-item"><strong>A.</strong> Artery</div>
+      <div class="abbr-item"><strong>V.</strong> Vein</div>
+      <div class="abbr-item"><strong>IVC</strong> Inferior vena cava</div>
+      <div class="abbr-item"><strong>SMA</strong> Superior mesenteric A.</div>
+      <div class="abbr-item"><strong>IMA</strong> Inferior mesenteric A.</div>
+      <div class="abbr-item"><strong>SMV</strong> Superior mesenteric V.</div>
+      <div class="abbr-item"><strong>IMV</strong> Inferior mesenteric V.</div>
+      <div class="abbr-item"><strong>O / I / A</strong> Origin / Insertion / Action</div>
+    </div>
+  </div>
+
+  <div class="intro-block">
+    <h2>Study Tips</h2>
+    <ol>
+      <li><strong>Trace, don't memorize.</strong> The path of food, the bile pathway, and hepatic portal blood flow each tell a story. If you can narrate the journey, the names follow.</li>
+      <li><strong>Use the trace-flow quizzes.</strong> Each region has at least one. They shuffle the structures and ask you to put them back in order. Repeat until you can do it without hesitation.</li>
+      <li><strong>Memory tricks help.</strong> For abdominal muscles: hands in pockets equals external oblique direction, praying hands equals internal oblique direction.</li>
+      <li><strong>Identify the relationships.</strong> Knowing the sigmoid colon comes before the rectum is more useful than knowing either name in isolation.</li>
+      <li><strong>Lab partner quiz.</strong> Use the Round Table Method (below) to drill structures with your lab group.</li>
+      <li><strong>Cross-reference with the Digital Atlas.</strong> Names on a list become structures with shape, position, and relationships.</li>
+    </ol>
+  </div>
+
+  <div class="intro-block">
+    <h2>The Round Table Method</h2>
+    <p>A 5-round group drill that takes about 15 minutes per organ system. Works best with 3 to 5 students.</p>
+    <h3>Round 1: Name It</h3>
+    <p>Person A points to a structure on a model or atlas. Person B names it. No notes, no peeking. Move clockwise. Anyone who misses passes the question.</p>
+    <h3>Round 2: Locate It</h3>
+    <p>Person A says a structure name. Person B points to it. Add a quick description of where it sits relative to a neighbor.</p>
+    <h3>Round 3: Function It</h3>
+    <p>Person A says a structure name. Person B states its function in one sentence. Examples: "the pyloric sphincter regulates emptying of stomach contents into the duodenum."</p>
+    <h3>Round 4: Connect It</h3>
+    <p>Person A says a structure name. Person B names what comes before it AND what comes after it in the relevant flow (food, bile, blood, etc.).</p>
+    <h3>Round 5: Apply It</h3>
+    <p>Person A invents a clinical scenario ("a patient with appendicitis"). Person B names the structure involved, where it is, and what symptoms might follow. Then trade.</p>
+    <div class="rt-rules">
+      <strong>Ground rules:</strong>
+      <ul style="margin: 6px 0 0 20px;">
+        <li>No phones during rounds.</li>
+        <li>Wrong answers are part of the process. Move on quickly.</li>
+        <li>Track which structures get missed most. Spend extra time there next round.</li>
+        <li>End each session by re-asking the first 3 missed items. If you can answer them, the session worked.</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============== REGION I ============== -->
+<div role="tabpanel" id="panel-r1" aria-labelledby="tab-r1" hidden>
+
+  <div class="filter-bar">
+    <span class="label">Show:</span>
+    <button class="chip" data-filter="r1" data-target="all" aria-pressed="true">All</button>
+    <button class="chip" data-filter="r1" data-target="identify" aria-pressed="false">Identify</button>
+    <button class="chip" data-filter="r1" data-target="trace" aria-pressed="false">Trace Flow</button>
+  </div>
+
+  <!-- Card: Abdominal Muscles -->
+  <div class="section-card" data-open="true" data-card-type="identify">
+    <button class="section-toggle" aria-expanded="true" aria-controls="body-r1-muscles">
+      <div>
+        <div class="section-eyebrow">Region I &middot; Identification</div>
+        <div class="section-title">Abdominal Muscles</div>
+        <div class="section-meta">4 muscles, identify origins, insertions, and actions</div>
+      </div>
+      <span class="toggle-icon" aria-hidden="true">+</span>
+    </button>
+    <div class="section-body" id="body-r1-muscles">
+      <div class="tip-box">
+        <strong>Memory trick:</strong> Hands in pockets = External oblique fiber direction. Praying hands = Internal oblique fiber direction.
+      </div>
+      <ul class="struct-list">
+        <li><label class="struct-item"><input type="checkbox" data-key="rectus_abdominis"><span class="struct-text"><strong>Rectus abdominis</strong><span class="struct-note">O: pubic crest and symphysis. I: xiphoid process and ribs 5 to 7. A: trunk flexion.</span></span></label></li>
+        <li><label class="struct-item"><input type="checkbox" data-key="external_oblique"><span class="struct-text"><strong>External abdominal oblique</strong><span class="struct-note">O: ribs 5 to 12. I: linea alba, pubic tubercle, iliac crest. A: trunk flexion and rotation, compresses abdomen.</span></span></label></li>
+        <li><label class="struct-item"><input type="checkbox" data-key="internal_oblique"><span class="struct-text"><strong>Internal abdominal oblique</strong><span class="struct-note">O: inguinal ligament, iliac crest, lumbodorsal fascia. I: ribs 9 to 12, linea alba, pubic crest. A: trunk flexion and rotation, compresses abdomen.</span></span></label></li>
+        <li><label class="struct-item"><input type="checkbox" data-key="transversus_abdominis"><span class="struct-text"><strong>Transversus abdominis</strong><span class="struct-note">O: inguinal ligament, iliac crest, lumbodorsal fascia, ribs 7 to 12. I: linea alba, pubic crest. A: compresses abdomen.</span></span></label></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Card: Body Cavities & Peritoneum -->
+  <div class="section-card" data-open="false" data-card-type="identify">
+    <button class="section-toggle" aria-expanded="false" aria-controls="body-r1-cavities">
+      <div>
+        <div class="section-eyebrow">Region I &middot; Identification</div>
+        <div class="section-title">Body Cavities, Serous Membranes &amp; Omenta</div>
+        <div class="section-meta">8 structures</div>
+      </div>
+      <span class="toggle-icon" aria-hidden="true">+</span>
+    </button>
+    <div class="section-body" id="body-r1-cavities">
+      <ul class="struct-list">
+        <li><label class="struct-item"><input type="checkbox" data-key="abdominal_cavity"><span class="struct-text"><strong>Abdominal cavity</strong></span></label></li>
+        <li><label class="struct-item"><input type="checkbox" data-key="pelvic_cavity"><span class="struct-text"><strong>Pelvic cavity</strong></span></label></li>
+        <li><label class="struct-item"><input type="checkbox" data-key="peritoneal_cavity"><span class="struct-text"><strong>Peritoneal cavity</strong><span class="struct-note">Potential space between parietal and visceral peritoneum.</span></span></label></li>
+        <li><label class="struct-item"><input type="checkbox" data-key="parietal_peritoneum"><span class="struct-text"><strong>Parietal peritoneum</strong><span class="struct-note">Lines the abdominal wall.</span></span></label></li>
+        <li><label class="struct-item"><input type="checkbox" data-key="visceral_peritoneum"><span class="struct-text"><strong>Visceral peritoneum</strong><span class="struct-note">Covers the abdominal organs.</span></span></label></li>
+        <li><label class="struct-item"><input type="checkbox" data-key="retroperitoneum"><span class="struct-text"><strong>Retroperitoneum</strong><span class="struct-note">Space behind the parietal peritoneum. Holds kidneys, pancreas, parts of duodenum and colon.</span></span></label></li>
+        <li><label class="struct-item"><input type="checkbox" data-key="greater_omentum"><span class="struct-text"><strong>Greater omentum</strong><span class="struct-note">Fatty apron from greater curvature of stomach, drapes over intestines.</span></span></label></li>
+        <li><label class="struct-item"><input type="checkbox" data-key="lesser_omentum"><span class="struct-text"><strong>Lesser omentum</strong><span class="struct-note">Connects lesser curvature of stomach to liver.</span></span></label></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Card: GI Tract -->
+  <div class="section-card" data-open="false" data-card-type="identify">
+    <button class="section-toggle" aria-expanded="false" aria-controls="body-r1-gi">
+      <div>
+        <div class="section-eyebrow">Region I &middot; Identification</div>
+        <div class="section-title">GI Tract Structures</div>
+        <div class="section-meta">Esophagus, stomach, small intestine, large intestine</div>
+      </div>
+      <span class="toggle-icon" aria-hidden="true">+</span>
+    </button>
+    <div class="section-body" id="body-r1-gi">
+
+      <div class="subsection">
+        <div class="subsection-title">Esophagus</div>
+        <ul class="struct-list">
+          <li><label class="struct-item"><input type="checkbox" data-key="esophagus"><span class="struct-text"><strong>Esophagus</strong></span></label></li>
+        </ul>
+      </div>
+
+      <div class="subsection">
+        <div class="subsection-title">Stomach</div>
+        <ul class="struct-list">
+          <li><label class="struct-item"><input type="checkbox" data-key="greater_curvature"><span class="struct-text"><strong>Greater curvature</strong></span></label></li>
+          <li><label class="struct-item"><input type="checkbox" data-key="lesser_curvature"><span class="struct-text"><strong>Lesser curvature</strong></span></label></li>
+          <li><label class="struct-item"><input type="checkbox" data-key="gastric_rugae"><span class="struct-text"><strong>Gastric rugae</strong><span class="struct-note">Internal folds.</span></span></label></li>
+          <li><label class="struct-item"><input type="checkbox" data-key="cardiac_region"><span class="struct-text"><strong>Cardiac region</strong></span></label></li>
+          <li><label class="struct-item"><input type="checkbox" data-key="fundus"><span class="struct-text"><strong>Fundus</strong></span></label></li>
+          <li><label class="struct-item"><input type="checkbox" data-key="body_stomach"><span class="struct-text"><strong>Body</strong></span></label></li>
+          <li><label class="struct-item"><input type="checkbox" data-key="pyloric_region"><span class="struct-text"><strong>Pyloric region</strong></span></label></li>
+          <li><label class="struct-item"><input type="checkbox" data-key="pyloric_sphincter"><span class="struct-text"><strong>Pyloric sphincter</strong><span class="struct-note">Stomach to duodenum.</span></span></label></li>
+          <li><label class="struct-item"><input type="checkbox" data-key="cardiac_sphincter"><span class="struct-text"><strong>Cardiac sphincter</strong><span class="struct-note">Esophagus to stomach. Also called the lower esophageal sphincter.</span></span></label></li>
+        </ul>
+      </div>
+
+      <div class="subsection">
+        <div class="subsection-title">Small Intestine (Small Bowel)</div>
+        <ul class="struct-list">
+          <li><label class="struct-item"><input type="checkbox" data-key="mesentery"><span class="struct-text"><strong>Mesentery</strong><span class="struct-note">Suspends the small intestine from the posterior abdominal wall.</span></span></label></li>
+          <li><label class="struct-item"><input type="checkbox" data-key="duodenum"><span class="struct-text"><strong>Duodenum</strong></span></label></li>
+          <li><label class="struct-item"><input type="checkbox" data-key="major_duodenal_papilla_si"><span class="struct-text"><strong>Major duodenal papilla</strong><span class="struct-note">Where bile and pancreatic juice enter the duodenum.</span></span></label></li>
+          <li><label class="struct-item"><input type="checkbox" data-key="jejunum"><span class="struct-text"><strong>Jejunum</strong></span></label></li>
+          <li><label class="struct-item"><input type="checkbox" data-key="ileum"><span class="struct-text"><strong>Ileum</strong></span></label></li>
+          <li><label class="struct-item"><input type="checkbox" data-key="ileocecal_valve"><span class="struct-text"><strong>Ileocecal valve</strong><span class="struct-note">Ileum to cecum.</span></span></label></li>
+        </ul>
+      </div>
+
+      <div class="subsection">
+        <div class="subsection-title">Large Intestine (Large Bowel)</div>
+        <ul class="struct-list">
+          <li><label class="struct-item"><input type="checkbox" data-key="cecum"><span class="struct-text"><strong>Cecum</strong></span></label></li>
+          <li><label class="struct-item"><input type="checkbox" data-key="vermiform_appendix"><span class="struct-text"><strong>Vermiform appendix</strong></span></label></li>
+          <li><label class="struct-item"><input type="checkbox" data-key="ascending_colon"><span class="struct-text"><strong>Ascending colon</strong></span></label></li>
+          <li><label class="struct-item"><input type="checkbox" data-key="hepatic_flexure"><span class="struct-text"><strong>Hepatic flexure</strong><span class="struct-note">Right colic flexure.</span></span></label></li>
+          <li><label class="struct-item"><input type="checkbox" data-key="transverse_colon"><span class="struct-text"><strong>Transverse colon</strong></span></label></li>
+          <li><label class="struct-item"><input type="checkbox" data-key="splenic_flexure"><span class="struct-text"><strong>Splenic flexure</strong><span class="struct-note">Left colic flexure.</span></span></label></li>
+          <li><label class="struct-item"><input type="checkbox" data-key="descending_colon"><span class="struct-text"><strong>Descending colon</strong></span></label></li>
+          <li><label class="struct-item"><input type="checkbox" data-key="sigmoid_colon"><span class="struct-text"><strong>Sigmoid colon</strong></span></label></li>
+          <li><label class="struct-item"><input type="checkbox" data-key="rectum"><span class="struct-text"><strong>Rectum</strong></span></label></li>
+          <li><label class="struct-item"><input type="checkbox" data-key="teniae_coli"><span class="struct-text"><strong>Teniae coli</strong><span class="struct-note">Three longitudinal muscle bands on the colon surface.</span></span></label></li>
+          <li><label class="struct-item"><input type="checkbox" data-key="haustra"><span class="struct-text"><strong>Haustra</strong><span class="struct-note">Pouches created by teniae coli contraction. Singular: haustrum.</span></span></label></li>
+          <li><label class="struct-item"><input type="checkbox" data-key="anal_canal"><span class="struct-text"><strong>Anal canal</strong></span></label></li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Card: Food Path Trace Quiz -->
+  <div class="section-card trace-card" data-open="false" data-card-type="trace">
+    <button class="section-toggle" aria-expanded="false" aria-controls="body-r1-trace">
+      <div>
+        <div class="section-eyebrow">Region I &middot; Trace Flow Quiz</div>
+        <div class="section-title">Path of Food</div>
+        <div class="section-meta">12 stops, esophagus to anal canal</div>
+      </div>
+      <span class="toggle-icon" aria-hidden="true">+</span>
+    </button>
+    <div class="section-body" id="body-r1-trace">
+      <p class="trace-intro">Drag is disabled, use the dropdowns. Each structure should be assigned its position number in the path, from 1 (first) to 12 (last). Hit Check Answers when ready.</p>
+      <div class="trace-controls">
+        <button class="trace-btn" data-trace-check="food">Check Answers</button>
+        <button class="trace-btn secondary" data-trace-reset="food">Shuffle &amp; Reset</button>
+        <span class="trace-score" data-trace-score="food">0 / 12</span>
+      </div>
+      <ul class="trace-list" data-trace-list="food"></ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============== REGION II ============== -->
+<div role="tabpanel" id="panel-r2" aria-labelledby="tab-r2" hidden>
+
+  <div class="filter-bar">
+    <span class="label">Show:</span>
+    <button class="chip" data-filter="r2" data-target="all" aria-pressed="true">All</button>
+    <button class="chip" data-filter="r2" data-target="identify" aria-pressed="false">Identify</button>
+    <button class="chip" data-filter="r2" data-target="trace" aria-pressed="false">Trace Flow</button>
+  </div>
+
+  <!-- Card: Accessory Organs -->
+  <div class="section-card" data-open="true" data-card-type="identify">
+    <button class="section-toggle" aria-expanded="true" aria-controls="body-r2-accessory">
+      <div>
+        <div class="section-eyebrow">Region II &middot; Identification</div>
+        <div class="section-title">Accessory Organs</div>
+        <div class="section-meta">Pancreas, gallbladder, biliary tree, liver</div>
+      </div>
+      <span class="toggle-icon" aria-hidden="true">+</span>
+    </button>
+    <div class="section-body" id="body-r2-accessory">
+
+      <div class="subsection">
+        <div class="subsection-title">Pancreas (also an endocrine organ)</div>
+        <ul class="struct-list">
+          <li><label class="struct-item"><input type="checkbox" data-key="main_pancreatic_duct"><span class="struct-text"><strong>Main pancreatic duct</strong></span></label></li>
+          <li><label class="struct-item"><input type="checkbox" data-key="accessory_pancreatic_duct"><span class="struct-text"><strong>Accessory pancreatic duct</strong></span></label></li>
+          <li><label class="struct-item"><input type="checkbox" data-key="hepatopancreatic_ampulla"><span class="struct-text"><strong>Hepatopancreatic ampulla</strong><span class="struct-note">Where the main pancreatic duct meets the common bile duct.</span></span></label></li>
+          <li><label class="struct-item"><input type="checkbox" data-key="major_duodenal_papilla"><span class="struct-text"><strong>Major duodenal papilla</strong><span class="struct-note">Opening into the duodenum.</span></span></label></li>
+        </ul>
+      </div>
+
+      <div class="subsection">
+        <div class="subsection-title">Gallbladder</div>
+        <ul class="struct-list">
+          <li><label class="struct-item"><input type="checkbox" data-key="gallbladder"><span class="struct-text"><strong>Gallbladder</strong><span class="struct-note">Stores and concentrates bile.</span></span></label></li>
+        </ul>
+      </div>
+
+      <div class="subsection">
+        <div class="subsection-title">Biliary Tree</div>
+        <ul class="struct-list">
+          <li><label class="struct-item"><input type="checkbox" data-key="right_hepatic_duct"><span class="struct-text"><strong>Right hepatic duct</strong></span></label></li>
+          <li><label class="struct-item"><input type="checkbox" data-key="left_hepatic_duct"><span class="struct-text"><strong>Left hepatic duct</strong></span></label></li>
+          <li><label class="struct-item"><input type="checkbox" data-key="common_hepatic_duct"><span class="struct-text"><strong>Common hepatic duct</strong><span class="struct-note">Formed by R + L hepatic ducts.</span></span></label></li>
+          <li><label class="struct-item"><input type="checkbox" data-key="cystic_duct"><span class="struct-text"><strong>Cystic duct</strong><span class="struct-note">Joins gallbladder to common bile duct.</span></span></label></li>
+          <li><label class="struct-item"><input type="checkbox" data-key="common_bile_duct"><span class="struct-text"><strong>Common bile duct</strong><span class="struct-note">Common hepatic duct + cystic duct.</span></span></label></li>
+        </ul>
+      </div>
+
+      <div class="subsection">
+        <div class="subsection-title">Liver</div>
+        <ul class="struct-list">
+          <li><label class="struct-item"><input type="checkbox" data-key="right_lobe"><span class="struct-text"><strong>Right lobe</strong></span></label></li>
+          <li><label class="struct-item"><input type="checkbox" data-key="left_lobe"><span class="struct-text"><strong>Left lobe</strong></span></label></li>
+          <li><label class="struct-item"><input type="checkbox" data-key="quadrate_lobe"><span class="struct-text"><strong>Quadrate lobe</strong></span></label></li>
+          <li><label class="struct-item"><input type="checkbox" data-key="caudate_lobe"><span class="struct-text"><strong>Caudate lobe</strong></span></label></li>
+          <li><label class="struct-item"><input type="checkbox" data-key="falciform_ligament"><span class="struct-text"><strong>Falciform ligament</strong></span></label></li>
+          <li><label class="struct-item"><input type="checkbox" data-key="ligamentum_teres"><span class="struct-text"><strong>Ligamentum teres</strong><span class="struct-note">Also called the round ligament.</span></span></label></li>
+        </ul>
+        <div class="fillin-box">
+          <p class="q"><strong>Self-check:</strong> The ligamentum teres is a remnant of which fetal structure?</p>
+          <button class="reveal-btn" data-reveal="lig-teres">Reveal Answer</button>
+          <div class="reveal-answer" id="lig-teres" hidden>The fetal <strong>umbilical vein</strong>, which carried oxygenated blood from the placenta to the fetal liver.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Card: Bile Pathway Trace Quiz -->
+  <div class="section-card trace-card" data-open="false" data-card-type="trace">
+    <button class="section-toggle" aria-expanded="false" aria-controls="body-r2-bile">
+      <div>
+        <div class="section-eyebrow">Region II &middot; Trace Flow Quiz</div>
+        <div class="section-title">Bile Pathway</div>
+        <div class="section-meta">7 stops, liver to duodenum</div>
+      </div>
+      <span class="toggle-icon" aria-hidden="true">+</span>
+    </button>
+    <div class="section-body" id="body-r2-bile">
+      <p class="trace-intro">Trace bile from where it is produced to where it enters the small intestine. Use the dropdowns to assign each structure a position from 1 to 7.</p>
+      <div class="trace-controls">
+        <button class="trace-btn" data-trace-check="bile">Check Answers</button>
+        <button class="trace-btn secondary" data-trace-reset="bile">Shuffle &amp; Reset</button>
+        <span class="trace-score" data-trace-score="bile">0 / 7</span>
+      </div>
+      <ul class="trace-list" data-trace-list="bile"></ul>
+    </div>
+  </div>
+
+  <!-- Card: Lymphatic -->
+  <div class="section-card" data-open="false" data-card-type="identify">
+    <button class="section-toggle" aria-expanded="false" aria-controls="body-r2-lymph">
+      <div>
+        <div class="section-eyebrow">Region II &middot; Identification</div>
+        <div class="section-title">Lymphatic Structures</div>
+        <div class="section-meta">Spleen and tonsils</div>
+      </div>
+      <span class="toggle-icon" aria-hidden="true">+</span>
+    </button>
+    <div class="section-body" id="body-r2-lymph">
+      <ul class="struct-list">
+        <li><label class="struct-item"><input type="checkbox" data-key="spleen"><span class="struct-text"><strong>Spleen</strong><span class="struct-note">Filters blood, recycles old red blood cells. Largest lymphatic organ.</span></span></label></li>
+        <li><label class="struct-item"><input type="checkbox" data-key="pharyngeal_tonsil"><span class="struct-text"><strong>Pharyngeal tonsil</strong><span class="struct-note">Posterior nasopharynx. Also called the adenoid.</span></span></label></li>
+        <li><label class="struct-item"><input type="checkbox" data-key="palatine_tonsil"><span class="struct-text"><strong>Palatine tonsil</strong><span class="struct-note">At the back of the oral cavity, between the palatoglossal and palatopharyngeal arches.</span></span></label></li>
+        <li><label class="struct-item"><input type="checkbox" data-key="lingual_tonsil"><span class="struct-text"><strong>Lingual tonsil</strong><span class="struct-note">At the base of the tongue.</span></span></label></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Card: Arteries -->
+  <div class="section-card" data-open="false" data-card-type="identify">
+    <button class="section-toggle" aria-expanded="false" aria-controls="body-r2-art">
+      <div>
+        <div class="section-eyebrow">Region II &middot; Identification</div>
+        <div class="section-title">Abdominal Arteries</div>
+        <div class="section-meta">Abdominal aorta and major branches</div>
+      </div>
+      <span class="toggle-icon" aria-hidden="true">+</span>
+    </button>
+    <div class="section-body" id="body-r2-art">
+      <ul class="struct-list">
+        <li><label class="struct-item"><input type="checkbox" data-key="abdominal_aorta"><span class="struct-text"><strong>Abdominal aorta</strong></span></label></li>
+        <li><label class="struct-item"><input type="checkbox" data-key="celiac_trunk"><span class="struct-text"><strong>Celiac trunk</strong><span class="struct-note">First major branch off the abdominal aorta. Splits into 3.</span></span></label></li>
+        <li><label class="struct-item"><input type="checkbox" data-key="left_gastric_a"><span class="struct-text"><strong>Left gastric artery</strong><span class="struct-note">Branch of celiac trunk. Supplies stomach.</span></span></label></li>
+        <li><label class="struct-item"><input type="checkbox" data-key="splenic_a"><span class="struct-text"><strong>Splenic artery</strong><span class="struct-note">Branch of celiac trunk. Supplies spleen, pancreas, parts of stomach.</span></span></label></li>
+        <li><label class="struct-item"><input type="checkbox" data-key="common_hepatic_a"><span class="struct-text"><strong>Common hepatic artery</strong><span class="struct-note">Branch of celiac trunk. Supplies liver, gallbladder, parts of duodenum and pancreas.</span></span></label></li>
+        <li><label class="struct-item"><input type="checkbox" data-key="sma"><span class="struct-text"><strong>Superior mesenteric artery (SMA)</strong><span class="struct-note">Supplies most of the small intestine and proximal large intestine.</span></span></label></li>
+        <li><label class="struct-item"><input type="checkbox" data-key="ima"><span class="struct-text"><strong>Inferior mesenteric artery (IMA)</strong><span class="struct-note">Supplies distal large intestine and rectum.</span></span></label></li>
+        <li><label class="struct-item"><input type="checkbox" data-key="right_common_iliac_a"><span class="struct-text"><strong>Right common iliac artery</strong></span></label></li>
+        <li><label class="struct-item"><input type="checkbox" data-key="left_common_iliac_a"><span class="struct-text"><strong>Left common iliac artery</strong></span></label></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Card: Veins -->
+  <div class="section-card" data-open="false" data-card-type="identify">
+    <button class="section-toggle" aria-expanded="false" aria-controls="body-r2-vein">
+      <div>
+        <div class="section-eyebrow">Region II &middot; Identification</div>
+        <div class="section-title">Abdominal Veins</div>
+        <div class="section-meta">IVC and hepatic portal system</div>
+      </div>
+      <span class="toggle-icon" aria-hidden="true">+</span>
+    </button>
+    <div class="section-body" id="body-r2-vein">
+      <ul class="struct-list">
+        <li><label class="struct-item"><input type="checkbox" data-key="ivc"><span class="struct-text"><strong>Inferior vena cava (IVC)</strong></span></label></li>
+        <li><label class="struct-item"><input type="checkbox" data-key="right_common_iliac_v"><span class="struct-text"><strong>Right common iliac vein</strong></span></label></li>
+        <li><label class="struct-item"><input type="checkbox" data-key="left_common_iliac_v"><span class="struct-text"><strong>Left common iliac vein</strong></span></label></li>
+        <li><label class="struct-item"><input type="checkbox" data-key="hepatic_portal_v"><span class="struct-text"><strong>Hepatic portal vein</strong><span class="struct-note">Carries nutrient-rich blood from GI tract to the liver.</span></span></label></li>
+        <li><label class="struct-item"><input type="checkbox" data-key="splenic_v"><span class="struct-text"><strong>Splenic vein</strong><span class="struct-note">Drains spleen, joins hepatic portal vein.</span></span></label></li>
+        <li><label class="struct-item"><input type="checkbox" data-key="smv"><span class="struct-text"><strong>Superior mesenteric vein (SMV)</strong><span class="struct-note">Drains small intestine and proximal large intestine.</span></span></label></li>
+        <li><label class="struct-item"><input type="checkbox" data-key="imv"><span class="struct-text"><strong>Inferior mesenteric vein (IMV)</strong><span class="struct-note">Drains distal large intestine.</span></span></label></li>
+      </ul>
+      <div class="flow-diagram">
+        <strong>Hepatic portal flow at a glance:</strong><br>
+        Splenic V., SMV, IMV <span class="flow-arrow">&rarr;</span> <strong>Hepatic portal vein</strong> <span class="flow-arrow">&rarr;</span> Liver <span class="flow-arrow">&rarr;</span> Hepatic veins <span class="flow-arrow">&rarr;</span> <strong>IVC</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card: Hepatic Portal Trace Quiz -->
+  <div class="section-card trace-card" data-open="false" data-card-type="trace">
+    <button class="section-toggle" aria-expanded="false" aria-controls="body-r2-portal">
+      <div>
+        <div class="section-eyebrow">Region II &middot; Trace Flow Quiz</div>
+        <div class="section-title">Hepatic Portal Blood Flow</div>
+        <div class="section-meta">5 stops, small intestine to IVC</div>
+      </div>
+      <span class="toggle-icon" aria-hidden="true">+</span>
+    </button>
+    <div class="section-body" id="body-r2-portal">
+      <p class="trace-intro">Trace blood from the small intestine back to the systemic circulation. Use the dropdowns to assign each structure a position from 1 to 5.</p>
+      <div class="trace-controls">
+        <button class="trace-btn" data-trace-check="portal">Check Answers</button>
+        <button class="trace-btn secondary" data-trace-reset="portal">Shuffle &amp; Reset</button>
+        <span class="trace-score" data-trace-score="portal">0 / 5</span>
+      </div>
+      <ul class="trace-list" data-trace-list="portal"></ul>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer-note">Dr. Sharilyn Rennie</div>
+
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  /* ===== TABS ===== */
+  var tabs = document.querySelectorAll('[role="tab"]');
+  var panels = document.querySelectorAll('[role="tabpanel"]');
+  function selectTab(tab) {
+    tabs.forEach(function(t) {
+      var selected = (t === tab);
+      t.setAttribute('aria-selected', selected ? 'true' : 'false');
+      t.tabIndex = selected ? 0 : -1;
+    });
+    panels.forEach(function(p) {
+      var match = p.getAttribute('aria-labelledby') === tab.id;
+      if (match) p.removeAttribute('hidden');
+      else p.setAttribute('hidden', '');
+    });
+    requestAnimationFrame(sendHeight);
+  }
+  tabs.forEach(function(tab, idx) {
+    tab.addEventListener('click', function() { selectTab(tab); });
+    tab.addEventListener('keydown', function(e) {
+      var k = e.key;
+      var next = null;
+      if (k === 'ArrowRight') next = tabs[(idx + 1) % tabs.length];
+      else if (k === 'ArrowLeft') next = tabs[(idx - 1 + tabs.length) % tabs.length];
+      else if (k === 'Home') next = tabs[0];
+      else if (k === 'End') next = tabs[tabs.length - 1];
+      if (next) { e.preventDefault(); next.focus(); selectTab(next); }
+    });
+  });
+
+  /* ===== SECTION CARD TOGGLE ===== */
+  document.querySelectorAll('.section-toggle').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var card = btn.closest('.section-card');
+      var open = card.getAttribute('data-open') === 'true';
+      card.setAttribute('data-open', open ? 'false' : 'true');
+      btn.setAttribute('aria-expanded', open ? 'false' : 'true');
+      requestAnimationFrame(sendHeight);
+    });
+  });
+
+  /* ===== CHECKBOX PERSISTENCE ===== */
+  var STORAGE_PREFIX = 'gistruct_';
+  document.querySelectorAll('input[type="checkbox"][data-key]').forEach(function(cb) {
+    var key = STORAGE_PREFIX + cb.dataset.key;
+    try {
+      if (localStorage.getItem(key) === '1') cb.checked = true;
+    } catch(e) {}
+    cb.addEventListener('change', function() {
+      try {
+        if (cb.checked) localStorage.setItem(key, '1');
+        else localStorage.removeItem(key);
+      } catch(e) {}
+    });
+  });
+
+  /* ===== REVEAL ANSWER ===== */
+  document.querySelectorAll('.reveal-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var target = document.getElementById(btn.dataset.reveal);
+      if (target) {
+        if (target.hidden) {
+          target.hidden = false;
+          btn.textContent = 'Hide Answer';
+        } else {
+          target.hidden = true;
+          btn.textContent = 'Reveal Answer';
+        }
+        requestAnimationFrame(sendHeight);
+      }
+    });
+  });
+
+  /* ===== FILTER CHIPS ===== */
+  document.querySelectorAll('.chip').forEach(function(chip) {
+    chip.addEventListener('click', function() {
+      var filter = chip.dataset.filter;
+      var target = chip.dataset.target;
+      var siblings = document.querySelectorAll('.chip[data-filter="' + filter + '"]');
+      siblings.forEach(function(s) {
+        s.setAttribute('aria-pressed', s === chip ? 'true' : 'false');
+      });
+      var panelId = 'panel-' + filter;
+      var panel = document.getElementById(panelId);
+      if (!panel) return;
+      panel.querySelectorAll('.section-card').forEach(function(card) {
+        var ct = card.dataset.cardType;
+        var show = (target === 'all') || (ct === target);
+        card.style.display = show ? '' : 'none';
+      });
+      requestAnimationFrame(sendHeight);
+    });
+  });
+
+  /* ===== TRACE QUIZZES ===== */
+  var traces = {
+    food: {
+      label: 'Path of Food',
+      items: [
+        'Esophagus',
+        'Stomach',
+        'Duodenum',
+        'Jejunum',
+        'Ileum',
+        'Cecum',
+        'Ascending colon',
+        'Transverse colon',
+        'Descending colon',
+        'Sigmoid colon',
+        'Rectum',
+        'Anal canal'
+      ]
+    },
+    bile: {
+      label: 'Bile Pathway',
+      items: [
+        'Liver',
+        'Right and left hepatic ducts',
+        'Common hepatic duct',
+        'Common bile duct',
+        'Hepatopancreatic ampulla',
+        'Major duodenal papilla',
+        'Duodenum'
+      ]
+    },
+    portal: {
+      label: 'Hepatic Portal Blood Flow',
+      items: [
+        'Superior mesenteric vein',
+        'Hepatic portal vein',
+        'Liver',
+        'Hepatic veins',
+        'Inferior vena cava'
+      ]
+    }
+  };
+
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function renderTrace(key) {
+    var t = traces[key];
+    var list = document.querySelector('[data-trace-list="' + key + '"]');
+    if (!list) return;
+    list.innerHTML = '';
+    var shuffled = shuffle(t.items.map(function(name, idx) {
+      return { name: name, correctPos: idx + 1 };
+    }));
+    shuffled.forEach(function(item) {
+      var li = document.createElement('li');
+      li.className = 'trace-row';
+      li.dataset.correctPos = item.correctPos;
+
+      var sel = document.createElement('select');
+      sel.setAttribute('aria-label', 'Position for ' + item.name);
+      var optBlank = document.createElement('option');
+      optBlank.value = '';
+      optBlank.textContent = '?';
+      sel.appendChild(optBlank);
+      for (var i = 1; i <= t.items.length; i++) {
+        var opt = document.createElement('option');
+        opt.value = i;
+        opt.textContent = i;
+        sel.appendChild(opt);
+      }
+
+      var name = document.createElement('span');
+      name.className = 'trace-name';
+      name.textContent = item.name;
+
+      var mark = document.createElement('span');
+      mark.className = 'trace-mark';
+
+      li.appendChild(sel);
+      li.appendChild(name);
+      li.appendChild(mark);
+      list.appendChild(li);
+    });
+    var score = document.querySelector('[data-trace-score="' + key + '"]');
+    if (score) {
+      score.dataset.shown = 'false';
+      score.textContent = '0 / ' + t.items.length;
+    }
+  }
+
+  function checkTrace(key) {
+    var t = traces[key];
+    var list = document.querySelector('[data-trace-list="' + key + '"]');
+    if (!list) return;
+    var rows = list.querySelectorAll('.trace-row');
+    var correct = 0;
+    rows.forEach(function(row) {
+      var sel = row.querySelector('select');
+      var mark = row.querySelector('.trace-mark');
+      var picked = parseInt(sel.value, 10);
+      var correctPos = parseInt(row.dataset.correctPos, 10);
+      row.classList.remove('correct', 'incorrect');
+      if (picked === correctPos) {
+        row.classList.add('correct');
+        mark.textContent = '✓';
+        correct++;
+      } else {
+        row.classList.add('incorrect');
+        mark.textContent = picked ? '✗' : '?';
+      }
+    });
+    var score = document.querySelector('[data-trace-score="' + key + '"]');
+    if (score) {
+      score.textContent = correct + ' / ' + t.items.length;
+      score.dataset.shown = 'true';
+    }
+    requestAnimationFrame(sendHeight);
+  }
+
+  Object.keys(traces).forEach(renderTrace);
+
+  document.querySelectorAll('[data-trace-check]').forEach(function(btn) {
+    btn.addEventListener('click', function() { checkTrace(btn.dataset.traceCheck); });
+  });
+  document.querySelectorAll('[data-trace-reset]').forEach(function(btn) {
+    btn.addEventListener('click', function() { renderTrace(btn.dataset.traceReset); });
+  });
+
+  /* ===== IFRAME HEIGHT SENDER ===== */
+  function sendHeight() {
+    var height = Math.max(
+      document.body.scrollHeight,
+      document.documentElement.scrollHeight,
+      document.body.offsetHeight,
+      document.documentElement.offsetHeight
+    );
+    var id = '';
+    try { id = window.frameElement && window.frameElement.id ? window.frameElement.id : ''; } catch(e) {}
+    try { window.parent.postMessage({ type: 'iframeHeight', id: id, height: height }, '*'); } catch(e) {}
+  }
+  if ('ResizeObserver' in window) {
+    try { var ro = new ResizeObserver(sendHeight); ro.observe(document.body); } catch(e) {}
+  }
+  window.addEventListener('load', sendHeight);
+  window.addEventListener('resize', sendHeight);
+  setTimeout(sendHeight, 100);
+  setTimeout(sendHeight, 500);
+  window.sendHeight = sendHeight;
+
+})();
+</script>
+</body>
+</html>
