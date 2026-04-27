@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BIO 431 Schedule Update</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #1B2845;
+  --navy-soft: #2A3A5C;
+  --tan: #B8946B;
+  --tan-soft: #D4B594;
+  --tan-deep: #8C6E4A;
+  --cream: #F4EDDC;
+  --cream-pale: #FAF6EC;
+  --bg: #FFFFFF;
+  --text: #2E2E2E;
+  --text-muted: #6B6B6B;
+  --border: #E5E0D5;
+  --gold: #D4A24C;
+  --shadow: 0 4px 18px rgba(27, 40, 69, 0.08);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.55;
+  padding: 28px 16px 48px;
+}
+.container { max-width: 1100px; margin: 0 auto; }
+
+.page-header {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-soft) 100%);
+  color: white;
+  border-radius: 16px;
+  padding: 32px 36px 28px;
+  margin-bottom: 22px;
+  position: relative;
+  overflow: hidden;
+}
+.page-header::before {
+  content: ""; position: absolute; top: 0; right: 0;
+  width: 280px; height: 280px;
+  background: radial-gradient(circle at 100% 0%, rgba(184,148,107,0.22), transparent 65%);
+  pointer-events: none;
+}
+.breadcrumb {
+  font-size: 0.78rem; letter-spacing: 0.08em;
+  color: var(--tan-soft); font-weight: 700;
+  text-transform: uppercase; margin-bottom: 10px;
+  position: relative;
+}
+.page-header h1 {
+  font-size: 2.1rem; font-weight: 800;
+  letter-spacing: -0.01em; margin-bottom: 8px;
+  position: relative; line-height: 1.15;
+}
+.page-header .subtitle {
+  font-family: 'Lora', Georgia, serif;
+  font-style: italic; font-size: 1rem;
+  color: rgba(255,255,255,0.86);
+  max-width: 680px; position: relative;
+}
+
+.update-banner {
+  background: var(--cream-pale);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--gold);
+  border-radius: 10px;
+  padding: 14px 20px;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+.update-banner strong { color: var(--navy); font-weight: 800; }
+
+.schedule-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.schedule-row {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  display: grid;
+  grid-template-columns: 160px 1fr 1fr;
+  position: relative;
+}
+
+.schedule-row.past { opacity: 0.55; }
+.schedule-row.next-up { border: 2px solid var(--gold); box-shadow: 0 6px 22px rgba(212, 162, 76, 0.25); }
+.schedule-row.exam { background: var(--cream); }
+.schedule-row.cumulative { background: var(--cream-pale); border-color: var(--tan); }
+
+.next-up-pill {
+  position: absolute;
+  top: -10px;
+  right: 18px;
+  background: var(--gold);
+  color: var(--navy);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  border-radius: 999px;
+  z-index: 2;
+}
+
+.date-cell {
+  background: var(--navy);
+  color: white;
+  padding: 22px 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  border-right: 1px solid var(--border);
+}
+.schedule-row.past .date-cell { background: var(--text-muted); }
+.schedule-row.exam .date-cell { background: var(--tan-deep); }
+.schedule-row.cumulative .date-cell { background: var(--navy); }
+.date-cell .day {
+  font-size: 0.74rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--tan-soft);
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.date-cell .date {
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+
+.session-cell {
+  padding: 18px 22px;
+  border-right: 1px solid var(--border);
+}
+.session-cell:last-child { border-right: none; }
+.session-eyebrow {
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 800;
+  color: var(--tan-deep);
+  margin-bottom: 6px;
+}
+.session-content {
+  font-size: 0.95rem;
+  color: var(--text);
+  line-height: 1.5;
+}
+.session-content strong { color: var(--navy); font-weight: 700; }
+.session-content .note {
+  display: block;
+  font-family: 'Lora', Georgia, serif;
+  font-style: italic;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  margin-top: 4px;
+  line-height: 1.45;
+}
+
+.exam-pill {
+  display: inline-block;
+  background: var(--tan-deep);
+  color: white;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 4px 12px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.cumulative-pill {
+  display: inline-block;
+  background: var(--navy);
+  color: white;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 4px 12px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.footer-note {
+  margin-top: 26px;
+  text-align: center;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+@media (max-width: 740px) {
+  .schedule-row {
+    grid-template-columns: 1fr;
+  }
+  .date-cell {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 14px 18px;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .date-cell .day { margin-bottom: 0; }
+  .session-cell {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .session-cell:last-child { border-bottom: none; }
+  .page-header h1 { font-size: 1.6rem; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header class="page-header">
+  <div class="breadcrumb">BIO 431 &middot; Schedule Update</div>
+  <h1>End-of-Semester Schedule</h1>
+  <p class="subtitle">Updated April 26, 2026. Saturday meetings through May 16. Schedule reflects the move of respiratory TBL and renal anatomy into the May 2 session.</p>
+</header>
+
+<div class="update-banner">
+  <strong>What changed:</strong> April 25 class was cancelled. May 2 now opens with the Respiratory TBL and ABG Challenge in the morning, with Renal and GI Anatomy in the afternoon to keep the unit on track for the May 9 exam.
+</div>
+
+<div class="schedule-grid">
+
+  <!-- Apr 25 (cancelled) -->
+  <div class="schedule-row past">
+    <div class="date-cell">
+      <span class="day">Saturday</span>
+      <span class="date">Apr 25</span>
+    </div>
+    <div class="session-cell" style="grid-column: span 2; display: flex; align-items: center; justify-content: center; padding: 24px;">
+      <div class="session-content" style="text-align: center;">
+        <span class="exam-pill" style="background: var(--text-muted); margin-bottom: 8px;">Class Cancelled</span>
+        <div><strong>No class held</strong></div>
+        <span class="note">Instructor absence. Renal Anatomy material moves to May 2.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- May 2 (NEXT UP) -->
+  <div class="schedule-row next-up">
+    <span class="next-up-pill">Next Up</span>
+    <div class="date-cell">
+      <span class="day">Saturday</span>
+      <span class="date">May 2</span>
+    </div>
+    <div class="session-cell">
+      <div class="session-eyebrow">Morning Session</div>
+      <div class="session-content">
+        <strong>Respiratory TBL</strong>
+        <span class="note">ABG Challenge.</span>
+      </div>
+    </div>
+    <div class="session-cell">
+      <div class="session-eyebrow">Afternoon Session</div>
+      <div class="session-content">
+        <strong>Renal &amp; GI Anatomy</strong>
+        <span class="note">Lab work and structure identification.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- May 9 (Exam) -->
+  <div class="schedule-row exam">
+    <div class="date-cell">
+      <span class="day">Saturday</span>
+      <span class="date">May 9</span>
+    </div>
+    <div class="session-cell">
+      <div class="session-eyebrow">Morning Session</div>
+      <div class="session-content">
+        <span class="exam-pill">Lab Practical 4</span>
+        <strong>Renal, Fluid &amp; Electrolytes, Digestive</strong>
+      </div>
+    </div>
+    <div class="session-cell">
+      <div class="session-eyebrow">Afternoon Session</div>
+      <div class="session-content">
+        <span class="exam-pill">Lecture Exam 4</span>
+        <strong>Respiratory, Renal, Fluid &amp; Electrolytes, GI</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- May 16 (Cumulative) -->
+  <div class="schedule-row cumulative">
+    <div class="date-cell">
+      <span class="day">Saturday</span>
+      <span class="date">May 16</span>
+    </div>
+    <div class="session-cell">
+      <div class="session-eyebrow">Morning Session</div>
+      <div class="session-content">
+        <span class="cumulative-pill">Cumulative</span>
+        <strong>Lab Cumulative</strong>
+      </div>
+    </div>
+    <div class="session-cell">
+      <div class="session-eyebrow">Afternoon Session</div>
+      <div class="session-content">
+        <span class="cumulative-pill">Cumulative</span>
+        <strong>Lecture Cumulative</strong>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer-note">Dr. Sharilyn Rennie</div>
+
+</div>
+
+<!-- Iframe height sender for Kajabi or Canvas embedding -->
+<script>
+(function() {
+  function sendHeight() {
+    var height = Math.max(
+      document.body.scrollHeight,
+      document.documentElement.scrollHeight,
+      document.body.offsetHeight,
+      document.documentElement.offsetHeight
+    );
+    var id = '';
+    try { id = window.frameElement && window.frameElement.id ? window.frameElement.id : ''; } catch(e) {}
+    try { window.parent.postMessage({ type: 'iframeHeight', id: id, height: height }, '*'); } catch(e) {}
+  }
+  if ('ResizeObserver' in window) {
+    try { var ro = new ResizeObserver(sendHeight); ro.observe(document.body); } catch(e) {}
+  }
+  window.addEventListener('load', sendHeight);
+  window.addEventListener('resize', sendHeight);
+  setTimeout(sendHeight, 100);
+  setTimeout(sendHeight, 500);
+})();
+</script>
+
+</body>
+</html>
