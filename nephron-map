@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>Nephron Map Checklist | Human Anatomy</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FAF8F4;
+    --cream-dark: #F0EDE6;
+    --navy: #1C2E4A;
+    --navy-mid: #2D4A6B;
+    --sage: #6B8F71;
+    --sage-light: #E8F0E9;
+    --terra: #B5673A;
+    --terra-light: #FAF0EA;
+    --gold: #C49A3C;
+    --gold-light: #FBF5E6;
+    --teal: #3A7D7B;
+    --teal-light: #E6F4F3;
+    --rose: #9B4E52;
+    --rose-light: #FAEAEB;
+    --slate: #5A6B7A;
+    --slate-light: #EBF0F4;
+    --check-color: #4A7C59;
+    --check-phys: #2A6E7C;
+    --border: #DDD8CE;
+    --text: #2A2A2A;
+    --text-light: #666;
+    --radius: 10px;
+    --shadow: 0 2px 12px rgba(28,46,74,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { background: #FAF8F4 !important; color-scheme: light !important; }
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background: #FAF8F4 !important; color: #2A2A2A !important; min-height: 100vh; }
+
+  .site-header {
+    background: white; color: var(--navy);
+    border-bottom: 1.5px solid var(--border);
+    padding: 22px 40px 18px;
+    display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+  }
+  .header-left h1 { font-family: 'Lora', serif; font-size: 1.55rem; font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; margin-bottom: 3px; color: var(--navy); }
+  .header-left p { font-size: 0.76rem; color: var(--slate); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
+  .header-badge { background: var(--terra); color: white; font-size: 0.73rem; font-weight: 700; padding: 4px 13px; border-radius: 20px; letter-spacing: 0.04em; white-space: nowrap; }
+
+  .tab-bar { background: var(--navy-mid); display: flex; align-items: stretch; padding: 0 40px; }
+  .tab-btn {
+    padding: 13px 26px 11px;
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.8rem; font-weight: 700;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: #7A9BB5; background: none; border: none; border-bottom: 3px solid transparent;
+    cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px;
+  }
+  .tab-btn:hover { color: #C8DAEA; }
+  .tab-btn.active-lab { color: white; border-bottom-color: var(--gold); }
+  .tab-btn.active-anat { color: white; border-bottom-color: var(--sage); }
+  .tab-btn.active-phys { color: white; border-bottom-color: var(--teal); }
+
+  .progress-bar-wrap {
+    background: var(--cream-dark); border-bottom: 1px solid var(--border);
+    padding: 11px 40px; display: flex; align-items: center; gap: 14px;
+  }
+  .progress-label { color: var(--slate); font-size: 0.74rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; min-width: 110px; }
+  .progress-track { flex: 1; height: 7px; background: var(--border); border-radius: 4px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 4px; transition: width 0.4s ease; width: 0%; }
+  .progress-fill.lab-fill { background: linear-gradient(90deg, var(--gold) 0%, #B5673A 100%); }
+  .progress-fill.anat-fill { background: linear-gradient(90deg, var(--sage) 0%, #4A9E6E 100%); }
+  .progress-fill.phys-fill { background: linear-gradient(90deg, var(--teal) 0%, #2A9D9B 100%); }
+  .progress-count { color: var(--navy); font-size: 0.8rem; font-weight: 700; min-width: 52px; text-align: right; }
+
+  .rubric-strip { background: white; border-bottom: 1.5px solid var(--border); padding: 9px 40px; display: flex; gap: 7px; flex-wrap: wrap; align-items: center; }
+  .rubric-label { font-size: 0.7rem; font-weight: 700; color: var(--slate); text-transform: uppercase; letter-spacing: 0.06em; margin-right: 4px; }
+  .rubric-pill { background: var(--cream-dark); border: 1.5px solid var(--border); border-radius: 20px; padding: 3px 10px; font-size: 0.71rem; font-weight: 600; color: var(--text-light); display: flex; align-items: center; gap: 5px; transition: all 0.25s; }
+  .rubric-pill .pts { color: var(--navy); font-weight: 700; }
+  .rubric-pill.met { background: var(--sage-light); border-color: var(--sage); color: #3A6645; }
+  .rubric-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); transition: background 0.25s; }
+  .rubric-pill.met .rubric-dot { background: var(--sage); }
+
+  .abbrev-bar { background: white; border-bottom: 1.5px solid var(--border); }
+  .abbrev-head { padding: 8px 40px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; user-select: none; transition: background 0.15s; }
+  .abbrev-head:hover { background: var(--cream); }
+  .abbrev-head-left { display: flex; align-items: center; gap: 8px; }
+  .abbrev-icon { font-size: 0.92rem; }
+  .abbrev-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.73rem; font-weight: 700; color: var(--navy); letter-spacing: 0.06em; text-transform: uppercase; }
+  .abbrev-toggle { font-size: 0.7rem; color: var(--slate); font-weight: 600; }
+  .abbrev-body { display: none; padding: 0 40px 14px; border-top: 1px solid var(--border); background: var(--cream); }
+  .abbrev-body.open { display: block; }
+  .abbrev-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 6px 14px; padding: 12px 0 4px; }
+  .abbrev-item { font-size: 0.76rem; color: var(--text); line-height: 1.45; }
+  .abbrev-item strong { color: var(--navy); font-weight: 700; letter-spacing: 0.02em; font-family: 'Plus Jakarta Sans', sans-serif; }
+  .abbrev-section-title { font-size: 0.68rem; font-weight: 700; color: var(--slate); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 10px; padding-bottom: 4px; border-bottom: 1px dashed var(--border); }
+  .abbrev-section-title:first-child { margin-top: 0; }
+
+  .lab-intro { background: var(--gold-light); border-left: 4px solid var(--gold); border-radius: 6px; padding: 16px 20px; margin-bottom: 22px; }
+  .lab-intro h3 { font-family: 'Lora', serif; font-size: 1rem; color: var(--navy); margin-bottom: 6px; font-weight: 700; }
+  .lab-intro p { font-size: 0.86rem; line-height: 1.55; color: var(--text); }
+  .lab-intro p + p { margin-top: 6px; }
+  .flow-trace-box { background: white; border: 2px solid var(--gold); border-radius: 8px; padding: 14px 18px; margin-top: 12px; }
+  .flow-trace-box .flow-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.78rem; font-weight: 700; color: var(--navy); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .flow-trace-box .flow-text { font-size: 0.82rem; line-height: 1.55; color: var(--text); }
+  .flow-trace-box .flow-text strong { color: var(--terra); }
+
+  .main { max-width: 960px; margin: 0 auto; padding: 26px 22px 60px; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 22px; align-items: center; }
+  .legend-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-light); margin-right: 4px; }
+  .tag { display: inline-flex; align-items: center; gap: 4px; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; white-space: nowrap; }
+  .tag-anatomy { background: var(--slate-light); color: var(--slate); }
+  .tag-histo { background: var(--teal-light); color: var(--teal); }
+  .tag-cells { background: var(--sage-light); color: #3A6645; }
+  .tag-secrete { background: var(--gold-light); color: #7A5E1A; }
+  .tag-neural { background: var(--rose-light); color: var(--rose); }
+  .tag-function { background: var(--terra-light); color: var(--terra); }
+
+  .phys-chip { display: inline-flex; align-items: center; font-size: 0.65rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 7px; border-radius: 4px; white-space: nowrap; flex-shrink: 0; }
+  .chip-on { background: #E8F5E9; color: #2E6B3E; border: 1.5px solid #A5D6A7; }
+  .chip-off { background: #FDE8E8; color: #7B2020; border: 1.5px solid #F5AAAA; }
+  .chip-effect { background: var(--teal-light); color: #1A5958; border: 1.5px solid #A0CECE; }
+  .chip-integrate { background: var(--gold-light); color: #7A5E1A; border: 1.5px solid #DEC97A; }
+
+  .region-group { margin-bottom: 9px; border: 1.5px solid var(--border); border-radius: var(--radius); background: white; box-shadow: var(--shadow); overflow: hidden; }
+  .region-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; cursor: pointer; user-select: none; background: white; transition: background 0.2s; gap: 12px; }
+  .region-header:hover { background: var(--cream); }
+  .region-header.open { background: var(--navy); color: white; }
+  .region-header.open .region-name { color: white; }
+  .region-header.open .region-tag-line { color: #A8BAC8; }
+  .region-header.open .region-progress-text { color: #A8BAC8; }
+  .region-header.open .toggle-icon { color: white; }
+
+  .region-left { display: flex; align-items: center; gap: 11px; flex: 1; min-width: 0; }
+  .region-icon { width: 33px; height: 33px; border-radius: 8px; background: var(--sage-light); display: flex; align-items: center; justify-content: center; font-size: 0.95rem; flex-shrink: 0; }
+  .region-icon.phys-icon { background: var(--teal-light); }
+  .region-header.open .region-icon { background: rgba(255,255,255,0.15); }
+  .region-name { font-family: 'Lora', serif; font-size: 0.96rem; font-weight: 700; color: var(--navy); line-height: 1.2; }
+  .region-tag-line { font-size: 0.7rem; color: var(--text-light); margin-top: 1px; }
+  .region-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .region-mini-bar { width: 54px; height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .region-header.open .region-mini-bar { background: rgba(255,255,255,0.2); }
+  .region-mini-fill { height: 100%; border-radius: 3px; width: 0%; transition: width 0.3s; }
+  .region-mini-fill.lab-mini { background: var(--gold); }
+  .region-mini-fill.anat-mini { background: var(--sage); }
+  .region-mini-fill.phys-mini { background: var(--teal); }
+  .region-header.open .region-mini-fill { opacity: 0.8; }
+  .region-progress-text { font-size: 0.7rem; font-weight: 600; color: var(--text-light); }
+  .toggle-icon { font-size: 0.88rem; color: var(--text-light); transition: transform 0.25s; }
+  .region-header.open .toggle-icon { transform: rotate(180deg); }
+
+  .region-body { display: none; border-top: 1.5px solid var(--border); }
+  .region-body.open { display: block; }
+
+  .cat-block { border-bottom: 1px solid var(--cream-dark); padding: 12px 20px 14px; }
+  .cat-block:last-child { border-bottom: none; }
+  .cat-title { display: flex; align-items: center; gap: 7px; margin-bottom: 9px; flex-wrap: wrap; }
+
+  .check-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+  .check-item { display: flex; align-items: flex-start; gap: 9px; padding: 6px 9px; border-radius: 6px; cursor: pointer; transition: background 0.15s; }
+  .check-item:hover { background: var(--cream); }
+  .check-item.checked-lab { background: var(--gold-light); }
+  .check-item.checked-lab .check-text { color: #6B4E1A; }
+  .check-item.checked-lab .check-note { color: #8A6828; }
+  .check-item.checked-anat { background: var(--sage-light); }
+  .check-item.checked-anat .check-text { color: #2E6040; }
+  .check-item.checked-anat .check-note { color: #4A7A58; }
+  .check-item.checked-phys { background: var(--teal-light); }
+  .check-item.checked-phys .check-text { color: #1A4F5A; }
+  .check-item.checked-phys .check-note { color: #2A6E78; }
+
+  .check-box { width: 18px; height: 18px; border: 2px solid var(--border); border-radius: 5px; flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; background: white; font-size: 0.68rem; color: white; }
+  .check-item.checked-lab .check-box { background: var(--gold); border-color: var(--gold); }
+  .check-item.checked-anat .check-box { background: var(--check-color); border-color: var(--check-color); }
+  .check-item.checked-phys .check-box { background: var(--check-phys); border-color: var(--check-phys); }
+
+  .check-text-wrap { flex: 1; min-width: 0; }
+  .check-text { font-size: 0.845rem; font-weight: 500; color: var(--text); line-height: 1.35; }
+  .check-note { font-size: 0.74rem; color: var(--text-light); margin-top: 2px; line-height: 1.35; font-style: italic; }
+
+  .feedback-row { display: flex; flex-direction: column; gap: 0; padding: 10px 11px; border-radius: 7px; border: 1.5px solid var(--border); background: white; margin-bottom: 8px; cursor: pointer; transition: all 0.15s; }
+  .feedback-row:hover { background: var(--cream); border-color: #C0BBB0; }
+  .feedback-row.checked-phys { background: var(--teal-light); border-color: var(--teal); }
+  .feedback-row.checked-phys .check-box { background: var(--check-phys); border-color: var(--check-phys); }
+  .feedback-row.checked-phys .fb-title { color: #1A4F5A; }
+
+  .fb-header { display: flex; align-items: center; gap: 9px; }
+  .fb-title { font-size: 0.87rem; font-weight: 700; color: var(--navy); flex: 1; line-height: 1.3; }
+  .fb-rows { display: flex; flex-direction: column; gap: 4px; margin-top: 8px; padding-left: 27px; }
+  .fb-line { font-size: 0.78rem; line-height: 1.5; color: var(--text); display: flex; gap: 7px; align-items: flex-start; }
+  .fb-line span:last-child { flex: 1; }
+
+  .phys-intro { background: var(--teal-light); border: 1.5px solid #A0CECE; border-radius: 8px; padding: 13px 17px; margin-bottom: 20px; font-size: 0.81rem; color: #1A4F5A; line-height: 1.55; }
+  .phys-intro strong { font-weight: 700; color: var(--navy); }
+
+  .reminder-box { background: var(--gold-light); border: 1.5px solid #DEC97A; border-radius: 8px; padding: 12px 16px; margin: 20px 0 0; font-size: 0.8rem; color: #6A4E10; line-height: 1.5; }
+  .reminder-box strong { font-weight: 700; color: #5A3E08; }
+  .reminder-phys { background: var(--teal-light); border-color: #A0CECE; color: #1A4F5A; }
+  .reminder-phys strong { color: var(--navy); }
+
+  .rubric-summary { background: var(--navy); color: white; border-radius: var(--radius); padding: 18px 24px; margin-top: 24px; }
+  .rubric-summary h3 { font-family: 'Lora', serif; font-size: 0.82rem; font-weight: 700; margin-bottom: 11px; color: #A8BAC8; text-transform: uppercase; letter-spacing: 0.06em; }
+  .rubric-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; }
+  .rubric-row { background: rgba(255,255,255,0.06); border-radius: 7px; padding: 9px 13px; }
+  .rubric-row-name { font-size: 0.74rem; color: #A8BAC8; font-weight: 500; margin-bottom: 3px; }
+  .rubric-row-pts { font-size: 1rem; font-weight: 700; color: white; }
+  .rubric-row-pts span { font-size: 0.7rem; font-weight: 400; color: #6B8499; }
+
+  .instr-wrap { background: white; border: 1.5px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 24px; overflow: hidden; }
+  .instr-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; cursor: pointer; background: var(--navy); user-select: none; gap: 12px; }
+  .instr-header:hover { background: var(--navy-mid); }
+  .instr-header-left { display: flex; align-items: center; gap: 10px; }
+  .instr-icon { font-size: 1rem; }
+  .instr-title { font-family: 'Lora', serif; font-size: 0.98rem; font-weight: 700; color: white; }
+  .instr-toggle { font-size: 0.72rem; font-weight: 700; color: #A8BAC8; text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; }
+  .instr-body { padding: 22px 24px; display: flex; flex-direction: column; gap: 20px; }
+  .instr-section { display: flex; flex-direction: column; gap: 9px; }
+  .instr-section-title { font-family: 'Lora', serif; font-size: 0.95rem; font-weight: 700; color: var(--navy); border-bottom: 2px solid var(--cream-dark); padding-bottom: 6px; }
+  .instr-section p { font-size: 0.845rem; line-height: 1.65; color: var(--text); }
+  .instr-section strong { font-weight: 700; color: var(--navy); }
+  .instr-card-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin-top: 4px; }
+  .instr-card { background: var(--cream); border: 1.5px solid var(--border); border-radius: 8px; padding: 13px 15px; }
+  .instr-card-title { font-size: 0.83rem; font-weight: 700; color: var(--navy); margin-bottom: 7px; }
+  .instr-card p { font-size: 0.79rem; line-height: 1.6; color: var(--text); }
+  .instr-tips { display: flex; flex-direction: column; gap: 7px; }
+  .instr-tip { display: flex; gap: 9px; align-items: flex-start; font-size: 0.83rem; line-height: 1.6; color: var(--text); }
+  .tip-dot { color: var(--teal); font-size: 0.5rem; margin-top: 6px; flex-shrink: 0; }
+  .instr-callout { background: var(--navy); color: white; border-radius: 8px; padding: 14px 18px; font-size: 0.83rem; line-height: 1.6; }
+  .instr-callout strong { color: #A8C8E8; font-weight: 700; }
+  .instr-body.collapsed { display: none; }
+
+  @media (max-width: 600px) {
+    .site-header, .tab-bar { padding-left: 18px; padding-right: 18px; }
+    .progress-bar-wrap, .rubric-strip { padding: 10px 16px; }
+    .main { padding: 18px 12px 50px; }
+    .tab-btn { padding: 11px 13px 9px; font-size: 0.73rem; }
+    .region-header { padding: 12px 14px; }
+    .cat-block { padding: 11px 14px 12px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-left">
+    <h1>Nephron Map Checklist</h1>
+    <p>Human Anatomy | Human Physiology</p>
+  </div>
+  <div class="header-badge">50 pts | Single Page</div>
+</header>
+
+<div class="tab-bar">
+  <button class="tab-btn active-lab" id="tabLab" onclick="switchTab('lab')">&#128269; Lab Structures</button>
+  <button class="tab-btn" id="tabAnat" onclick="switchTab('anat')">&#9998; Nephron Map -- Anatomy</button>
+  <button class="tab-btn" id="tabPhys" onclick="switchTab('phys')">&#9889; Nephron Map -- Physiology</button>
+</div>
+
+<div class="abbrev-bar">
+  <div class="abbrev-head" onclick="toggleAbbrev()">
+    <div class="abbrev-head-left"><span class="abbrev-icon">&#128218;</span><span class="abbrev-title">Abbreviations Key</span></div>
+    <span class="abbrev-toggle" id="abbrevToggle">&#9660; Expand</span>
+  </div>
+  <div class="abbrev-body" id="abbrevBody">
+
+    <div class="abbrev-section-title">Structural + Anatomic</div>
+    <div class="abbrev-grid">
+      <div class="abbrev-item"><strong>L/R</strong> = Left / Right</div>
+      <div class="abbrev-item"><strong>PCT</strong> = Proximal Convoluted Tubule</div>
+      <div class="abbrev-item"><strong>DCT</strong> = Distal Convoluted Tubule</div>
+      <div class="abbrev-item"><strong>CD</strong> = Collecting Duct</div>
+      <div class="abbrev-item"><strong>LoH</strong> = Loop of Henle</div>
+      <div class="abbrev-item"><strong>TAL</strong> = Thick Ascending Limb</div>
+      <div class="abbrev-item"><strong>tDL</strong> = Thin Descending Limb</div>
+      <div class="abbrev-item"><strong>JGA</strong> = Juxtaglomerular Apparatus</div>
+      <div class="abbrev-item"><strong>JG cells</strong> = Juxtaglomerular (granular) cells</div>
+      <div class="abbrev-item"><strong>UPJ</strong> = Ureteropelvic Junction</div>
+      <div class="abbrev-item"><strong>UVJ</strong> = Ureterovesical Junction</div>
+      <div class="abbrev-item"><strong>IVC</strong> = Inferior Vena Cava</div>
+    </div>
+
+    <div class="abbrev-section-title">Physiology + Pressures</div>
+    <div class="abbrev-grid">
+      <div class="abbrev-item"><strong>GFR</strong> = Glomerular Filtration Rate</div>
+      <div class="abbrev-item"><strong>NFP</strong> = Net Filtration Pressure</div>
+      <div class="abbrev-item"><strong>HP</strong> = Hydrostatic Pressure</div>
+      <div class="abbrev-item"><strong>OP / &#960;</strong> = Oncotic (colloid osmotic) Pressure</div>
+      <div class="abbrev-item"><strong>BP</strong> = Blood Pressure</div>
+      <div class="abbrev-item"><strong>MAP</strong> = Mean Arterial Pressure</div>
+      <div class="abbrev-item"><strong>TGF</strong> = Tubuloglomerular Feedback</div>
+      <div class="abbrev-item"><strong>RBF</strong> = Renal Blood Flow</div>
+    </div>
+
+    <div class="abbrev-section-title">Hormones + Regulators</div>
+    <div class="abbrev-grid">
+      <div class="abbrev-item"><strong>RAAS</strong> = Renin-Angiotensin-Aldosterone System</div>
+      <div class="abbrev-item"><strong>Ang I / Ang II</strong> = Angiotensin I / II</div>
+      <div class="abbrev-item"><strong>ACE</strong> = Angiotensin Converting Enzyme</div>
+      <div class="abbrev-item"><strong>ADH</strong> = Antidiuretic Hormone (Vasopressin)</div>
+      <div class="abbrev-item"><strong>ANP</strong> = Atrial Natriuretic Peptide</div>
+      <div class="abbrev-item"><strong>BNP</strong> = Brain Natriuretic Peptide</div>
+      <div class="abbrev-item"><strong>PTH</strong> = Parathyroid Hormone</div>
+      <div class="abbrev-item"><strong>EPO</strong> = Erythropoietin</div>
+    </div>
+
+    <div class="abbrev-section-title">Transporters + Channels</div>
+    <div class="abbrev-grid">
+      <div class="abbrev-item"><strong>AQP2</strong> = Aquaporin 2 (water channel)</div>
+      <div class="abbrev-item"><strong>ENaC</strong> = Epithelial Na+ Channel</div>
+      <div class="abbrev-item"><strong>ROMK</strong> = Renal Outer Medullary K+ Channel</div>
+      <div class="abbrev-item"><strong>NKCC2</strong> = Na/K/2Cl Cotransporter (TAL)</div>
+      <div class="abbrev-item"><strong>NCC</strong> = Na/Cl Cotransporter (DCT)</div>
+      <div class="abbrev-item"><strong>NHE3</strong> = Na/H Exchanger (PCT)</div>
+      <div class="abbrev-item"><strong>SGLT</strong> = Sodium-Glucose Cotransporter</div>
+      <div class="abbrev-item"><strong>GLUT</strong> = Glucose Transporter</div>
+      <div class="abbrev-item"><strong>TRPV5</strong> = Transient Receptor Potential Vanilloid 5 (Ca2+ channel, DCT)</div>
+      <div class="abbrev-item"><strong>V2 receptor</strong> = Vasopressin type 2 receptor (principal cells)</div>
+    </div>
+
+    <div class="abbrev-section-title">Clinical</div>
+    <div class="abbrev-grid">
+      <div class="abbrev-item"><strong>DI</strong> = Diabetes Insipidus</div>
+      <div class="abbrev-item"><strong>SIADH</strong> = Syndrome of Inappropriate ADH</div>
+      <div class="abbrev-item"><strong>UTI</strong> = Urinary Tract Infection</div>
+      <div class="abbrev-item"><strong>AKI</strong> = Acute Kidney Injury</div>
+      <div class="abbrev-item"><strong>CKD</strong> = Chronic Kidney Disease</div>
+    </div>
+
+  </div>
+</div>
+
+<div class="progress-bar-wrap">
+  <div class="progress-label" id="progressLabel">Lab Structures Progress</div>
+  <div class="progress-track"><div class="progress-fill lab-fill" id="globalFill"></div></div>
+  <div class="progress-count" id="globalCount">0 / 0</div>
+</div>
+
+<div class="rubric-strip" id="rubricStrip">
+  <span class="rubric-label">Rubric</span>
+  <div class="rubric-pill" id="rpAnat"><span class="rubric-dot"></span> Anatomy <span class="pts">10 pts</span></div>
+  <div class="rubric-pill" id="rpHisto"><span class="rubric-dot"></span> Histology + Micro <span class="pts">10 pts</span></div>
+  <div class="rubric-pill" id="rpFlow"><span class="rubric-dot"></span> Flow Pathways <span class="pts">5 pts</span></div>
+  <div class="rubric-pill" id="rpFunc"><span class="rubric-dot"></span> Function <span class="pts">5 pts</span></div>
+  <div class="rubric-pill" id="rpVisual"><span class="rubric-dot"></span> Visual + Effort <span class="pts">10 pts</span></div>
+  <div class="rubric-pill" id="rpAccuracy"><span class="rubric-dot"></span> Accuracy <span class="pts">10 pts</span></div>
+</div>
+
+<main class="main">
+
+  <!-- INSTRUCTIONS BLOCK -->
+  <div class="instr-wrap" id="instrWrap">
+    <div class="instr-header" onclick="toggleInstr()">
+      <div class="instr-header-left">
+        <span class="instr-icon">&#128196;</span>
+        <span class="instr-title">How to Build Your Nephron Map -- Read This First</span>
+      </div>
+      <span class="instr-toggle" id="instrToggle">&#9660; Collapse</span>
+    </div>
+    <div class="instr-body" id="instrBody">
+
+      <div class="instr-section">
+        <div class="instr-section-title">&#127912; This is a Visual, Not a List</div>
+        <p>Your Nephron Map is a single-page illustrated diagram, not an outline, not a study guide written in bullet points, and not a paragraph essay. If your final product looks like a table or a numbered list, start over. The goal is a hand-drawn or digitally designed <strong>map</strong> that traces a single nephron from renal corpuscle to collecting duct, with annotated structures, zoom-in boxes, and brief labels. Think of it as a page out of a medical atlas that you made yourself.</p>
+        <p style="margin-top:8px;">You are <strong>not</strong> being graded on artistic ability. Rough sketches, imperfect circles, and uneven lines are completely fine. What matters is that you drew something, a real visual representation, not that it looks beautiful.</p>
+      </div>
+
+      <div class="instr-section">
+        <div class="instr-section-title">&#128247; What "Visual" Actually Means</div>
+        <p>Every region of the nephron should be <strong>drawn</strong> as a shape on the page, even a simple tube or oval. From that shape, you pull out and annotate. Here are the three visual tools you should be using:</p>
+        <div class="instr-card-row">
+          <div class="instr-card">
+            <div class="instr-card-title">&#128269; Zoom-In Boxes</div>
+            <p>Draw a small box or circle that zooms in on a specific region. For example, draw the renal corpuscle as an oval, then draw a magnified box off to the side showing the three-layer filtration membrane with labeled fenestrated endothelium, basement membrane, and podocyte slit diaphragms. Connect it to the main diagram with a line. This is how you show histology without cluttering your main diagram.</p>
+          </div>
+          <div class="instr-card">
+            <div class="instr-card-title">&#9635; Cross-Sectional Boxes</div>
+            <p>At least one segment should include a small cross-section showing the epithelial cell type and key transporters. The PCT is a great choice, draw the lumen, brush border, basal striations, and label the transporters (SGLT2, NHE3, Na-K ATPase on basolateral side). This is also where you can show the principal cell vs intercalated cell difference in the collecting duct.</p>
+          </div>
+          <div class="instr-card">
+            <div class="instr-card-title">&#8594; Arrows and Brief Captions</div>
+            <p>Every label on your map should be a short phrase of 1 to 5 words, connected by an arrow to the structure it describes. Captions can be slightly longer (one sentence max) but should be written as annotations, not prose. Example: "Podocyte -- filtration slit" is a good caption. A paragraph explaining podocyte function is not.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="instr-section">
+        <div class="instr-section-title">&#9989; Use This Checklist the Right Way</div>
+        <p>The checklist in this tool is organized by region and category, anatomy, histology, cells, transport, neural/hormonal, and function. Work through each region <strong>on your actual map first</strong>, then come back and check off what you included. Do not write out every checklist item as text on your map, that defeats the purpose. Each item on this list should correspond to a label, a zoom-in box, a symbol, or an arrow on your drawing.</p>
+        <p style="margin-top:8px;">A good gut check: if you can fold your map and all the information is still readable as prose without the drawing, you have not made a map. You have made a document. Go back and draw.</p>
+      </div>
+
+      <div class="instr-section">
+        <div class="instr-section-title">&#128161; Practical Layout Tips</div>
+        <div class="instr-tips">
+          <div class="instr-tip"><span class="tip-dot">&#9679;</span><span>Start by sketching the full nephron as a winding tube on your page, renal corpuscle at the top, collecting duct at the bottom draining toward the papilla. Show a clear border between cortex (top) and medulla (bottom) so segments can be located regionally.</span></div>
+          <div class="instr-tip"><span class="tip-dot">&#9679;</span><span>Draw the blood supply alongside the tubule, afferent arteriole into glomerulus, efferent arteriole out, peritubular capillaries hugging the PCT and DCT, vasa recta running parallel to the loop of Henle. Use a different color for blood.</span></div>
+          <div class="instr-tip"><span class="tip-dot">&#9679;</span><span>The juxtaglomerular apparatus deserves its own zoom-in, draw the triangular contact zone where the DCT touches the afferent arteriole, and label all three cell types (macula densa, JG cells, extraglomerular mesangial cells).</span></div>
+          <div class="instr-tip"><span class="tip-dot">&#9679;</span><span>Use color to differentiate categories, one color for histology labels, another for transporters/secretions, another for hormones. A simple legend in the corner is enough.</span></div>
+          <div class="instr-tip"><span class="tip-dot">&#9679;</span><span>Reserve at least one corner or side margin for your cross-section or zoom-in boxes. These do not need to be large, a 2 inch box is sufficient if it is clearly labeled.</span></div>
+          <div class="instr-tip"><span class="tip-dot">&#9679;</span><span>For the physiology panel (A&P course): feedback loops should be drawn as small circles or loops with arrows marked "+" (stimulates) and "-" (inhibits). A RAAS loop that is one inch in diameter and clearly labeled beats a paragraph of text every time.</span></div>
+          <div class="instr-tip"><span class="tip-dot">&#9679;</span><span>Scan or photograph your finished map at high resolution before submitting. Make sure all labels are legible in the digital version.</span></div>
+        </div>
+      </div>
+
+      <div class="instr-callout">
+        <strong>Bottom line:</strong> The rubric rewards completeness and accuracy, not beauty. A clean, clearly labeled sketch that includes the renal corpuscle, all tubular segments, cell types, transporters, and the JGA will score well. A gorgeous digital illustration that is missing the macula densa or forgets to label the loop of Henle limbs will not. Draw first. Label accurately. Keep text short.
+      </div>
+
+    </div>
+  </div>
+
+<!-- ============================= LAB STRUCTURES PANEL ============================= -->
+<div class="panel active" id="panel-lab">
+
+  <div class="lab-intro">
+    <h3>&#128269; Urinary System Lab Identification List</h3>
+    <p>This is the full structural checklist from your lab handout. Use this panel when you are working with cadaveric specimens, models, or imaging to identify the gross and microscopic structures of the urinary system. Check off each structure as you locate and correctly identify it in the lab. This is a separate task from your Nephron Map, which is graded on the 50 pt rubric and covered in the next two tabs.</p>
+    <p><strong>Note for BIO 004 students:</strong> This panel is your priority. The Nephron Map Anatomy tab is the drawing assignment. The Physiology tab is optional reference.</p>
+    <p><strong>Note for BIO 431 students:</strong> Work through all three panels. Lab identification first, then build your Nephron Map across the anatomy and physiology tabs.</p>
+  </div>
+
+  <!-- 1. GROSS ANATOMY -->
+  <div class="region-group"><div class="region-header" onclick="toggleRegion(this)"><div class="region-left"><div class="region-icon">&#129704;</div><div><div class="region-name">1. Urinary System Gross Anatomy</div><div class="region-tag-line">Kidney regions, adrenal gland, collecting system, bladder, urethra</div></div></div><div class="region-right"><div><div class="region-mini-bar"><div class="region-mini-fill lab-mini"></div></div><div class="region-progress-text">0%</div></div><div class="toggle-icon">&#9660;</div></div></div>
+  <div class="region-body">
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-anatomy">Identify</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Left kidney + Right kidney (retroperitoneal, right sits lower due to liver)</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Suprarenal (adrenal) gland -- sits on superior pole of each kidney</div><div class="check-note">Not functionally part of the urinary system but anatomically paired</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Renal capsule -- thin fibrous layer directly on kidney surface</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Perirenal fat (adipose capsule) + renal fascia (Gerota's) + pararenal fat</div><div class="check-note">Three support layers surrounding the kidney</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Renal cortex -- outer region, contains renal corpuscles + convoluted tubules</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Renal medulla -- inner region, contains loops + collecting ducts</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Renal column -- cortical tissue extending between pyramids (contains interlobar vessels)</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Renal pyramid -- triangular medullary masses; 8 to 18 per kidney; apex = papilla</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Renal sinus -- the hollow fat-filled cavity housing calyces, pelvis, vessels, nerves</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Minor calyx -- cup-shaped, collects urine from one papilla</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Major calyx -- formed by 2 to 3 minor calyces merging</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Renal pelvis -- funnel formed by merged major calyces; continuous with ureter</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Hilum -- indentation where renal artery, renal vein, ureter, nerves, lymphatics enter/exit</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Ureter -- ~25 to 30 cm muscular tube from renal pelvis to bladder (retroperitoneal)</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Urinary bladder -- identify trigone, detrusor muscle, rugae</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Urethra -- female ~4 cm; male ~20 cm (prostatic, membranous, spongy regions)</div></div></li>
+    </ul></div>
+  </div></div>
+
+  <!-- 2. VASCULATURE -->
+  <div class="region-group"><div class="region-header" onclick="toggleRegion(this)"><div class="region-left"><div class="region-icon">&#128166;</div><div><div class="region-name">2. Kidney Vasculature</div><div class="region-tag-line">Full arterial + venous tree, microvasculature of the nephron</div></div></div><div class="region-right"><div><div class="region-mini-bar"><div class="region-mini-fill lab-mini"></div></div><div class="region-progress-text">0%</div></div><div class="toggle-icon">&#9660;</div></div></div>
+  <div class="region-body">
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-anatomy">Arterial (in order)</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Renal artery -- enters kidney at hilum; branches from abdominal aorta</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Segmental arteries -- first branches inside renal sinus</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Interlobar arteries -- travel through renal columns between pyramids</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Arcuate arteries -- arch along the base of each pyramid (cortex/medulla junction)</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Cortical radiate (interlobular) arteries -- ascend radially into the cortex</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Afferent arteriole -- delivers blood to glomerulus</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Efferent arteriole -- carries blood AWAY from glomerulus (unique portal system feature)</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-histo">Capillary beds</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Glomerular capillaries -- tuft between afferent + efferent arterioles; high pressure, filtration</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Peritubular capillaries -- wrap PCT + DCT of cortical nephrons; low pressure, reabsorption</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Vasa recta -- long straight vessels parallel to loop of Henle (juxtamedullary nephrons); preserve medullary gradient</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-function">Venous (reverse order)</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Cortical radiate (interlobular) veins</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Arcuate veins</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Interlobar veins</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Renal vein -- exits at hilum; drains into IVC</div><div class="check-note">No segmental vein; venous return mirrors arterial tree minus segmental level</div></div></li>
+    </ul></div>
+  </div></div>
+
+  <!-- 3. RENAL CORPUSCLE -->
+  <div class="region-group"><div class="region-header" onclick="toggleRegion(this)"><div class="region-left"><div class="region-icon">&#9898;</div><div><div class="region-name">3. Renal Corpuscle Structures</div><div class="region-tag-line">Glomerulus + glomerular capsule (both layers)</div></div></div><div class="region-right"><div><div class="region-mini-bar"><div class="region-mini-fill lab-mini"></div></div><div class="region-progress-text">0%</div></div><div class="toggle-icon">&#9660;</div></div></div>
+  <div class="region-body">
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-anatomy">Identify</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Glomerulus -- tuft of fenestrated capillaries</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Glomerular (Bowman's) capsule -- double-walled epithelial sac surrounding the glomerulus</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Parietal layer of glomerular capsule -- simple squamous epithelium (outer wall)</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Visceral layer of glomerular capsule -- podocytes (inner wall, directly on capillaries)</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Bowman's (capsular) space -- between parietal + visceral layers; filtrate collects here</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Vascular pole (afferent/efferent arterioles enter) vs tubular pole (PCT begins)</div></div></li>
+    </ul></div>
+  </div></div>
+
+  <!-- 4. RENAL TUBULE -->
+  <div class="region-group"><div class="region-header" onclick="toggleRegion(this)"><div class="region-left"><div class="region-icon">&#127777;</div><div><div class="region-name">4. Renal Tubule Structures</div><div class="region-tag-line">PCT, LoH, DCT, CD, papillary duct, JGA</div></div></div><div class="region-right"><div><div class="region-mini-bar"><div class="region-mini-fill lab-mini"></div></div><div class="region-progress-text">0%</div></div><div class="toggle-icon">&#9660;</div></div></div>
+  <div class="region-body">
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-anatomy">Identify</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Proximal convoluted tubule (PCT) -- coiled tubule in cortex, immediately exits glomerular capsule</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Loop of Henle -- U-shaped, dips into medulla; descending limb + ascending limb</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Distal convoluted tubule (DCT) -- coiled tubule in cortex, returns near its own corpuscle</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Collecting duct -- receives filtrate from multiple DCTs; descends through medulla</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Papillary duct -- distal-most portion of collecting duct; opens at renal papilla into minor calyx</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-cells">JGA Cells</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Juxtaglomerular apparatus (JGA) -- found where the DCT contacts the afferent arteriole of its own corpuscle</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Macula densa cells -- modified DCT epithelial cells; sense NaCl delivery in filtrate</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Granular (juxtaglomerular) cells -- modified smooth muscle cells in afferent arteriole wall; secrete renin</div></div></li>
+    </ul></div>
+  </div></div>
+
+  <!-- 5. TRACE URINE PATH -->
+  <div class="region-group"><div class="region-header" onclick="toggleRegion(this)"><div class="region-left"><div class="region-icon">&#128167;</div><div><div class="region-name">5. Trace Path of Filtrate / Urine</div><div class="region-tag-line">From PCT to outside the body</div></div></div><div class="region-right"><div><div class="region-mini-bar"><div class="region-mini-fill lab-mini"></div></div><div class="region-progress-text">0%</div></div><div class="toggle-icon">&#9660;</div></div></div>
+  <div class="region-body">
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-function">Trace the flow</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Step 1: PCT (proximal convoluted tubule)</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Step 2: Loop of Henle (descending then ascending limb)</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Step 3: DCT (distal convoluted tubule)</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Step 4: Collecting duct</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Step 5: Papillary duct</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Step 6: Minor calyx &#8594; Major calyx &#8594; Renal pelvis</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Step 7: Ureter (~25 to 30 cm, peristaltic contractions push urine)</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Step 8: Urinary bladder (storage)</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Step 9: Urethra (through internal then external urethral sphincter) to outside</div></div></li>
+    </ul></div>
+    <div class="flow-trace-box">
+      <div class="flow-title">Memorize this one-liner</div>
+      <div class="flow-text"><strong>PCT</strong> &#8594; <strong>Loop of Henle</strong> &#8594; <strong>DCT</strong> &#8594; <strong>CD</strong> &#8594; <strong>papillary duct</strong> &#8594; <strong>minor calyx</strong> &#8594; <strong>major calyx</strong> &#8594; <strong>renal pelvis</strong> &#8594; <strong>ureter</strong> &#8594; <strong>bladder</strong> &#8594; <strong>urethra</strong> &#8594; outside</div>
+    </div>
+  </div></div>
+
+  <!-- 6. TRACE BLOOD PATH -->
+  <div class="region-group"><div class="region-header" onclick="toggleRegion(this)"><div class="region-left"><div class="region-icon">&#10084;</div><div><div class="region-name">6. Trace Path of Blood Through the Kidney</div><div class="region-tag-line">Aorta to IVC, including the glomerulus loop</div></div></div><div class="region-right"><div><div class="region-mini-bar"><div class="region-mini-fill lab-mini"></div></div><div class="region-progress-text">0%</div></div><div class="toggle-icon">&#9660;</div></div></div>
+  <div class="region-body">
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-function">Trace the flow</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Abdominal aorta &#8594; renal artery (enters at hilum)</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Segmental artery &#8594; interlobar artery (in renal column)</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Arcuate artery (base of pyramid) &#8594; cortical radiate artery</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Afferent arteriole &#8594; glomerular capillaries &#8594; efferent arteriole</div><div class="check-note">This is the portal-like system -- capillaries between two arterioles</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Peritubular capillaries (cortical) OR vasa recta (juxtamedullary)</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'lab')"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Cortical radiate vein &#8594; arcuate vein &#8594; interlobar vein &#8594; renal vein &#8594; IVC</div></div></li>
+    </ul></div>
+    <div class="flow-trace-box">
+      <div class="flow-title">Memorize this one-liner</div>
+      <div class="flow-text">Aorta &#8594; <strong>renal a.</strong> &#8594; segmental &#8594; interlobar &#8594; <strong>arcuate a.</strong> &#8594; cortical radiate &#8594; <strong>afferent arteriole</strong> &#8594; glomerulus &#8594; <strong>efferent arteriole</strong> &#8594; peritubular / vasa recta &#8594; cortical radiate v. &#8594; <strong>arcuate v.</strong> &#8594; interlobar &#8594; <strong>renal v.</strong> &#8594; IVC</div>
+    </div>
+  </div></div>
+
+</div><!-- end panel-lab -->
+
+<!-- ============================= ANATOMY PANEL ============================= -->
+<div class="panel" id="panel-anat">
+  <div class="legend">
+    <span class="legend-label">Category:</span>
+    <span class="tag tag-anatomy">Anatomy</span>
+    <span class="tag tag-histo">Histology</span>
+    <span class="tag tag-cells">Cells</span>
+    <span class="tag tag-secrete">Transport</span>
+    <span class="tag tag-neural">Neural/Hormonal</span>
+    <span class="tag tag-function">Function</span>
+  </div>
+
+  <!-- RENAL BLOOD SUPPLY -->
+  <div class="region-group"><div class="region-header" onclick="toggleRegion(this)"><div class="region-left"><div class="region-icon">&#128166;</div><div><div class="region-name">Nephron Microvasculature</div><div class="region-tag-line">Afferent, glomerulus, efferent, peritubular + vasa recta</div></div></div><div class="region-right"><div><div class="region-mini-bar"><div class="region-mini-fill anat-mini"></div></div><div class="region-progress-text">0%</div></div><div class="toggle-icon">&#9660;</div></div></div>
+  <div class="region-body">
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-anatomy">Draw on your map</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="anatomy"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Afferent arteriole entering glomerulus at the vascular pole</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="anatomy"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Glomerular capillary tuft (fenestrated); label as the high-pressure filtration bed</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="anatomy"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Efferent arteriole leaving glomerulus at the vascular pole</div><div class="check-note">This is the hallmark portal-like arrangement -- capillaries between two arterioles</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="anatomy"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Peritubular capillaries wrapping the PCT and DCT (cortical nephrons)</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="anatomy"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Vasa recta running parallel to the Loop of Henle (juxtamedullary nephrons)</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-function">Function + Annotation</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="function"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Two-capillary-bed design: glomerular (high pressure, filtration) + peritubular/vasa recta (low pressure, reabsorption)</div><div class="check-note">Key annotation to include on your map near each bed</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="function"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Arteriole diameter changes modulate GFR: constrict afferent &#8594; GFR drops; constrict efferent &#8594; GFR rises</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="function"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Vasa recta form countercurrent exchange loops that preserve the medullary osmotic gradient</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-histo">Histology Note</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="histo"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Glomerular capillaries: fenestrated endothelium with ~70 to 100 nm pores</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="histo"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Peritubular capillaries: continuous capillaries with low hydrostatic pressure + high oncotic pressure (favors reabsorption)</div></div></li>
+    </ul></div>
+    <div class="reminder-box" style="margin-top:8px; font-size:0.82rem;"><strong>Not on the map:</strong> the larger arterial tree (renal &#8594; segmental &#8594; interlobar &#8594; arcuate &#8594; cortical radiate) lives on the Lab Structures tab. Your Nephron Map only needs the microvasculature around the nephron itself.</div>
+  </div></div>
+
+  <!-- RENAL CORPUSCLE -->
+  <div class="region-group"><div class="region-header" onclick="toggleRegion(this)"><div class="region-left"><div class="region-icon">&#9898;</div><div><div class="region-name">Renal Corpuscle</div><div class="region-tag-line">Glomerulus + Bowman's capsule | Site of filtration</div></div></div><div class="region-right"><div><div class="region-mini-bar"><div class="region-mini-fill anat-mini"></div></div><div class="region-progress-text">0%</div></div><div class="toggle-icon">&#9660;</div></div></div>
+  <div class="region-body">
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-anatomy">Anatomy</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="anatomy"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Glomerulus: tuft of fenestrated capillaries</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="anatomy"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Bowman's capsule: double-walled epithelial sac surrounding glomerulus</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="anatomy"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Parietal layer (simple squamous) + visceral layer (podocytes) + Bowman's space between</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="anatomy"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Vascular pole (afferent + efferent arterioles enter/exit) + urinary pole (PCT begins here)</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-histo">Histology</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="histo"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">3-layer filtration membrane: fenestrated capillary endothelium + glomerular basement membrane (GBM) + podocyte slit diaphragms</div><div class="check-note">Key zoom-in box on your map</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="histo"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">GBM is negatively charged (heparan sulfate) -- repels anions; this is why albumin (negative) is excluded despite being near the size cutoff</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="histo"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Size cutoff: freely filtered &lt; ~5 kDa; restricted 5-70 kDa; excluded &gt; 70 kDa (albumin is ~69 kDa)</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-cells">Cells</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="cells"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Podocytes: visceral layer cells with primary processes extending pedicels (foot processes); slit diaphragms bridge between adjacent pedicels (nephrin/podocin proteins)</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="cells"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Intraglomerular mesangial cells: structural support, phagocytose debris, contract to regulate Kf (filtration coefficient)</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="cells"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Fenestrated endothelial cells: ~70-100 nm pores (block RBCs, platelets, large proteins)</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-function">Function</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="function"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Ultrafiltration of blood: filters by size + charge; produces ~125 mL filtrate/min (GFR)</div></div></li>
+    </ul></div>
+  </div></div>
+
+  <!-- PROXIMAL CONVOLUTED TUBULE -->
+  <div class="region-group"><div class="region-header" onclick="toggleRegion(this)"><div class="region-left"><div class="region-icon">&#127777;</div><div><div class="region-name">Proximal Convoluted Tubule (PCT)</div><div class="region-tag-line">Bulk reabsorption | Cortex</div></div></div><div class="region-right"><div><div class="region-mini-bar"><div class="region-mini-fill anat-mini"></div></div><div class="region-progress-text">0%</div></div><div class="toggle-icon">&#9660;</div></div></div>
+  <div class="region-body">
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-anatomy">Anatomy</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="anatomy"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Most convoluted segment of the nephron; located entirely in the cortex</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="anatomy"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Receives filtrate from Bowman's space at urinary pole; drains into descending limb of loop of Henle</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-histo">Histology</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="histo"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Simple cuboidal epithelium with prominent apical brush border (dense microvilli) -- tallest brush border in the nephron</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="histo"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Basal striations from densely packed mitochondria (high ATP demand for active transport)</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="histo"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">"Leaky" tight junctions: permits paracellular movement of water and small ions</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-cells">Cells</span> <span class="tag tag-secrete">Transport</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="cells secrete"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">PCT epithelial cells: Na/K ATPase (basolateral) drives secondary active transport of glucose (SGLT2, SGLT1), amino acids, phosphate</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="secrete"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Reabsorbs: ~65% Na+, 65% water, 65% Cl-, 100% glucose, 100% amino acids, 85% HCO3-, 65% K+, phosphate</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="secrete"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Secretes: H+ (via NHE3), organic acids (PAH, urate, penicillin), organic bases, creatinine, drugs</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-function">Function</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="function"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Bulk isosmotic reabsorption: filtrate leaves PCT at the same osmolarity it entered (~300 mOsm), but volume is reduced ~65%</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="function"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Major site of drug excretion (secretion) and reclaiming of valuable solutes</div></div></li>
+    </ul></div>
+  </div></div>
+
+  <!-- LOOP OF HENLE -->
+  <div class="region-group"><div class="region-header" onclick="toggleRegion(this)"><div class="region-left"><div class="region-icon">&#8634;</div><div><div class="region-name">Loop of Henle</div><div class="region-tag-line">Descending thin, ascending thin, thick ascending | Medulla</div></div></div><div class="region-right"><div><div class="region-mini-bar"><div class="region-mini-fill anat-mini"></div></div><div class="region-progress-text">0%</div></div><div class="toggle-icon">&#9660;</div></div></div>
+  <div class="region-body">
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-anatomy">Anatomy</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="anatomy"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">U-shaped hairpin loop descending into medulla then ascending back to cortex; three segments: descending limb > thin ascending limb > thick ascending limb (TAL)</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="anatomy"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Cortical nephrons (~85%) have short loops; juxtamedullary nephrons (~15%) have long loops reaching deep medulla</div><div class="check-note">Juxtamedullary = deep concentrating power</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-histo">Histology</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="histo"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Thin descending + thin ascending = simple squamous epithelium</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="histo"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Thick ascending limb (TAL) = simple cuboidal; abundant mitochondria (active transport)</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-secrete">Transport</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="secrete"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Descending limb: permeable to water (AQP1), impermeable to NaCl -- filtrate concentrates as it descends</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="secrete"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Thin ascending: impermeable to water, permeable to NaCl (passive) -- filtrate dilutes</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="secrete"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">TAL: impermeable to water; NKCC2 (Na+/K+/2Cl- cotransporter) actively pumps out NaCl; ROMK recycles K+ to lumen (creates + lumen voltage)</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="secrete"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">TAL paracellular reabsorption of Ca2+, Mg2+ (driven by + luminal charge)</div><div class="check-note">Loop diuretics block NKCC2 here</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-function">Function</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="function"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Countercurrent multiplication: establishes medullary osmotic gradient (300 mOsm at corticomedullary junction > 1200 mOsm at papilla)</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="function"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Reabsorbs ~25% of filtered NaCl; TAL is the "diluting segment" -- filtrate leaves hypoosmotic (~100 mOsm)</div></div></li>
+    </ul></div>
+  </div></div>
+
+  <!-- DISTAL CONVOLUTED TUBULE -->
+  <div class="region-group"><div class="region-header" onclick="toggleRegion(this)"><div class="region-left"><div class="region-icon">&#10132;</div><div><div class="region-name">Distal Convoluted Tubule (DCT)</div><div class="region-tag-line">Fine tuning NaCl + Ca2+ | Cortex</div></div></div><div class="region-right"><div><div class="region-mini-bar"><div class="region-mini-fill anat-mini"></div></div><div class="region-progress-text">0%</div></div><div class="toggle-icon">&#9660;</div></div></div>
+  <div class="region-body">
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-anatomy">Anatomy</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="anatomy"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Located entirely in the cortex; begins at the macula densa; less convoluted than PCT</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="anatomy"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Early DCT (NCC-expressing) transitions to late DCT (principal + intercalated cells begin here)</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-histo">Histology</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="histo"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Simple cuboidal; few or no microvilli (no brush border -- key distinction from PCT)</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="histo"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Abundant mitochondria; smaller lumen than PCT in cross-section</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-cells">Cells</span> <span class="tag tag-secrete">Transport</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="cells secrete"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">DCT cells: NCC (Na+/Cl- cotransporter, thiazide-sensitive) on apical side; reabsorbs ~5-7% of filtered Na+</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="secrete"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Ca2+ reabsorption: TRPV5 apical, calbindin cytoplasm, NCX/PMCA basolateral; PTH-stimulated</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="secrete"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Impermeable to water (like TAL) -- continues diluting the filtrate</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-function">Function</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="function"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Fine tuning of Na+ and Ca2+ reabsorption; major site of hormone-regulated Ca2+ handling (PTH, vitamin D)</div></div></li>
+    </ul></div>
+  </div></div>
+
+  <!-- COLLECTING DUCT -->
+  <div class="region-group"><div class="region-header" onclick="toggleRegion(this)"><div class="region-left"><div class="region-icon">&#128167;</div><div><div class="region-name">Collecting Duct</div><div class="region-tag-line">Cortical, medullary, papillary | Final regulation</div></div></div><div class="region-right"><div><div class="region-mini-bar"><div class="region-mini-fill anat-mini"></div></div><div class="region-progress-text">0%</div></div><div class="toggle-icon">&#9660;</div></div></div>
+  <div class="region-body">
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-anatomy">Anatomy</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="anatomy"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Cortical collecting duct > outer medullary > inner medullary > papillary duct (ducts of Bellini) > minor calyx</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="anatomy"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Multiple nephrons drain into a single collecting duct (convergence point)</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-histo">Histology</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="histo"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Simple cuboidal in cortex, transitioning to simple columnar in inner medulla (cells get taller as duct descends)</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="histo"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Cells have distinct, well-defined cell borders on histology slides (easy to identify)</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-cells">Cells</span> <span class="tag tag-secrete">Transport</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="cells secrete"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Principal cells (~70%): ENaC (aldosterone-sensitive, apical Na+), ROMK (K+ secretion apical), AQP2 (ADH-sensitive water channels)</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="cells secrete"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Alpha (Type A) intercalated cells: H+-ATPase + H+/K+-ATPase apical (secrete H+); AE1 (Cl-/HCO3- exchanger) basolateral (reabsorb new HCO3-)</div><div class="check-note">Active in acidosis</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="cells secrete"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Beta (Type B) intercalated cells: pendrin (apical HCO3- secretion); H+-ATPase on basolateral side (reabsorb H+)</div><div class="check-note">Active in alkalosis</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-neural">Hormonal</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="neural"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">ADH (vasopressin): binds V2 receptor on principal cells > cAMP > AQP2 inserted into apical membrane > water reabsorbed</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="neural"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Aldosterone: upregulates ENaC, ROMK, and Na/K ATPase in principal cells > Na+ retention, K+ secretion</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-function">Function</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="function"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Final regulation of water balance (ADH), Na+/K+ balance (aldosterone), and acid-base status (intercalated cells)</div></div></li>
+    </ul></div>
+  </div></div>
+
+  <!-- JUXTAGLOMERULAR APPARATUS -->
+  <div class="region-group"><div class="region-header" onclick="toggleRegion(this)"><div class="region-left"><div class="region-icon">&#9881;</div><div><div class="region-name">Juxtaglomerular Apparatus (JGA)</div><div class="region-tag-line">Where DCT meets afferent arteriole | BP control center</div></div></div><div class="region-right"><div><div class="region-mini-bar"><div class="region-mini-fill anat-mini"></div></div><div class="region-progress-text">0%</div></div><div class="toggle-icon">&#9660;</div></div></div>
+  <div class="region-body">
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-anatomy">Anatomy</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="anatomy"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Triangular zone at vascular pole where DCT of a nephron contacts the afferent arteriole of its OWN glomerulus</div><div class="check-note">This is a dedicated zoom-in box on your map</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-cells">Cells</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="cells"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Macula densa: specialized tall, narrow DCT epithelial cells that sense luminal NaCl via NKCC2</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="cells"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">JG cells (granular/juxtaglomerular cells): modified smooth muscle cells in the afferent arteriole wall containing renin granules</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="cells"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Extraglomerular mesangial cells (Lacis cells): sit in the triangle between macula densa + afferent + efferent arterioles; relay signals between them</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-neural">Hormonal</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="neural"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Renin release triggers: low perfusion pressure (afferent baroreceptor), low NaCl at macula densa, sympathetic stimulation (β1 on JG cells)</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-function">Function</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="function"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Tubuloglomerular feedback (TGF): local GFR regulation via macula densa > adenosine > afferent constriction</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="function"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">RAAS initiation: systemic BP regulation via renin release > angiotensin II > aldosterone</div></div></li>
+    </ul></div>
+  </div></div>
+
+  <!-- URINARY TRACT -- moved to Lab Structures panel -->
+
+  <!-- NEURAL + HORMONAL INTEGRATION -->
+  <div class="region-group"><div class="region-header" onclick="toggleRegion(this)"><div class="region-left"><div class="region-icon">&#9889;</div><div><div class="region-name">Neural + Hormonal Integration</div><div class="region-tag-line">Sympathetic, RAAS, ADH, ANP, PTH, EPO</div></div></div><div class="region-right"><div><div class="region-mini-bar"><div class="region-mini-fill anat-mini"></div></div><div class="region-progress-text">0%</div></div><div class="toggle-icon">&#9660;</div></div></div>
+  <div class="region-body">
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-neural">Neural</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="neural"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Sympathetic innervation (T10-L1): renal plexus around renal artery; innervates afferent + efferent arterioles, JG cells (β1 -- renin), PCT/TAL (Na+ reabsorption)</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="neural"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Parasympathetic (S2-S4, pelvic splanchnic): primarily innervates bladder (detrusor contraction); minimal role in nephron function</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="neural"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Somatic motor (pudendal nerve): external urethral sphincter voluntary control</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-secrete">Hormonal</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="secrete"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Renin (JG cells) > Angiotensin I > ACE > Angiotensin II > Aldosterone + ADH + thirst + vasoconstriction</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="secrete"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">ADH (posterior pituitary): V2 receptor on principal cells > AQP2 insertion > water reabsorption</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="secrete"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">ANP/BNP (atrial/ventricular stretch): dilates afferent, constricts efferent; inhibits renin/aldosterone/ADH; opposite of RAAS</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="secrete"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">PTH (parathyroid): stimulates Ca2+ reabsorption in DCT; activates 1-alpha-hydroxylase in PCT (calcitriol synthesis); inhibits phosphate reabsorption in PCT</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="secrete"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Erythropoietin (peritubular fibroblasts): released in response to hypoxia; stimulates RBC production in bone marrow</div></div></li>
+    </ul></div>
+  </div></div>
+
+  <div class="reminder-box"><strong>Drawing Reminders:</strong> Single page, front side only. Use arrows and brief captions, avoid paragraphs. Color-code your nephron segments, blood vessels, and hormones separately. Include at least one zoom-in box of the filtration membrane and one zoom-in of the JGA. Label the cortex/medulla boundary clearly so segment locations make sense. Optional: add mnemonics or brief clinical correlations (kidney stones, diabetes insipidus, SIADH).</div>
+
+  <div class="rubric-summary"><h3>Rubric | 50 pts Total</h3><div class="rubric-grid">
+    <div class="rubric-row"><div class="rubric-row-name">Anatomical Accuracy</div><div class="rubric-row-pts">10 <span>pts</span></div></div>
+    <div class="rubric-row"><div class="rubric-row-name">Histology + Cell Types</div><div class="rubric-row-pts">10 <span>pts</span></div></div>
+    <div class="rubric-row"><div class="rubric-row-name">Vascular + Tubular Flow</div><div class="rubric-row-pts">5 <span>pts</span></div></div>
+    <div class="rubric-row"><div class="rubric-row-name">Functional Annotations</div><div class="rubric-row-pts">5 <span>pts</span></div></div>
+    <div class="rubric-row"><div class="rubric-row-name">Visual Organization</div><div class="rubric-row-pts">10 <span>pts</span></div></div>
+    <div class="rubric-row"><div class="rubric-row-name">Accuracy + Effort</div><div class="rubric-row-pts">10 <span>pts</span></div></div>
+  </div></div>
+</div><!-- end panel-anat -->
+
+<!-- ============================= PHYSIOLOGY PANEL ============================= -->
+<div class="panel" id="panel-phys">
+
+  <div class="phys-intro">
+    <strong>How to use this panel:</strong> Each card is a pressure, transporter, or regulatory loop. Check it off as you add it to your map. For each one, your map should show the <span style="background:#E8F5E9;color:#2E6B3E;padding:1px 5px;border-radius:3px;font-weight:700;font-size:0.78em;">ON</span> stimulus, the <span style="background:var(--teal-light);color:#1A5958;padding:1px 5px;border-radius:3px;font-weight:700;font-size:0.78em;">EFFECT</span>, and the <span style="background:#FDE8E8;color:#7B2020;padding:1px 5px;border-radius:3px;font-weight:700;font-size:0.78em;">OFF</span> signal. A tiny labeled loop is enough, no paragraphs needed.
+  </div>
+
+  <div class="legend">
+    <span class="legend-label">Chips:</span>
+    <span class="phys-chip chip-on">ON</span>&nbsp;triggers response &nbsp;
+    <span class="phys-chip chip-effect">EFFECT</span>&nbsp;what it does &nbsp;
+    <span class="phys-chip chip-off">OFF</span>&nbsp;what stops it &nbsp;
+    <span class="phys-chip chip-integrate">LINK</span>&nbsp;draw this
+  </div>
+
+  <!-- GLOMERULAR FILTRATION -->
+  <div class="region-group"><div class="region-header" onclick="toggleRegion(this)"><div class="region-left"><div class="region-icon phys-icon">&#9898;</div><div><div class="region-name">Glomerular Filtration</div><div class="region-tag-line">Starling forces, NFP, GFR</div></div></div><div class="region-right"><div><div class="region-mini-bar"><div class="region-mini-fill phys-mini"></div></div><div class="region-progress-text">0%</div></div><div class="toggle-icon">&#9660;</div></div></div>
+  <div class="region-body"><div class="cat-block"><ul class="check-list" style="gap:8px;">
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">Net Filtration Pressure (NFP)</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-on">ON</span><span>Blood flow into glomerular capillaries under pressure; afferent arteriole delivers blood at ~55 mmHg (P_GC)</span></div>
+      <div class="fb-line"><span class="phys-chip chip-effect">EFFECT</span><span>NFP = P_GC (55) minus P_BS (15) minus osmotic pull of plasma proteins pi_GC (30) = ~10 mmHg favoring filtration into Bowman's space</span></div>
+      <div class="fb-line"><span class="phys-chip chip-off">OFF</span><span>Low BP drops P_GC; ureteral obstruction raises P_BS; dehydration raises pi_GC; all three decrease filtration</span></div>
+      <div class="fb-line"><span class="phys-chip chip-integrate">LINK</span><span>Draw all three pressure arrows at the glomerulus: P_GC pushing out, P_BS pushing in, pi_GC pulling back. NFP is the net vector.</span></div>
+    </div></li>
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">Glomerular Filtration Rate (GFR)</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-on">ON</span><span>GFR = Kf (filtration coefficient) times NFP; Kf depends on filtration membrane permeability and surface area</span></div>
+      <div class="fb-line"><span class="phys-chip chip-effect">EFFECT</span><span>Normal GFR ~125 mL/min = ~180 L/day; entire plasma volume filtered ~60 times per day</span></div>
+      <div class="fb-line"><span class="phys-chip chip-off">OFF</span><span>Mesangial cell contraction reduces Kf; glomerular damage reduces surface area; low NFP reduces GFR</span></div>
+      <div class="fb-line"><span class="phys-chip chip-integrate">LINK</span><span>Clinical: GFR is the best measure of kidney function. Creatinine clearance approximates GFR because creatinine is freely filtered but minimally secreted.</span></div>
+    </div></li>
+  </ul></div></div></div>
+
+  <!-- AUTOREGULATION -->
+  <div class="region-group"><div class="region-header" onclick="toggleRegion(this)"><div class="region-left"><div class="region-icon phys-icon">&#127918;</div><div><div class="region-name">GFR Autoregulation</div><div class="region-tag-line">Myogenic + tubuloglomerular feedback</div></div></div><div class="region-right"><div><div class="region-mini-bar"><div class="region-mini-fill phys-mini"></div></div><div class="region-progress-text">0%</div></div><div class="toggle-icon">&#9660;</div></div></div>
+  <div class="region-body"><div class="cat-block"><ul class="check-list" style="gap:8px;">
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">Myogenic Mechanism</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-on">ON</span><span>Increased arterial pressure stretches afferent arteriole smooth muscle cells</span></div>
+      <div class="fb-line"><span class="phys-chip chip-effect">EFFECT</span><span>Stretch activates Ca2+ channels > smooth muscle contracts > afferent arteriole constricts > resistance rises > GFR held stable</span></div>
+      <div class="fb-line"><span class="phys-chip chip-off">OFF</span><span>Pressure normalizes > stretch decreases > smooth muscle relaxes > afferent dilates back</span></div>
+      <div class="fb-line"><span class="phys-chip chip-integrate">LINK</span><span>Intrinsic to the vessel (no nerves or hormones). Works over BP range ~80 to 180 mmHg. Why you can change posture without fainting or shutting down GFR.</span></div>
+    </div></li>
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">Tubuloglomerular Feedback (TGF)</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-on">ON</span><span>Increased GFR > increased flow past macula densa > increased NaCl delivery detected by NKCC2</span></div>
+      <div class="fb-line"><span class="phys-chip chip-effect">EFFECT</span><span>Macula densa releases adenosine (and ATP) > afferent arteriole constricts > GFR decreases back to set point</span></div>
+      <div class="fb-line"><span class="phys-chip chip-off">OFF</span><span>GFR normalizes > NaCl delivery normalizes > adenosine release stops; macula densa can also signal JG cells to release renin when NaCl is LOW</span></div>
+      <div class="fb-line"><span class="phys-chip chip-integrate">LINK</span><span>Draw the closed loop: sensor (macula densa) > signal (adenosine) > effector (afferent arteriole). Classic negative feedback.</span></div>
+    </div></li>
+  </ul></div></div></div>
+
+  <!-- PCT REABSORPTION -->
+  <div class="region-group"><div class="region-header" onclick="toggleRegion(this)"><div class="region-left"><div class="region-icon phys-icon">&#127777;</div><div><div class="region-name">PCT Bulk Reabsorption</div><div class="region-tag-line">Na+, glucose, amino acids, HCO3-, water</div></div></div><div class="region-right"><div><div class="region-mini-bar"><div class="region-mini-fill phys-mini"></div></div><div class="region-progress-text">0%</div></div><div class="toggle-icon">&#9660;</div></div></div>
+  <div class="region-body"><div class="cat-block"><ul class="check-list" style="gap:8px;">
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">Na/K ATPase -- The Primary Pump</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-on">ON</span><span>Basolateral Na/K ATPase on every PCT cell constantly pumps 3 Na+ out, 2 K+ in (uses ATP)</span></div>
+      <div class="fb-line"><span class="phys-chip chip-effect">EFFECT</span><span>Creates a low intracellular Na+ environment, which drives secondary active transport of glucose, amino acids, phosphate, and H+ from the lumen via various cotransporters/antiporters</span></div>
+      <div class="fb-line"><span class="phys-chip chip-integrate">LINK</span><span>Nearly every reabsorption event in the kidney depends on this one pump. It is why the kidney has such high O2/ATP demand. Draw it on the basolateral side with a star.</span></div>
+    </div></li>
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">Glucose Reabsorption (SGLT + GLUT)</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-on">ON</span><span>Filtered glucose in PCT lumen; Na+ gradient maintained by Na/K ATPase</span></div>
+      <div class="fb-line"><span class="phys-chip chip-effect">EFFECT</span><span>SGLT2 (early PCT, ~90%) and SGLT1 (late PCT, ~10%) cotransport Na+ and glucose into cell; GLUT2 basolateral releases glucose to blood. Normally 100% reabsorbed.</span></div>
+      <div class="fb-line"><span class="phys-chip chip-off">OFF</span><span>Plasma glucose greater than 180 to 200 mg/dL exceeds Tm (~375 mg/min) > transporters saturate > glucosuria</span></div>
+      <div class="fb-line"><span class="phys-chip chip-integrate">LINK</span><span>Diabetes: glucosuria is diagnostic because transport is saturated. SGLT2 inhibitors (empagliflozin, dapagliflozin) therapeutically block reabsorption to lower blood glucose.</span></div>
+    </div></li>
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">HCO3- Reabsorption (PCT)</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-on">ON</span><span>Filtered HCO3- arrives in PCT lumen; ~85% of filtered HCO3- reclaimed here</span></div>
+      <div class="fb-line"><span class="phys-chip chip-effect">EFFECT</span><span>PCT secretes H+ (NHE3) > H+ + HCO3- forms H2CO3 > carbonic anhydrase IV splits to CO2 + H2O > CO2 enters cell > reverse reaction > HCO3- exits basolateral via Na-HCO3 cotransporter</span></div>
+      <div class="fb-line"><span class="phys-chip chip-off">OFF</span><span>Acetazolamide (carbonic anhydrase inhibitor) blocks this > HCO3- lost in urine > metabolic acidosis</span></div>
+      <div class="fb-line"><span class="phys-chip chip-integrate">LINK</span><span>Important: PCT RECOVERS existing HCO3- (no net new bicarb made). Draw H+ cycling in and out while HCO3- moves from lumen to blood.</span></div>
+    </div></li>
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">Obligatory Water Reabsorption</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-on">ON</span><span>Solute reabsorption creates osmotic gradient across PCT cells</span></div>
+      <div class="fb-line"><span class="phys-chip chip-effect">EFFECT</span><span>Water follows solutes passively via AQP1 and paracellular route; ~65% of filtered water reabsorbed isosmotically (not hormone-regulated)</span></div>
+      <div class="fb-line"><span class="phys-chip chip-integrate">LINK</span><span>"Obligatory" = happens regardless of body's water status. "Facultative" = water reabsorption in collecting duct, regulated by ADH. Map both separately.</span></div>
+    </div></li>
+  </ul></div></div></div>
+
+  <!-- COUNTERCURRENT -->
+  <div class="region-group"><div class="region-header" onclick="toggleRegion(this)"><div class="region-left"><div class="region-icon phys-icon">&#8634;</div><div><div class="region-name">Countercurrent Multiplication + Exchange</div><div class="region-tag-line">How the kidney concentrates urine</div></div></div><div class="region-right"><div><div class="region-mini-bar"><div class="region-mini-fill phys-mini"></div></div><div class="region-progress-text">0%</div></div><div class="toggle-icon">&#9660;</div></div></div>
+  <div class="region-body"><div class="cat-block"><ul class="check-list" style="gap:8px;">
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">Countercurrent Multiplication (Loop of Henle)</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-on">ON</span><span>Active NaCl transport out of TAL (NKCC2) into medullary interstitium, creating a steep osmotic gradient</span></div>
+      <div class="fb-line"><span class="phys-chip chip-effect">EFFECT</span><span>Descending limb is water-permeable (AQP1): water exits > filtrate concentrates. Ascending limb is water-impermeable but NaCl-permeable: NaCl exits > filtrate dilutes. Net result: medullary gradient 300 mOsm (cortex) to 1200 mOsm (papilla).</span></div>
+      <div class="fb-line"><span class="phys-chip chip-off">OFF</span><span>Loop diuretics (furosemide, bumetanide) block NKCC2 > no gradient > impaired urine concentrating ability</span></div>
+      <div class="fb-line"><span class="phys-chip chip-integrate">LINK</span><span>Draw the loop with opposing arrows: water out of descending, NaCl out of ascending. This gradient is what ADH later uses to pull water out of the collecting duct.</span></div>
+    </div></li>
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">Countercurrent Exchange (Vasa Recta)</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-on">ON</span><span>Vasa recta capillaries run parallel to loop of Henle in hairpin loops through the medulla</span></div>
+      <div class="fb-line"><span class="phys-chip chip-effect">EFFECT</span><span>Descending vasa recta: gains solute, loses water. Ascending vasa recta: loses solute, gains water. Net: solutes are recycled in the medulla, gradient is preserved, but O2/nutrients still reach medullary cells.</span></div>
+      <div class="fb-line"><span class="phys-chip chip-off">OFF</span><span>High medullary blood flow (vasodilation) can wash out the gradient, reducing concentrating ability</span></div>
+      <div class="fb-line"><span class="phys-chip chip-integrate">LINK</span><span>Critical distinction: loop of Henle CREATES the gradient; vasa recta PRESERVES it. Both are needed. Map them as parallel hairpins with different colors.</span></div>
+    </div></li>
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">Urea Recycling Amplification</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-on">ON</span><span>Inner medullary collecting duct urea transporters (UT-A1/A3) activated by ADH</span></div>
+      <div class="fb-line"><span class="phys-chip chip-effect">EFFECT</span><span>Urea concentrated in inner medullary interstitium; urea then diffuses into thin descending loop and cycles back; contributes ~50% of deep medullary osmolarity at max concentrating state</span></div>
+      <div class="fb-line"><span class="phys-chip chip-integrate">LINK</span><span>This is why low protein diet can reduce urine concentrating ability: less urea available for recycling.</span></div>
+    </div></li>
+  </ul></div></div></div>
+
+  <!-- RAAS -->
+  <div class="region-group"><div class="region-header" onclick="toggleRegion(this)"><div class="region-left"><div class="region-icon phys-icon">&#128139;</div><div><div class="region-name">RAAS Cascade</div><div class="region-tag-line">Renin, Angiotensin II, Aldosterone</div></div></div><div class="region-right"><div><div class="region-mini-bar"><div class="region-mini-fill phys-mini"></div></div><div class="region-progress-text">0%</div></div><div class="toggle-icon">&#9660;</div></div></div>
+  <div class="region-body"><div class="cat-block"><ul class="check-list" style="gap:8px;">
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">Renin Release -- JG Cells</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-on">ON</span><span>Three triggers: (1) decreased renal perfusion pressure (afferent arteriole baroreceptor); (2) decreased NaCl at macula densa; (3) sympathetic β1 stimulation of JG cells</span></div>
+      <div class="fb-line"><span class="phys-chip chip-effect">EFFECT</span><span>JG cells release renin into blood; renin cleaves angiotensinogen (liver) to Angiotensin I</span></div>
+      <div class="fb-line"><span class="phys-chip chip-off">OFF</span><span>Restored BP, restored NaCl at macula densa, decreased sympathetic tone, high Ang II (negative feedback)</span></div>
+      <div class="fb-line"><span class="phys-chip chip-integrate">LINK</span><span>Renin is the RATE-LIMITING step of the entire cascade. Three inputs converge on JG cells. Draw all three arrows pointing at the JG cell.</span></div>
+    </div></li>
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">Angiotensin II -- The Master Effector</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-on">ON</span><span>Angiotensin I passes through pulmonary capillaries > ACE cleaves it to Angiotensin II</span></div>
+      <div class="fb-line"><span class="phys-chip chip-effect">EFFECT</span><span>Multiple coordinated actions: (1) systemic vasoconstriction > raises BP; (2) preferential efferent arteriole constriction > maintains GFR when BP is low; (3) stimulates aldosterone release (zona glomerulosa); (4) stimulates ADH (posterior pituitary); (5) stimulates thirst (hypothalamus); (6) increases PCT Na+ reabsorption</span></div>
+      <div class="fb-line"><span class="phys-chip chip-off">OFF</span><span>ACE inhibitors (lisinopril, enalapril) block conversion; ARBs (losartan, valsartan) block AT1 receptor</span></div>
+      <div class="fb-line"><span class="phys-chip chip-integrate">LINK</span><span>Draw Ang II in the center with SIX arrows fanning out to its targets. One hormone, six coordinated effects, all aimed at raising BP and conserving Na+/water.</span></div>
+    </div></li>
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">Aldosterone -- Principal Cell Action</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-on">ON</span><span>Released from zona glomerulosa (adrenal cortex) in response to: Ang II, high plasma K+ (direct stimulation), ACTH (minor)</span></div>
+      <div class="fb-line"><span class="phys-chip chip-effect">EFFECT</span><span>Enters principal cells > binds intracellular mineralocorticoid receptor > gene transcription > upregulates ENaC (apical), ROMK (apical), Na/K ATPase (basolateral) > Na+ retention, K+ secretion, water follows Na+</span></div>
+      <div class="fb-line"><span class="phys-chip chip-off">OFF</span><span>Low Ang II, low plasma K+, ANP directly suppresses aldosterone release; spironolactone blocks the mineralocorticoid receptor</span></div>
+      <div class="fb-line"><span class="phys-chip chip-integrate">LINK</span><span>Slow onset (hours), long duration (gene transcription). Clinical: primary hyperaldosteronism = hypertension + hypokalemia. Addison disease = opposite (low aldosterone > hyperkalemia, hyponatremia, low BP).</span></div>
+    </div></li>
+  </ul></div></div></div>
+
+  <!-- ADH -->
+  <div class="region-group"><div class="region-header" onclick="toggleRegion(this)"><div class="region-left"><div class="region-icon phys-icon">&#128166;</div><div><div class="region-name">ADH (Vasopressin) + Water Balance</div><div class="region-tag-line">Osmoreceptors, V2 receptor, AQP2 insertion</div></div></div><div class="region-right"><div><div class="region-mini-bar"><div class="region-mini-fill phys-mini"></div></div><div class="region-progress-text">0%</div></div><div class="toggle-icon">&#9660;</div></div></div>
+  <div class="region-body"><div class="cat-block"><ul class="check-list" style="gap:8px;">
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">ADH Release -- Posterior Pituitary</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-on">ON</span><span>Primary: plasma osmolarity above ~280 mOsm (hypothalamic osmoreceptors). Secondary: decreased blood volume (atrial/carotid baroreceptors, needs ~10% volume loss). Also Ang II, nausea, pain, stress.</span></div>
+      <div class="fb-line"><span class="phys-chip chip-effect">EFFECT</span><span>ADH binds V2 receptor on principal cells > cAMP > AQP2 inserted into apical membrane > water flows DOWN the osmotic gradient from lumen to hyperosmotic interstitium > concentrated urine</span></div>
+      <div class="fb-line"><span class="phys-chip chip-off">OFF</span><span>Low osmolarity, high blood volume, alcohol (directly inhibits release), caffeine. Leads to AQP2 endocytosis > dilute urine.</span></div>
+      <div class="fb-line"><span class="phys-chip chip-integrate">LINK</span><span>Osmoreceptors are exquisitely sensitive (detect 1% change in osmolarity). Baroreceptors are less sensitive but more powerful when activated. Draw both inputs converging on hypothalamus > posterior pituitary.</span></div>
+    </div></li>
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">Clinical: DI vs SIADH</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-effect">EFFECT</span><span>Diabetes insipidus (DI): no ADH (central) or no V2 response (nephrogenic) > dilute, high-volume urine, hypernatremia, intense thirst. SIADH: too much ADH > concentrated, low-volume urine, hyponatremia, water retention.</span></div>
+      <div class="fb-line"><span class="phys-chip chip-integrate">LINK</span><span>Test: water deprivation + desmopressin. If urine concentrates with desmopressin = central DI (kidney works, no ADH). If no concentration = nephrogenic DI (ADH present, kidney doesn't respond).</span></div>
+    </div></li>
+  </ul></div></div></div>
+
+  <!-- ANP -->
+  <div class="region-group"><div class="region-header" onclick="toggleRegion(this)"><div class="region-left"><div class="region-icon phys-icon">&#129505;</div><div><div class="region-name">ANP + Counter-Regulation</div><div class="region-tag-line">Atrial natriuretic peptide opposes RAAS</div></div></div><div class="region-right"><div><div class="region-mini-bar"><div class="region-mini-fill phys-mini"></div></div><div class="region-progress-text">0%</div></div><div class="toggle-icon">&#9660;</div></div></div>
+  <div class="region-body"><div class="cat-block"><ul class="check-list" style="gap:8px;">
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">ANP / BNP -- The Volume Dump Hormone</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-on">ON</span><span>Atrial stretch (ANP from atria) or ventricular stretch (BNP from ventricles) from high blood volume, hypertension, or heart failure</span></div>
+      <div class="fb-line"><span class="phys-chip chip-effect">EFFECT</span><span>(1) Dilates afferent arteriole + constricts efferent > INCREASES GFR and filtration fraction; (2) Inhibits Na+ reabsorption in collecting duct; (3) Suppresses renin, aldosterone, ADH; (4) Systemic vasodilation. Net: natriuresis + diuresis + lower BP.</span></div>
+      <div class="fb-line"><span class="phys-chip chip-off">OFF</span><span>Volume normalizes > atrial stretch stops > ANP drops</span></div>
+      <div class="fb-line"><span class="phys-chip chip-integrate">LINK</span><span>Draw ANP and RAAS as opposing seesaw. High volume > ANP up, RAAS down. Low volume > RAAS up, ANP down. BNP is clinically measured to diagnose heart failure.</span></div>
+    </div></li>
+  </ul></div></div></div>
+
+  <!-- ACID-BASE -->
+  <div class="region-group"><div class="region-header" onclick="toggleRegion(this)"><div class="region-left"><div class="region-icon phys-icon">&#9878;</div><div><div class="region-name">Renal Acid-Base Handling</div><div class="region-tag-line">H+ secretion, new HCO3- generation, buffers</div></div></div><div class="region-right"><div><div class="region-mini-bar"><div class="region-mini-fill phys-mini"></div></div><div class="region-progress-text">0%</div></div><div class="toggle-icon">&#9660;</div></div></div>
+  <div class="region-body"><div class="cat-block"><ul class="check-list" style="gap:8px;">
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">New HCO3- Generation (Alpha Intercalated Cells)</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-on">ON</span><span>Acidemia (low blood pH); low luminal HCO3- arriving at collecting duct</span></div>
+      <div class="fb-line"><span class="phys-chip chip-effect">EFFECT</span><span>Alpha cells secrete H+ via H+-ATPase and H+/K+-ATPase; intracellular CO2 + H2O forms new H2CO3 > new HCO3- generated > exits basolateral via AE1 (Cl-/HCO3- exchanger) to blood. Net: acid excreted, new base added to blood.</span></div>
+      <div class="fb-line"><span class="phys-chip chip-off">OFF</span><span>Alkalemia > beta intercalated cells take over (pendrin apical secretes HCO3-, H+-ATPase basolateral reabsorbs H+)</span></div>
+      <div class="fb-line"><span class="phys-chip chip-integrate">LINK</span><span>Key distinction: PCT RECOVERS old HCO3-; intercalated cells MAKE new HCO3-. This is how kidneys correct chronic acidosis over days to weeks.</span></div>
+    </div></li>
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">Urinary Buffers</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-on">ON</span><span>Secreted H+ must be buffered to keep urine pH above ~4.5 (limit of H+ gradient); two main buffers: phosphate (HPO4^2-) and ammonia (NH3)</span></div>
+      <div class="fb-line"><span class="phys-chip chip-effect">EFFECT</span><span>Titratable acidity: H+ + HPO4^2- > H2PO4-. Ammonia buffer: PCT generates NH3 from glutamine metabolism > NH3 + H+ > NH4+ (trapped in lumen)</span></div>
+      <div class="fb-line"><span class="phys-chip chip-integrate">LINK</span><span>Ammonia is the MAJOR adaptive buffer (can upregulate x10 during chronic acidosis). Each H+ trapped on NH3 = one new HCO3- added to blood.</span></div>
+    </div></li>
+  </ul></div></div></div>
+
+  <!-- K+ HANDLING -->
+  <div class="region-group"><div class="region-header" onclick="toggleRegion(this)"><div class="region-left"><div class="region-icon phys-icon">&#128165;</div><div><div class="region-name">Potassium Handling</div><div class="region-tag-line">Reabsorption vs secretion balance</div></div></div><div class="region-right"><div><div class="region-mini-bar"><div class="region-mini-fill phys-mini"></div></div><div class="region-progress-text">0%</div></div><div class="toggle-icon">&#9660;</div></div></div>
+  <div class="region-body"><div class="cat-block"><ul class="check-list" style="gap:8px;">
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">K+ Reabsorption Along the Nephron</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-on">ON</span><span>K+ filtered at glomerulus then ~65% reabsorbed PCT (paracellular with water), ~25% TAL (via NKCC2 + ROMK recycling)</span></div>
+      <div class="fb-line"><span class="phys-chip chip-effect">EFFECT</span><span>By time filtrate reaches DCT, most K+ has already been reabsorbed. Net urinary K+ = principal cell secretion minus any intercalated reabsorption.</span></div>
+      <div class="fb-line"><span class="phys-chip chip-integrate">LINK</span><span>This is why "potassium balance" is really "potassium SECRETION control" in the late DCT and collecting duct.</span></div>
+    </div></li>
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">K+ Secretion by Principal Cells</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-on">ON</span><span>High serum K+ > direct aldosterone release; high Na+ delivery to late DCT; high distal flow; alkalosis</span></div>
+      <div class="fb-line"><span class="phys-chip chip-effect">EFFECT</span><span>Principal cells upregulate Na/K ATPase (pumps K+ in basolateral) and ROMK (secretes K+ to lumen apical); ENaC brings Na+ in, creates lumen-negative voltage that pulls K+ out</span></div>
+      <div class="fb-line"><span class="phys-chip chip-off">OFF</span><span>Low K+ intake, low Na+ delivery (e.g., volume depletion), acidosis (H+ competes with K+ for secretion)</span></div>
+      <div class="fb-line"><span class="phys-chip chip-integrate">LINK</span><span>Draw the principal cell: ENaC in apical (Na+ in), ROMK in apical (K+ out), Na/K ATPase basolateral. The electrical coupling is the key: Na+ absorption DRIVES K+ secretion.</span></div>
+    </div></li>
+  </ul></div></div></div>
+
+  <!-- MICTURITION -->
+  <div class="region-group"><div class="region-header" onclick="toggleRegion(this)"><div class="region-left"><div class="region-icon phys-icon">&#128167;</div><div><div class="region-name">Micturition Reflex</div><div class="region-tag-line">Storage + voiding control</div></div></div><div class="region-right"><div><div class="region-mini-bar"><div class="region-mini-fill phys-mini"></div></div><div class="region-progress-text">0%</div></div><div class="toggle-icon">&#9660;</div></div></div>
+  <div class="region-body"><div class="cat-block"><ul class="check-list" style="gap:8px;">
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">Storage Phase (Sympathetic Dominant)</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-on">ON</span><span>Bladder filling below threshold; sympathetic nerves (T11-L2, hypogastric) dominant</span></div>
+      <div class="fb-line"><span class="phys-chip chip-effect">EFFECT</span><span>Beta-3 receptors > detrusor relaxes (accommodates filling); alpha-1 receptors > internal urethral sphincter contracts. Pudendal nerve keeps external sphincter tone up (voluntary).</span></div>
+    </div></li>
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">Voiding Phase (Parasympathetic Dominant)</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-on">ON</span><span>Bladder volume ~300-400 mL > stretch receptors fire > afferents via pelvic splanchnic nerves (S2-S4) > spinal reflex and cortical processing</span></div>
+      <div class="fb-line"><span class="phys-chip chip-effect">EFFECT</span><span>Parasympathetic efferents > M3 receptors > detrusor contracts; internal sphincter relaxes (smooth, involuntary). Voluntary relaxation of external sphincter (pudendal nerve releases its hold) allows voiding.</span></div>
+      <div class="fb-line"><span class="phys-chip chip-off">OFF</span><span>Voluntary override via cortex can inhibit the reflex until appropriate location reached (pontine micturition center coordinates)</span></div>
+      <div class="fb-line"><span class="phys-chip chip-integrate">LINK</span><span>Infants lack cortical control (spinal reflex only). Spinal cord injury above S2: reflex bladder (no voluntary control). Below S2 or cauda equina: flaccid bladder (no reflex, overflow incontinence).</span></div>
+    </div></li>
+  </ul></div></div></div>
+
+  <!-- FEEDBACK MAP DRAWING GUIDE -->
+  <div class="region-group"><div class="region-header" onclick="toggleRegion(this)"><div class="region-left"><div class="region-icon phys-icon">&#128393;</div><div><div class="region-name">Feedback Loop Drawing Guide</div><div class="region-tag-line">How to draw ON/OFF loops on your nephron map</div></div></div><div class="region-right"><div><div class="region-mini-bar"><div class="region-mini-fill phys-mini"></div></div><div class="region-progress-text">0%</div></div><div class="toggle-icon">&#9660;</div></div></div>
+  <div class="region-body"><div class="cat-block"><ul class="check-list" style="gap:8px;">
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">Tubuloglomerular Feedback Loop</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-integrate">MAP IT</span><span>Draw at the JGA: high GFR > high NaCl at macula densa > adenosine > afferent arteriole constricts > GFR drops back. A tiny circle with + and - arrows around the JGA.</span></div>
+    </div></li>
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">Full RAAS Cascade Map</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-integrate">MAP IT</span><span>Low BP > JG cells release renin > angiotensinogen (liver) > Ang I > ACE (lungs) > Ang II > [vasoconstriction + efferent constriction + aldosterone + ADH + thirst + PCT Na+ reabsorption]. Draw as a linear cascade with Ang II fanning out to six targets.</span></div>
+    </div></li>
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">ADH-Osmolarity Loop</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-integrate">MAP IT</span><span>High plasma osmolarity > hypothalamic osmoreceptors > posterior pituitary > ADH > V2 on principal cells > AQP2 inserted > water reabsorbed > osmolarity drops > ADH stops. A closed circle with the hypothalamus as the sensor and principal cell as the effector.</span></div>
+    </div></li>
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">ANP-RAAS Opposing Seesaw</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-integrate">MAP IT</span><span>Draw a balance beam. Left: HIGH volume > ANP up, RAAS suppressed. Right: LOW volume > RAAS up, ANP low. Use "+" and "-" arrows from each hormone to Na+/water retention.</span></div>
+    </div></li>
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">Acid-Base Compensation Loop</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-integrate">MAP IT</span><span>Acidemia > alpha intercalated cell H+ secretion up > NH3 buffer up > H+ excretion as NH4+ > NEW HCO3- returned to blood > pH rises. A compact loop drawn at the collecting duct.</span></div>
+    </div></li>
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">Countercurrent + ADH Integration</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-integrate">MAP IT</span><span>Loop of Henle creates medullary gradient (300 > 1200 mOsm) > ADH opens AQP2 in collecting duct > water flows down gradient into interstitium > concentrated urine. The loop is the engine; ADH is the switch. Draw both on the same map.</span></div>
+    </div></li>
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">K+ Secretion Coupling</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-integrate">MAP IT</span><span>Aldosterone > principal cell: ENaC (Na+ in) + ROMK (K+ out) + Na/K ATPase basolateral. Na+ entry creates lumen-negative charge that drives K+ out. Draw the one cell with all three pumps labeled.</span></div>
+    </div></li>
+  </ul></div></div></div>
+
+  <div class="reminder-box reminder-phys"><strong>Physiology Map Tips:</strong> Tiny labeled arrows are enough, no paragraphs needed. A small circle with "+" and "-" communicates a feedback loop perfectly. Use a different ink color for physiology annotations so they stand out from anatomy labels. If you are a BIO 004 anatomy student, this panel is optional context; if you are in A&P or taking BIO 431 next semester, these loops are the scaffolding you will build on.</div>
+
+</div><!-- end panel-phys -->
+</main>
+
+<script>
+  function toggleInstr() {
+    var body = document.getElementById('instrBody');
+    var toggle = document.getElementById('instrToggle');
+    var collapsed = body.classList.toggle('collapsed');
+    toggle.innerHTML = collapsed ? '&#9654; Expand' : '&#9660; Collapse';
+    setTimeout(sendHeight, 50);
+  }
+
+  function toggleAbbrev() {
+    var body = document.getElementById('abbrevBody');
+    var toggle = document.getElementById('abbrevToggle');
+    var open = body.classList.toggle('open');
+    toggle.innerHTML = open ? '&#9650; Collapse' : '&#9660; Expand';
+    setTimeout(sendHeight, 50);
+  }
+
+  var currentTab = 'lab';
+
+  function switchTab(tab) {
+    currentTab = tab;
+    document.getElementById('panel-lab').classList.toggle('active', tab === 'lab');
+    document.getElementById('panel-anat').classList.toggle('active', tab === 'anat');
+    document.getElementById('panel-phys').classList.toggle('active', tab === 'phys');
+    document.getElementById('tabLab').className = 'tab-btn' + (tab === 'lab' ? ' active-lab' : '');
+    document.getElementById('tabAnat').className = 'tab-btn' + (tab === 'anat' ? ' active-anat' : '');
+    document.getElementById('tabPhys').className = 'tab-btn' + (tab === 'phys' ? ' active-phys' : '');
+
+    // Rubric strip only applies to the Nephron Map (anat + phys panels), not lab ID work
+    document.getElementById('rubricStrip').style.display = (tab === 'anat') ? '' : 'none';
+
+    // Instructions block is specifically about the Nephron Map drawing assignment
+    var instrWrap = document.getElementById('instrWrap');
+    if (instrWrap) instrWrap.style.display = (tab === 'lab') ? 'none' : '';
+
+    var fill = document.getElementById('globalFill');
+    var fillClass = tab === 'lab' ? 'lab-fill' : (tab === 'anat' ? 'anat-fill' : 'phys-fill');
+    fill.className = 'progress-fill ' + fillClass;
+    var labelMap = { lab: 'Lab Structures Progress', anat: 'Anatomy Progress', phys: 'Physiology Progress' };
+    document.getElementById('progressLabel').textContent = labelMap[tab];
+
+    updateProgress();
+    sendHeight();
+  }
+
+  function toggleRegion(header) {
+    var isOpen = header.classList.contains('open');
+    header.classList.toggle('open', !isOpen);
+    header.nextElementSibling.classList.toggle('open', !isOpen);
+    setTimeout(sendHeight, 50);
+  }
+
+  function toggleCheck(item, mode) {
+    item.classList.toggle('checked-' + mode);
+    updateProgress();
+  }
+
+  function updateProgress() {
+    var panel = document.getElementById('panel-' + currentTab);
+    var allItems = panel.querySelectorAll('.check-item, .feedback-row');
+    var checkedItems = panel.querySelectorAll('.checked-' + currentTab);
+    var total = allItems.length;
+    var checked = checkedItems.length;
+    var pct = total ? Math.round((checked / total) * 100) : 0;
+    document.getElementById('globalFill').style.width = pct + '%';
+    document.getElementById('globalCount').textContent = checked + ' / ' + total;
+
+    panel.querySelectorAll('.region-group').forEach(function(group) {
+      var rItems = group.querySelectorAll('.check-item, .feedback-row');
+      var rChecked = group.querySelectorAll('.checked-' + currentTab);
+      var rPct = rItems.length ? Math.round((rChecked.length / rItems.length) * 100) : 0;
+      var fill = group.querySelector('.region-mini-fill');
+      var label = group.querySelector('.region-progress-text');
+      if (fill) fill.style.width = rPct + '%';
+      if (label) label.textContent = rPct + '%';
+    });
+
+    if (currentTab === 'anat') updateRubricPills();
+  }
+
+  function updateRubricPills() {
+    var panel = document.getElementById('panel-anat');
+    var cats = {anatomy:0,histo:0,neural:0,function:0,cells:0,secrete:0};
+    var totals = {anatomy:0,histo:0,neural:0,function:0,cells:0,secrete:0};
+    panel.querySelectorAll('.check-item').forEach(function(item) {
+      (item.dataset.cats||'').split(' ').forEach(function(c){if(totals[c]!==undefined)totals[c]++;});
+    });
+    panel.querySelectorAll('.check-item.checked-anat').forEach(function(item) {
+      (item.dataset.cats||'').split(' ').forEach(function(c){if(cats[c]!==undefined)cats[c]++;});
+    });
+    var t = 0.5;
+    var anat = (cats.anatomy/(totals.anatomy||1)) >= t;
+    var histo = (cats.histo/(totals.histo||1)) >= t && (cats.cells/(totals.cells||1)) >= t;
+    var flow = (cats.secrete/(totals.secrete||1)) >= t;
+    var func = (cats.function/(totals.function||1)) >= t;
+    var all = panel.querySelectorAll('.check-item.checked-anat').length / (panel.querySelectorAll('.check-item').length||1);
+    var effort = all >= t;
+    ['rpAnat','rpHisto','rpFlow','rpFunc','rpVisual','rpAccuracy'].forEach(function(id){
+      var el = document.getElementById(id);
+      if (el) el.classList.remove('met');
+    });
+    if(anat) document.getElementById('rpAnat').classList.add('met');
+    if(histo) document.getElementById('rpHisto').classList.add('met');
+    if(flow) document.getElementById('rpFlow').classList.add('met');
+    if(func) document.getElementById('rpFunc').classList.add('met');
+    if(effort) document.getElementById('rpVisual').classList.add('met');
+    if(effort&&anat&&histo) document.getElementById('rpAccuracy').classList.add('met');
+  }
+
+  // Initialize page to lab tab state (lab is the default tab)
+  (function initLabTab(){
+    var instrWrap = document.getElementById('instrWrap');
+    if (instrWrap) instrWrap.style.display = 'none';
+    var rubric = document.getElementById('rubricStrip');
+    if (rubric) rubric.style.display = 'none';
+  })();
+
+  updateProgress();
+
+  /* ---------- IFRAME HEIGHT SENDER FOR KAJABI ---------- */
+  (function() {
+    var FRAME_ID = 'nephron-map-checklist';
+
+    function sendHeight() {
+      var height = Math.max(
+        document.body.scrollHeight,
+        document.body.offsetHeight,
+        document.documentElement.clientHeight,
+        document.documentElement.scrollHeight,
+        document.documentElement.offsetHeight
+      );
+      try {
+        window.parent.postMessage({
+          type: 'resize',
+          id: FRAME_ID,
+          height: height
+        }, '*');
+      } catch (e) {}
+    }
+
+    window.sendHeight = sendHeight;
+
+    window.addEventListener('load', sendHeight);
+    window.addEventListener('resize', sendHeight);
+    window.addEventListener('click', function() { setTimeout(sendHeight, 60); });
+
+    if (window.ResizeObserver) {
+      try {
+        var ro = new ResizeObserver(function() { sendHeight(); });
+        ro.observe(document.body);
+      } catch (e) {}
+    }
+
+    setTimeout(sendHeight, 100);
+    setTimeout(sendHeight, 400);
+    setTimeout(sendHeight, 1000);
+  })();
+</script>
+</body>
+</html>
