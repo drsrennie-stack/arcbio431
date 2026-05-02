@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>GI Map Checklist | Human Anatomy</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FAF8F4;
+    --cream-dark: #F0EDE6;
+    --navy: #1C2E4A;
+    --navy-mid: #2D4A6B;
+    --sage: #6B8F71;
+    --sage-light: #E8F0E9;
+    --terra: #B5673A;
+    --terra-light: #FAF0EA;
+    --gold: #C49A3C;
+    --gold-light: #FBF5E6;
+    --teal: #3A7D7B;
+    --teal-light: #E6F4F3;
+    --rose: #9B4E52;
+    --rose-light: #FAEAEB;
+    --slate: #5A6B7A;
+    --slate-light: #EBF0F4;
+    --check-color: #4A7C59;
+    --check-phys: #2A6E7C;
+    --border: #DDD8CE;
+    --text: #2A2A2A;
+    --text-light: #666;
+    --radius: 10px;
+    --shadow: 0 2px 12px rgba(28,46,74,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { background: #FAF8F4 !important; color-scheme: light !important; }
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background: #FAF8F4 !important; color: #2A2A2A !important; min-height: 100vh; }
+
+  .site-header {
+    background: white; color: var(--navy);
+    border-bottom: 1.5px solid var(--border);
+    padding: 22px 40px 18px;
+    display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+  }
+  .header-left h1 { font-family: 'Lora', serif; font-size: 1.55rem; font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; margin-bottom: 3px; color: var(--navy); }
+  .header-left p { font-size: 0.76rem; color: var(--slate); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
+  .header-badge { background: var(--terra); color: white; font-size: 0.73rem; font-weight: 700; padding: 4px 13px; border-radius: 20px; letter-spacing: 0.04em; white-space: nowrap; }
+
+  .tab-bar { background: var(--navy-mid); display: flex; align-items: stretch; padding: 0 40px; }
+  .tab-btn {
+    padding: 13px 26px 11px;
+    font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.8rem; font-weight: 700;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: #7A9BB5; background: none; border: none; border-bottom: 3px solid transparent;
+    cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px;
+  }
+  .tab-btn:hover { color: #C8DAEA; }
+  .tab-btn.active-anat { color: white; border-bottom-color: var(--sage); }
+  .tab-btn.active-phys { color: white; border-bottom-color: var(--teal); }
+
+  .progress-bar-wrap {
+    background: var(--cream-dark); border-bottom: 1px solid var(--border);
+    padding: 11px 40px; display: flex; align-items: center; gap: 14px;
+  }
+  .progress-label { color: var(--slate); font-size: 0.74rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; min-width: 110px; }
+  .progress-track { flex: 1; height: 7px; background: var(--border); border-radius: 4px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 4px; transition: width 0.4s ease; width: 0%; }
+  .progress-fill.anat-fill { background: linear-gradient(90deg, var(--sage) 0%, #4A9E6E 100%); }
+  .progress-fill.phys-fill { background: linear-gradient(90deg, var(--teal) 0%, #2A9D9B 100%); }
+  .progress-count { color: var(--navy); font-size: 0.8rem; font-weight: 700; min-width: 52px; text-align: right; }
+
+  .rubric-strip { background: white; border-bottom: 1.5px solid var(--border); padding: 9px 40px; display: flex; gap: 7px; flex-wrap: wrap; align-items: center; }
+  .rubric-label { font-size: 0.7rem; font-weight: 700; color: var(--slate); text-transform: uppercase; letter-spacing: 0.06em; margin-right: 4px; }
+  .rubric-pill { background: var(--cream-dark); border: 1.5px solid var(--border); border-radius: 20px; padding: 3px 10px; font-size: 0.71rem; font-weight: 600; color: var(--text-light); display: flex; align-items: center; gap: 5px; transition: all 0.25s; }
+  .rubric-pill .pts { color: var(--navy); font-weight: 700; }
+  .rubric-pill.met { background: var(--sage-light); border-color: var(--sage); color: #3A6645; }
+  .rubric-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); transition: background 0.25s; }
+  .rubric-pill.met .rubric-dot { background: var(--sage); }
+
+  .main { max-width: 960px; margin: 0 auto; padding: 26px 22px 60px; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 22px; align-items: center; }
+  .legend-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-light); margin-right: 4px; }
+  .tag { display: inline-flex; align-items: center; gap: 4px; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; white-space: nowrap; }
+  .tag-anatomy { background: var(--slate-light); color: var(--slate); }
+  .tag-histo { background: var(--teal-light); color: var(--teal); }
+  .tag-cells { background: var(--sage-light); color: #3A6645; }
+  .tag-secrete { background: var(--gold-light); color: #7A5E1A; }
+  .tag-neural { background: var(--rose-light); color: var(--rose); }
+  .tag-function { background: var(--terra-light); color: var(--terra); }
+
+  .phys-chip { display: inline-flex; align-items: center; font-size: 0.65rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 7px; border-radius: 4px; white-space: nowrap; flex-shrink: 0; }
+  .chip-on { background: #E8F5E9; color: #2E6B3E; border: 1.5px solid #A5D6A7; }
+  .chip-off { background: #FDE8E8; color: #7B2020; border: 1.5px solid #F5AAAA; }
+  .chip-effect { background: var(--teal-light); color: #1A5958; border: 1.5px solid #A0CECE; }
+  .chip-integrate { background: var(--gold-light); color: #7A5E1A; border: 1.5px solid #DEC97A; }
+
+  .region-group { margin-bottom: 9px; border: 1.5px solid var(--border); border-radius: var(--radius); background: white; box-shadow: var(--shadow); overflow: hidden; }
+  .region-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; cursor: pointer; user-select: none; background: white; transition: background 0.2s; gap: 12px; }
+  .region-header:hover { background: var(--cream); }
+  .region-header.open { background: var(--navy); color: white; }
+  .region-header.open .region-name { color: white; }
+  .region-header.open .region-tag-line { color: #A8BAC8; }
+  .region-header.open .region-progress-text { color: #A8BAC8; }
+  .region-header.open .toggle-icon { color: white; }
+
+  .region-left { display: flex; align-items: center; gap: 11px; flex: 1; min-width: 0; }
+  .region-icon { width: 33px; height: 33px; border-radius: 8px; background: var(--sage-light); display: flex; align-items: center; justify-content: center; font-size: 0.95rem; flex-shrink: 0; }
+  .region-icon.phys-icon { background: var(--teal-light); }
+  .region-header.open .region-icon { background: rgba(255,255,255,0.15); }
+  .region-name { font-family: 'Lora', serif; font-size: 0.96rem; font-weight: 700; color: var(--navy); line-height: 1.2; }
+  .region-tag-line { font-size: 0.7rem; color: var(--text-light); margin-top: 1px; }
+  .region-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .region-mini-bar { width: 54px; height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .region-header.open .region-mini-bar { background: rgba(255,255,255,0.2); }
+  .region-mini-fill { height: 100%; border-radius: 3px; width: 0%; transition: width 0.3s; }
+  .region-mini-fill.anat-mini { background: var(--sage); }
+  .region-mini-fill.phys-mini { background: var(--teal); }
+  .region-header.open .region-mini-fill { opacity: 0.8; }
+  .region-progress-text { font-size: 0.7rem; font-weight: 600; color: var(--text-light); }
+  .toggle-icon { font-size: 0.88rem; color: var(--text-light); transition: transform 0.25s; }
+  .region-header.open .toggle-icon { transform: rotate(180deg); }
+
+  .region-body { display: none; border-top: 1.5px solid var(--border); }
+  .region-body.open { display: block; }
+
+  .cat-block { border-bottom: 1px solid var(--cream-dark); padding: 12px 20px 14px; }
+  .cat-block:last-child { border-bottom: none; }
+  .cat-title { display: flex; align-items: center; gap: 7px; margin-bottom: 9px; flex-wrap: wrap; }
+
+  .check-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+  .check-item { display: flex; align-items: flex-start; gap: 9px; padding: 6px 9px; border-radius: 6px; cursor: pointer; transition: background 0.15s; }
+  .check-item:hover { background: var(--cream); }
+  .check-item.checked-anat { background: var(--sage-light); }
+  .check-item.checked-anat .check-text { color: #2E6040; }
+  .check-item.checked-anat .check-note { color: #4A7A58; }
+  .check-item.checked-phys { background: var(--teal-light); }
+  .check-item.checked-phys .check-text { color: #1A4F5A; }
+  .check-item.checked-phys .check-note { color: #2A6E78; }
+
+  .check-box { width: 18px; height: 18px; border: 2px solid var(--border); border-radius: 5px; flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; background: white; font-size: 0.68rem; color: white; }
+  .check-item.checked-anat .check-box { background: var(--check-color); border-color: var(--check-color); }
+  .check-item.checked-phys .check-box { background: var(--check-phys); border-color: var(--check-phys); }
+
+  .check-text-wrap { flex: 1; min-width: 0; }
+  .check-text { font-size: 0.845rem; font-weight: 500; color: var(--text); line-height: 1.35; }
+  .check-note { font-size: 0.74rem; color: var(--text-light); margin-top: 2px; line-height: 1.35; font-style: italic; }
+
+  /* PHYSIOLOGY FEEDBACK CARDS */
+  .feedback-row { display: flex; flex-direction: column; gap: 0; padding: 10px 11px; border-radius: 7px; border: 1.5px solid var(--border); background: white; margin-bottom: 8px; cursor: pointer; transition: all 0.15s; }
+  .feedback-row:hover { background: var(--cream); border-color: #C0BBB0; }
+  .feedback-row.checked-phys { background: var(--teal-light); border-color: var(--teal); }
+  .feedback-row.checked-phys .check-box { background: var(--check-phys); border-color: var(--check-phys); }
+  .feedback-row.checked-phys .fb-title { color: #1A4F5A; }
+
+  .fb-header { display: flex; align-items: center; gap: 9px; }
+  .fb-title { font-size: 0.87rem; font-weight: 700; color: var(--navy); flex: 1; line-height: 1.3; }
+  .fb-rows { display: flex; flex-direction: column; gap: 4px; margin-top: 8px; padding-left: 27px; }
+  .fb-line { font-size: 0.78rem; line-height: 1.5; color: var(--text); display: flex; gap: 7px; align-items: flex-start; }
+  .fb-line span:last-child { flex: 1; }
+
+  .phys-intro { background: var(--teal-light); border: 1.5px solid #A0CECE; border-radius: 8px; padding: 13px 17px; margin-bottom: 20px; font-size: 0.81rem; color: #1A4F5A; line-height: 1.55; }
+  .phys-intro strong { font-weight: 700; color: var(--navy); }
+
+  .reminder-box { background: var(--gold-light); border: 1.5px solid #DEC97A; border-radius: 8px; padding: 12px 16px; margin: 20px 0 0; font-size: 0.8rem; color: #6A4E10; line-height: 1.5; }
+  .reminder-box strong { font-weight: 700; color: #5A3E08; }
+  .reminder-phys { background: var(--teal-light); border-color: #A0CECE; color: #1A4F5A; }
+  .reminder-phys strong { color: var(--navy); }
+
+  .rubric-summary { background: var(--navy); color: white; border-radius: var(--radius); padding: 18px 24px; margin-top: 24px; }
+  .rubric-summary h3 { font-family: 'Lora', serif; font-size: 0.82rem; font-weight: 700; margin-bottom: 11px; color: #A8BAC8; text-transform: uppercase; letter-spacing: 0.06em; }
+  .rubric-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; }
+  .rubric-row { background: rgba(255,255,255,0.06); border-radius: 7px; padding: 9px 13px; }
+  .rubric-row-name { font-size: 0.74rem; color: #A8BAC8; font-weight: 500; margin-bottom: 3px; }
+  .rubric-row-pts { font-size: 1rem; font-weight: 700; color: white; }
+  .rubric-row-pts span { font-size: 0.7rem; font-weight: 400; color: #6B8499; }
+
+  /* INSTRUCTIONS BLOCK */
+  .instr-wrap { background: white; border: 1.5px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 24px; overflow: hidden; }
+  .instr-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; cursor: pointer; background: var(--navy); user-select: none; gap: 12px; }
+  .instr-header:hover { background: var(--navy-mid); }
+  .instr-header-left { display: flex; align-items: center; gap: 10px; }
+  .instr-icon { font-size: 1rem; }
+  .instr-title { font-family: 'Lora', serif; font-size: 0.98rem; font-weight: 700; color: white; }
+  .instr-toggle { font-size: 0.72rem; font-weight: 700; color: #A8BAC8; text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; }
+  .instr-body { padding: 22px 24px; display: flex; flex-direction: column; gap: 20px; }
+  .instr-section { display: flex; flex-direction: column; gap: 9px; }
+  .instr-section-title { font-family: 'Lora', serif; font-size: 0.95rem; font-weight: 700; color: var(--navy); border-bottom: 2px solid var(--cream-dark); padding-bottom: 6px; }
+  .instr-section p { font-size: 0.845rem; line-height: 1.65; color: var(--text); }
+  .instr-section strong { font-weight: 700; color: var(--navy); }
+  .instr-card-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin-top: 4px; }
+  .instr-card { background: var(--cream); border: 1.5px solid var(--border); border-radius: 8px; padding: 13px 15px; }
+  .instr-card-title { font-size: 0.83rem; font-weight: 700; color: var(--navy); margin-bottom: 7px; }
+  .instr-card p { font-size: 0.79rem; line-height: 1.6; color: var(--text); }
+  .instr-tips { display: flex; flex-direction: column; gap: 7px; }
+  .instr-tip { display: flex; gap: 9px; align-items: flex-start; font-size: 0.83rem; line-height: 1.6; color: var(--text); }
+  .tip-dot { color: var(--teal); font-size: 0.5rem; margin-top: 6px; flex-shrink: 0; }
+  .instr-callout { background: var(--navy); color: white; border-radius: 8px; padding: 14px 18px; font-size: 0.83rem; line-height: 1.6; }
+  .instr-callout strong { color: #A8C8E8; font-weight: 700; }
+  .instr-body.collapsed { display: none; }
+
+  @media (max-width: 600px) {
+    .site-header, .tab-bar { padding-left: 18px; padding-right: 18px; }
+    .progress-bar-wrap, .rubric-strip { padding: 10px 16px; }
+    .main { padding: 18px 12px 50px; }
+    .tab-btn { padding: 11px 13px 9px; font-size: 0.73rem; }
+    .region-header { padding: 12px 14px; }
+    .cat-block { padding: 11px 14px 12px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-left">
+    <h1>GI Map Checklist</h1>
+    <p>Human Anatomy | Human Physiology</p>
+  </div>
+  <div class="header-badge">50 pts | Single Page</div>
+</header>
+
+<div class="tab-bar">
+  <button class="tab-btn active-anat" id="tabAnat" onclick="switchTab('anat')">&#9998; Anatomy</button>
+  <button class="tab-btn" id="tabPhys" onclick="switchTab('phys')">&#9889; Physiology</button>
+</div>
+
+<div class="progress-bar-wrap">
+  <div class="progress-label" id="progressLabel">Anatomy Progress</div>
+  <div class="progress-track"><div class="progress-fill anat-fill" id="globalFill"></div></div>
+  <div class="progress-count" id="globalCount">0 / 0</div>
+</div>
+
+<div class="rubric-strip" id="rubricStrip">
+  <span class="rubric-label">Rubric</span>
+  <div class="rubric-pill" id="rpAnat"><span class="rubric-dot"></span> Anatomy <span class="pts">10 pts</span></div>
+  <div class="rubric-pill" id="rpHisto"><span class="rubric-dot"></span> Histology + Micro <span class="pts">10 pts</span></div>
+  <div class="rubric-pill" id="rpNeural"><span class="rubric-dot"></span> Neural <span class="pts">5 pts</span></div>
+  <div class="rubric-pill" id="rpFunc"><span class="rubric-dot"></span> Function <span class="pts">5 pts</span></div>
+  <div class="rubric-pill" id="rpVisual"><span class="rubric-dot"></span> Visual + Effort <span class="pts">15 pts</span></div>
+  <div class="rubric-pill" id="rpAccuracy"><span class="rubric-dot"></span> Accuracy <span class="pts">5 pts</span></div>
+</div>
+
+<main class="main">
+
+  <!-- INSTRUCTIONS BLOCK -->
+  <div class="instr-wrap" id="instrWrap">
+    <div class="instr-header" onclick="toggleInstr()">
+      <div class="instr-header-left">
+        <span class="instr-icon">&#128196;</span>
+        <span class="instr-title">How to Build Your GI Map -- Read This First</span>
+      </div>
+      <span class="instr-toggle" id="instrToggle">&#9660; Collapse</span>
+    </div>
+    <div class="instr-body" id="instrBody">
+
+      <div class="instr-section">
+        <div class="instr-section-title">&#127912; This is a Visual, Not a List</div>
+        <p>Your GI Map is a single-page illustrated diagram -- not an outline, not a study guide written in bullet points, and not a paragraph essay. If your final product looks like a table or a numbered list, start over. The goal is a hand-drawn or digitally designed <strong>map</strong> that traces the digestive tract from mouth to anus with annotated structures, zoom-in boxes, and brief labels. Think of it as a page out of a medical atlas that you made yourself.</p>
+        <p style="margin-top:8px;">You are <strong>not</strong> being graded on artistic ability. Stick figures, rough sketches, and imperfect circles are completely fine. What matters is that you drew something -- a real visual representation -- not that it looks beautiful.</p>
+      </div>
+
+      <div class="instr-section">
+        <div class="instr-section-title">&#128247; What "Visual" Actually Means</div>
+        <p>Every region of the GI tract should be <strong>drawn</strong> as a shape on the page -- even a simple oval or tube. From that shape, you pull out and annotate. Here are the three visual tools you should be using:</p>
+        <div class="instr-card-row">
+          <div class="instr-card">
+            <div class="instr-card-title">&#128269; Zoom-In Boxes</div>
+            <p>Draw a small box or circle that zooms in on a specific region. For example: draw the stomach shape, then draw a small magnified box off to the side showing the gastric gland with labeled parietal, chief, G, and D cells. Connect it to the main diagram with a line or bracket. This is how you show histology without cluttering your main diagram.</p>
+          </div>
+          <div class="instr-card">
+            <div class="instr-card-title">&#9635; Cross-Sectional Boxes</div>
+            <p>At least one region should include a small cross-section diagram showing the four histological layers -- mucosa, submucosa, muscularis externa, and serosa/adventitia -- as concentric rings or layered bands. The small intestine cross-section is a great choice: you can show villi pointing inward, label the layers, and mark where Meissner\'s and Auerbach\'s plexuses sit between the muscle layers.</p>
+          </div>
+          <div class="instr-card">
+            <div class="instr-card-title">&#8594; Arrows and Brief Captions</div>
+            <p>Every label on your map should be a short phrase of 1-5 words, connected by an arrow to the structure it describes. Captions can be slightly longer (one sentence max) but should be written as annotations, not prose. Example: "Parietal cell -- HCl + intrinsic factor" is a good caption. A paragraph explaining the parietal cell is not.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="instr-section">
+        <div class="instr-section-title">&#9989; Use This Checklist the Right Way</div>
+        <p>The checklist in this tool is organized by region and category -- anatomy, histology, cells, secretions, neural, and function. Work through each region <strong>on your actual map first</strong>, then come back and check off what you included. Do not write out every checklist item as text on your map -- that defeats the purpose. Each item on this list should correspond to a label, a zoom-in box, a symbol, or an arrow on your drawing.</p>
+        <p style="margin-top:8px;">A good gut check: if you can fold your map and all the information is still readable as prose without the drawing, you have not made a map. You have made a document. Go back and draw.</p>
+      </div>
+
+      <div class="instr-section">
+        <div class="instr-section-title">&#128161; Practical Layout Tips</div>
+        <div class="instr-tips">
+          <div class="instr-tip"><span class="tip-dot">&#9679;</span><span>Start by sketching the full GI tract as a flow from top to bottom or in a winding path -- mouth at the top, anus at the bottom. Leave margins and blank space around each organ for your annotations.</span></div>
+          <div class="instr-tip"><span class="tip-dot">&#9679;</span><span>Place accessory organs (liver, gallbladder, pancreas, salivary glands) off to the side with arrows connecting their ducts to the correct GI region.</span></div>
+          <div class="instr-tip"><span class="tip-dot">&#9679;</span><span>Use color to differentiate regions or categories -- for example, one color for histology labels, another for secretions, another for neural structures. A simple legend in the corner is enough.</span></div>
+          <div class="instr-tip"><span class="tip-dot">&#9679;</span><span>Reserve at least one corner or side margin for your cross-section or zoom-in histology boxes. These do not need to be large -- a 2-inch box is sufficient if it is clearly labeled.</span></div>
+          <div class="instr-tip"><span class="tip-dot">&#9679;</span><span>For neural integration, mark Meissner\'s and Auerbach\'s plexuses directly on your cross-section diagram between the correct muscle layers -- do not just list them as text. Show their location.</span></div>
+          <div class="instr-tip"><span class="tip-dot">&#9679;</span><span>For the physiology panel (A&P course): feedback loops should be drawn as small circles or loops with arrows marked "+" (stimulates) and "-" (inhibits). A loop that is one inch in diameter and clearly labeled is more valuable than a paragraph of text.</span></div>
+          <div class="instr-tip"><span class="tip-dot">&#9679;</span><span>Scan or photograph your finished map at high resolution before submitting. Make sure all labels are legible in the digital version.</span></div>
+        </div>
+      </div>
+
+      <div class="instr-callout">
+        <strong>Bottom line:</strong> The rubric rewards completeness and accuracy -- not beauty. A clean, clearly labeled sketch that includes all required structures, histological layers, cell types, and functional annotations will score well. A gorgeous digital illustration that is missing parietal cells or the myenteric plexus will not. Draw first. Label accurately. Keep text short.
+      </div>
+
+    </div>
+  </div>
+
+<!-- ============================= ANATOMY PANEL ============================= -->
+<div class="panel active" id="panel-anat">
+  <div class="legend">
+    <span class="legend-label">Category:</span>
+    <span class="tag tag-anatomy">Anatomy</span>
+    <span class="tag tag-histo">Histology</span>
+    <span class="tag tag-cells">Cells</span>
+    <span class="tag tag-secrete">Secretions</span>
+    <span class="tag tag-neural">Neural</span>
+    <span class="tag tag-function">Function</span>
+  </div>
+
+  <!-- ORAL CAVITY -->
+  <div class="region-group"><div class="region-header" onclick="toggleRegion(this)"><div class="region-left"><div class="region-icon">&#129460;</div><div><div class="region-name">Oral Cavity</div><div class="region-tag-line">Mouth - beginning of the GI tract</div></div></div><div class="region-right"><div><div class="region-mini-bar"><div class="region-mini-fill anat-mini"></div></div><div class="region-progress-text">0%</div></div><div class="toggle-icon">&#9660;</div></div></div>
+  <div class="region-body">
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-anatomy">Anatomy</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="anatomy"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Lips, cheeks, hard palate, soft palate, uvula</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="anatomy"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Tongue (intrinsic + extrinsic muscles) + lingual frenulum</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="anatomy"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Teeth: incisors, canines, premolars, molars</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="anatomy"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Palatine tonsils, lingual tonsils (Waldeyer\'s ring)</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-histo">Histology</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="histo"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Stratified squamous epithelium (non-keratinized most surfaces; keratinized = gingiva, hard palate)</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="histo"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Taste buds on fungiform, circumvallate, and foliate papillae</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-cells">Cells</span> <span class="tag tag-secrete">Secretions</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="cells"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Serous cells - watery enzyme-rich saliva; Mucous cells - mucin for lubrication</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="secrete"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Salivary amylase (starch digestion), lingual lipase, lysozyme, IgA, bicarbonate</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-function">Function</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="function"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Mastication + bolus formation; chemical digestion begins (starch); taste, speech, pH buffering</div></div></li>
+    </ul></div>
+  </div></div>
+
+  <!-- SALIVARY GLANDS -->
+  <div class="region-group"><div class="region-header" onclick="toggleRegion(this)"><div class="region-left"><div class="region-icon">&#128167;</div><div><div class="region-name">Salivary Glands</div><div class="region-tag-line">Accessory | Parotid, Submandibular, Sublingual</div></div></div><div class="region-right"><div><div class="region-mini-bar"><div class="region-mini-fill anat-mini"></div></div><div class="region-progress-text">0%</div></div><div class="toggle-icon">&#9660;</div></div></div>
+  <div class="region-body">
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-anatomy">Anatomy</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="anatomy"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Parotid - Stensen\'s duct (upper 2nd molar); CN IX. Submandibular - Wharton\'s duct; CN VII. Sublingual - ducts of Rivinus; CN VII</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-histo">Histology</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="histo"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Parotid = purely serous; Submandibular = mixed (mostly serous); Sublingual = mostly mucous</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="histo"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Striated ducts modify ion content; myoepithelial cells surround acini (expel saliva)</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-cells">Cells</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="cells"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Serous acinar cells - amylase, lysozyme, IgA; Mucous acinar cells - mucin glycoproteins</div></div></li>
+    </ul></div>
+  </div></div>
+
+  <!-- PHARYNX -->
+  <div class="region-group"><div class="region-header" onclick="toggleRegion(this)"><div class="region-left"><div class="region-icon">&#11835;</div><div><div class="region-name">Pharynx</div><div class="region-tag-line">Nasopharynx, Oropharynx, Laryngopharynx</div></div></div><div class="region-right"><div><div class="region-mini-bar"><div class="region-mini-fill anat-mini"></div></div><div class="region-progress-text">0%</div></div><div class="toggle-icon">&#9660;</div></div></div>
+  <div class="region-body">
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-anatomy">Anatomy</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="anatomy"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Three regions: nasopharynx, oropharynx, laryngopharynx</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="anatomy"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Pharyngeal constrictors (superior, middle, inferior) coordinate swallowing</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-histo">Histology</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="histo"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Nasopharynx = pseudostratified ciliated columnar; Oro/laryngopharynx = stratified squamous</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-function">Function</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="function"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Deglutition: voluntary oral phase, involuntary pharyngeal + esophageal phases; epiglottis deflects to protect airway</div></div></li>
+    </ul></div>
+  </div></div>
+
+  <!-- ESOPHAGUS -->
+  <div class="region-group"><div class="region-header" onclick="toggleRegion(this)"><div class="region-left"><div class="region-icon">&#128761;</div><div><div class="region-name">Esophagus</div><div class="region-tag-line">UES and LES | Cervical, Thoracic, Abdominal</div></div></div><div class="region-right"><div><div class="region-mini-bar"><div class="region-mini-fill anat-mini"></div></div><div class="region-progress-text">0%</div></div><div class="toggle-icon">&#9660;</div></div></div>
+  <div class="region-body">
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-anatomy">Anatomy</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="anatomy"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">UES (skeletal, prevents air entry); LES/cardiac sphincter (smooth, prevents GERD)</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="anatomy"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Three anatomical narrowings: cricopharyngeal, aortic arch, diaphragmatic hiatus</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-histo">Histology</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="histo"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Stratified squamous non-keratinized epithelium (mucosa)</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="histo"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Muscularis: upper 1/3 skeletal, middle mixed, lower 1/3 smooth; adventitia (not serosa) in thorax</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="histo"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Esophageal mucous glands in submucosa for lubrication</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-neural">Neural</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="neural"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Meissner\'s plexus (submucosal) + Auerbach\'s plexus (myenteric) present throughout; vagus CN X controls peristalsis</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-function">Function</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="function"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Peristalsis transports bolus to stomach; no digestion or absorption</div></div></li>
+    </ul></div>
+  </div></div>
+
+  <!-- STOMACH -->
+  <div class="region-group"><div class="region-header" onclick="toggleRegion(this)"><div class="region-left"><div class="region-icon">&#128081;</div><div><div class="region-name">Stomach</div><div class="region-tag-line">Cardia, Fundus, Body, Pylorus</div></div></div><div class="region-right"><div><div class="region-mini-bar"><div class="region-mini-fill anat-mini"></div></div><div class="region-progress-text">0%</div></div><div class="toggle-icon">&#9660;</div></div></div>
+  <div class="region-body">
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-anatomy">Anatomy</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="anatomy"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Four regions: cardia, fundus, body (corpus), pylorus; greater and lesser curvature</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="anatomy"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Pyloric sphincter - controls chyme release into duodenum; angular incisure at body/pylorus junction</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-histo">Histology</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="histo"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Rugae - longitudinal folds of mucosa/submucosa; expand to accommodate food</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="histo"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Simple columnar epithelium; gastric pits leading to gastric glands</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="histo"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Muscularis externa: THREE layers - oblique (inner), circular (middle), longitudinal (outer)</div><div class="check-note">Unique to stomach - enables churning and retropulsion</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="histo"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Serosa (visceral peritoneum) covers entire stomach</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-cells">Cells</span> <span class="tag tag-secrete">Secretions</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="cells secrete"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Parietal cells (oxyntic) - HCl + intrinsic factor | Fundus/body glands</div><div class="check-note">HCl activates pepsinogen; intrinsic factor required for B12 absorption (ileum)</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="cells secrete"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Chief cells (zymogenic) - pepsinogen + gastric lipase | Fundus/body glands</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="cells secrete"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">G cells - gastrin | Pyloric antrum; D cells - somatostatin; ECL cells - histamine (stimulates HCl)</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="cells"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Mucous neck cells + surface mucous cells - protective mucus layer against HCl</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-neural">Neural</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="neural"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Meissner\'s plexus - glandular secretion; Auerbach\'s plexus - peristalsis and churning</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-function">Function</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="function"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Mechanical churning + chemical protein digestion; bolus converted to chyme</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="function"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Limited absorption: alcohol, aspirin, lipid-soluble drugs; cephalic/gastric/intestinal secretion phases</div></div></li>
+    </ul></div>
+  </div></div>
+
+  <!-- SMALL INTESTINE -->
+  <div class="region-group"><div class="region-header" onclick="toggleRegion(this)"><div class="region-left"><div class="region-icon">&#128307;</div><div><div class="region-name">Small Intestine</div><div class="region-tag-line">Duodenum, Jejunum, Ileum | ~6-7 meters</div></div></div><div class="region-right"><div><div class="region-mini-bar"><div class="region-mini-fill anat-mini"></div></div><div class="region-progress-text">0%</div></div><div class="toggle-icon">&#9660;</div></div></div>
+  <div class="region-body">
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-anatomy">Anatomy</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="anatomy"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Duodenum (~25 cm): C-shaped, retroperitoneal; ampulla of Vater + sphincter of Oddi (bile + pancreatic juice entry)</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="anatomy"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Jejunum (~2.5 m): prominent plicae circulares, thick walls, many villi</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="anatomy"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Ileum (~3.5 m): Peyer\'s patches; ileocecal valve connects to large intestine</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-histo">Histology</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="histo"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Plicae circulares (valves of Kerckring): permanent circular folds; +3x surface area</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="histo"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Villi: finger-like projections with lacteal (lymphatic) core; +10x surface area</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="histo"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Microvilli (brush border): apical enterocyte surface; +20x SA; brush border enzymes embedded</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="histo"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Crypts of Lieberkuhn: intestinal glands; stem cells, Paneth cells at base</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="histo"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Brunner\'s glands (duodenum only): submucosal; alkaline mucus neutralizes chyme</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="histo"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Peyer\'s patches (ileum): submucosal lymphoid aggregates - immune surveillance</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-cells">Cells</span> <span class="tag tag-secrete">Secretions</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="cells"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Enterocytes: brush border enzymes (maltase, sucrase, lactase, aminopeptidases); nutrient absorption</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="cells"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Goblet cells (mucus); Paneth cells (defensins, lysozyme - antimicrobial, crypt base)</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="cells secrete"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">S cells - secretin (acid chyme trigger); I cells - CCK (fat/protein trigger); K cells - GIP (glucose/fat trigger)</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="cells"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">M cells (Peyer\'s patches): transcytose antigens to underlying lymphocytes</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-neural">Neural</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="neural"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Meissner\'s plexus: secretion + blood flow; Auerbach\'s: peristalsis + segmentation</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-function">Function</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="function"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Duodenum: neutralizes chyme; bile + enzymes arrive; major digestion begins</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="function"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Jejunum: primary absorption of carbs, proteins, fats, most vitamins and minerals</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="function"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Ileum: B12 (intrinsic factor complex), bile salts (enterohepatic circulation), fat-soluble vitamins A/D/E/K</div></div></li>
+    </ul></div>
+  </div></div>
+
+  <!-- LARGE INTESTINE -->
+  <div class="region-group"><div class="region-header" onclick="toggleRegion(this)"><div class="region-left"><div class="region-icon">&#127873;</div><div><div class="region-name">Large Intestine</div><div class="region-tag-line">Cecum, Colon (4 parts), Rectum, Anal Canal</div></div></div><div class="region-right"><div><div class="region-mini-bar"><div class="region-mini-fill anat-mini"></div></div><div class="region-progress-text">0%</div></div><div class="toggle-icon">&#9660;</div></div></div>
+  <div class="region-body">
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-anatomy">Anatomy</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="anatomy"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Cecum + appendix (vermiform - lymphoid tissue)</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="anatomy"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Colon: ascending, transverse (hepatic/splenic flexures), descending, sigmoid</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="anatomy"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Rectum + anal canal; internal sphincter (smooth, involuntary) + external (skeletal, voluntary)</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="anatomy"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Haustra (sacculations), teniae coli (3 longitudinal muscle bands), epiploic appendages</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-histo">Histology</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="histo"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">NO villi; flat mucosal surface with deep crypts of Lieberkuhn; abundant goblet cells</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="histo"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Anal canal: stratified squamous below pectinate (dentate) line; columnar above</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-cells">Cells</span> <span class="tag tag-secrete">Secretions</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="cells secrete"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Goblet cells: mucus for lubrication; Colonocytes: absorb water and electrolytes (Na+, Cl-, K+)</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="secrete"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Gut microbiome: ferments fiber; produces vitamins K + B12; short-chain fatty acids</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-neural">Neural</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="neural"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Auerbach\'s plexus: mass movements; defecation reflex: parasympathetic (pelvic splanchnic); voluntary ext. sphincter</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-function">Function</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="function"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Water and electrolyte absorption; fecal compaction and storage; microbial fermentation; vitamin synthesis</div></div></li>
+    </ul></div>
+  </div></div>
+
+  <!-- LIVER -->
+  <div class="region-group"><div class="region-header" onclick="toggleRegion(this)"><div class="region-left"><div class="region-icon">&#129748;</div><div><div class="region-name">Liver</div><div class="region-tag-line">Accessory | Largest gland in the body</div></div></div><div class="region-right"><div><div class="region-mini-bar"><div class="region-mini-fill anat-mini"></div></div><div class="region-progress-text">0%</div></div><div class="toggle-icon">&#9660;</div></div></div>
+  <div class="region-body">
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-anatomy">Anatomy</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="anatomy"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Right, left, caudate, quadrate lobes; falciform ligament; ligamentum teres</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="anatomy"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Porta hepatis: portal vein + hepatic artery + bile ducts; common hepatic duct + cystic duct = CBD --> ampulla of Vater</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="anatomy"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Dual blood supply: portal vein (75%, nutrient-rich) + hepatic artery (25%, oxygenated)</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-histo">Histology</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="histo"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Classic hepatic lobule: hexagonal; portal triads at corners, central vein in center</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="histo"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Sinusoids (fenestrated endothelium); Space of Disse between sinusoids and hepatocytes</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-cells">Cells</span> <span class="tag tag-secrete">Secretions</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="cells secrete"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Hepatocytes: bile, albumin, clotting factors, glucose, urea, lipoproteins</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="cells"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Kupffer cells: macrophages in sinusoids (phagocytose bacteria, worn RBCs)</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="cells"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Stellate/Ito cells (Space of Disse): vitamin A storage; become fibroblasts in cirrhosis</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="secrete"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Bile composition: bile salts (emulsify fats), bilirubin, cholesterol, phospholipids, bicarbonate</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-function">Function</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="function"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Bile production; carbohydrate/lipid/protein metabolism; detoxification; storage (glycogen, vitamins, iron); synthesis of plasma proteins and clotting factors</div></div></li>
+    </ul></div>
+  </div></div>
+
+  <!-- GALLBLADDER -->
+  <div class="region-group"><div class="region-header" onclick="toggleRegion(this)"><div class="region-left"><div class="region-icon">&#128994;</div><div><div class="region-name">Gallbladder</div><div class="region-tag-line">Accessory | Bile storage and concentration</div></div></div><div class="region-right"><div><div class="region-mini-bar"><div class="region-mini-fill anat-mini"></div></div><div class="region-progress-text">0%</div></div><div class="toggle-icon">&#9660;</div></div></div>
+  <div class="region-body">
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-anatomy">Anatomy</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="anatomy"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Fundus, body, neck; cystic duct (valves of Heister) joins common hepatic duct; lies in gallbladder fossa</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-histo">Histology</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="histo"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Simple columnar epithelium with microvilli (absorbs water to concentrate bile up to 10x)</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="histo"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">No submucosa or muscularis mucosae; Rokitansky-Aschoff sinuses (mucosal outpouchings)</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-function">Function</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="function"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Stores and concentrates bile; releases into CBD when CCK is secreted (fat in duodenum)</div></div></li>
+    </ul></div>
+  </div></div>
+
+  <!-- PANCREAS -->
+  <div class="region-group"><div class="region-header" onclick="toggleRegion(this)"><div class="region-left"><div class="region-icon">&#128102;</div><div><div class="region-name">Pancreas</div><div class="region-tag-line">Accessory | Exocrine + Endocrine</div></div></div><div class="region-right"><div><div class="region-mini-bar"><div class="region-mini-fill anat-mini"></div></div><div class="region-progress-text">0%</div></div><div class="toggle-icon">&#9660;</div></div></div>
+  <div class="region-body">
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-anatomy">Anatomy</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="anatomy"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Head (duodenal C-loop), neck, body, tail (spleen); mostly retroperitoneal</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="anatomy"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Duct of Wirsung (main) + Santorini (accessory); join CBD at ampulla of Vater</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-histo">Histology</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="histo"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Exocrine (~95%): serous acini of acinar cells; centroacinar cells lining duct lumen</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="histo"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Endocrine (~5%): islets of Langerhans scattered among acini</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-cells">Cells</span> <span class="tag tag-secrete">Secretions</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="cells secrete"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Acinar cells: amylase, lipase, trypsinogen, chymotrypsinogen, elastase, phospholipase A2 | Stimulated by CCK</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="cells secrete"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Centroacinar cells: bicarbonate-rich fluid | Stimulated by secretin</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="cells secrete"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Alpha cells - glucagon; Beta cells - insulin (most numerous); Delta cells - somatostatin; PP cells - pancreatic polypeptide</div></div></li>
+    </ul></div>
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-function">Function</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="function"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Exocrine: neutralizes acid chyme (bicarbonate); digests all macronutrients (enzymes)</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="function"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Endocrine: insulin/glucagon regulate blood glucose; somatostatin modulates both</div></div></li>
+    </ul></div>
+  </div></div>
+
+  <!-- NEURAL INTEGRATION -->
+  <div class="region-group"><div class="region-header" onclick="toggleRegion(this)"><div class="region-left"><div class="region-icon">&#9889;</div><div><div class="region-name">Neural Integration</div><div class="region-tag-line">Enteric Nervous System - the "Second Brain"</div></div></div><div class="region-right"><div><div class="region-mini-bar"><div class="region-mini-fill anat-mini"></div></div><div class="region-progress-text">0%</div></div><div class="toggle-icon">&#9660;</div></div></div>
+  <div class="region-body">
+    <div class="cat-block"><div class="cat-title"><span class="tag tag-neural">Neural</span></div><ul class="check-list">
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="neural"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Meissner\'s plexus (submucosal): between mucosa and inner circular muscle</div><div class="check-note">Controls: glandular secretion, mucosal blood flow, sensory detection of luminal contents</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="neural"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Auerbach\'s plexus (myenteric): between inner circular and outer longitudinal muscle</div><div class="check-note">Controls: peristalsis, segmentation, GI smooth muscle tone (motility)</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="neural"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">ENS: ~500 million neurons; functions independently of CNS</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="neural"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Parasympathetic (vagus CN X / pelvic splanchnic): stimulates motility and secretion</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="neural"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Sympathetic (celiac, sup/inf mesenteric ganglia): inhibits motility; vasoconstriction</div></div></li>
+      <li class="check-item" onclick="toggleCheck(this,'anat')" data-cats="neural"><div class="check-box">&#10003;</div><div class="check-text-wrap"><div class="check-text">Peristalsis reflex: stretch detected, circular muscle contracts behind bolus, relaxes ahead (law of the intestine)</div></div></li>
+    </ul></div>
+  </div></div>
+
+  <div class="reminder-box"><strong>Drawing Reminders:</strong> Single page, front side only. Use arrows and brief captions - avoid paragraphs. Color-code your regions. Label the 4 histological layers (mucosa, submucosa, muscularis externa, serosa/adventitia) on at least one cross-section. Show both plexus locations between the muscle layers. Optional: add mnemonics or brief clinical correlations.</div>
+
+  <div class="rubric-summary"><h3>Rubric | 50 pts Total</h3><div class="rubric-grid">
+    <div class="rubric-row"><div class="rubric-row-name">Anatomical Accuracy</div><div class="rubric-row-pts">10 <span>pts</span></div></div>
+    <div class="rubric-row"><div class="rubric-row-name">Histology + Microanatomy</div><div class="rubric-row-pts">10 <span>pts</span></div></div>
+    <div class="rubric-row"><div class="rubric-row-name">Neural Components</div><div class="rubric-row-pts">5 <span>pts</span></div></div>
+    <div class="rubric-row"><div class="rubric-row-name">Functional Annotations</div><div class="rubric-row-pts">5 <span>pts</span></div></div>
+    <div class="rubric-row"><div class="rubric-row-name">Visual Organization</div><div class="rubric-row-pts">10 <span>pts</span></div></div>
+    <div class="rubric-row"><div class="rubric-row-name">Accuracy + Effort</div><div class="rubric-row-pts">10 <span>pts</span></div></div>
+  </div></div>
+</div><!-- end panel-anat -->
+
+<!-- ============================= PHYSIOLOGY PANEL ============================= -->
+<div class="panel" id="panel-phys">
+
+  <div class="phys-intro">
+    <strong>How to use this panel:</strong> Each card is a hormone, enzyme cascade, or regulatory loop. Check it off as you add it to your map. For each one, your map should show the <span style="background:#E8F5E9;color:#2E6B3E;padding:1px 5px;border-radius:3px;font-weight:700;font-size:0.78em;">ON</span> stimulus, the <span style="background:var(--teal-light);color:#1A5958;padding:1px 5px;border-radius:3px;font-weight:700;font-size:0.78em;">EFFECT</span>, and the <span style="background:#FDE8E8;color:#7B2020;padding:1px 5px;border-radius:3px;font-weight:700;font-size:0.78em;">OFF</span> signal. A tiny labeled loop is enough -- no paragraphs needed.
+  </div>
+
+  <div class="legend">
+    <span class="legend-label">Chips:</span>
+    <span class="phys-chip chip-on">ON</span>&nbsp;triggers release &nbsp;
+    <span class="phys-chip chip-effect">EFFECT</span>&nbsp;what it does &nbsp;
+    <span class="phys-chip chip-off">OFF</span>&nbsp;what stops it &nbsp;
+    <span class="phys-chip chip-integrate">LINK</span>&nbsp;draw this
+  </div>
+
+  <!-- GASTRIC SECRETION PHASES -->
+  <div class="region-group"><div class="region-header" onclick="toggleRegion(this)"><div class="region-left"><div class="region-icon phys-icon">&#127775;</div><div><div class="region-name">Gastric Secretion Phases</div><div class="region-tag-line">Cephalic, Gastric, Intestinal</div></div></div><div class="region-right"><div><div class="region-mini-bar"><div class="region-mini-fill phys-mini"></div></div><div class="region-progress-text">0%</div></div><div class="toggle-icon">&#9660;</div></div></div>
+  <div class="region-body"><div class="cat-block"><ul class="check-list" style="gap:8px;">
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">Cephalic Phase</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-on">ON</span><span>Sight, smell, taste, or thought of food; mediated entirely by vagus nerve (CN X) before food arrives</span></div>
+      <div class="fb-line"><span class="phys-chip chip-effect">EFFECT</span><span>Stimulates gastric glands (HCl, pepsinogen, mucus); ACh from vagus also stimulates G cells to release gastrin</span></div>
+      <div class="fb-line"><span class="phys-chip chip-off">OFF</span><span>Removal of sensory stimulus; rising acid pH; somatostatin from D cells</span></div>
+      <div class="fb-line"><span class="phys-chip chip-integrate">LINK</span><span>Why hunger and anticipation cause "stomach growling" -- entirely neural, no food required</span></div>
+    </div></li>
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">Gastric Phase</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-on">ON</span><span>Stomach distension (stretch receptors); peptides and amino acids; rising pH as food buffers acid</span></div>
+      <div class="fb-line"><span class="phys-chip chip-effect">EFFECT</span><span>Local myenteric reflexes + vagovagal reflexes stimulate G cells (gastrin) and ECL cells (histamine) -- massive HCl and pepsinogen amplification</span></div>
+      <div class="fb-line"><span class="phys-chip chip-off">OFF</span><span>pH falls below 3: somatostatin (D cells) inhibits G cells; secretin from duodenum inhibits gastrin once chyme exits</span></div>
+      <div class="fb-line"><span class="phys-chip chip-integrate">LINK</span><span>Gastrin also increases LES tone and stimulates motility -- one hormone, multiple coordinated effects</span></div>
+    </div></li>
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">Intestinal Phase</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-on">ON</span><span>Acid chyme entering duodenum; fats and proteins; osmolarity and distension of duodenal wall</span></div>
+      <div class="fb-line"><span class="phys-chip chip-effect">EFFECT</span><span>Releases secretin (neutralize acid) and CCK (digest fats/proteins); enterogastric reflex slows gastric emptying</span></div>
+      <div class="fb-line"><span class="phys-chip chip-off">OFF</span><span>Rising duodenal pH removes secretin stimulus; fat digestion removes CCK stimulus; gastric emptying slows automatically</span></div>
+      <div class="fb-line"><span class="phys-chip chip-integrate">LINK</span><span>Intestinal phase is INHIBITORY to the stomach -- protects the duodenum from acid chyme overload</span></div>
+    </div></li>
+  </ul></div></div></div>
+
+  <!-- KEY GI HORMONES -->
+  <div class="region-group"><div class="region-header" onclick="toggleRegion(this)"><div class="region-left"><div class="region-icon phys-icon">&#128138;</div><div><div class="region-name">Key GI Hormones</div><div class="region-tag-line">Gastrin, Secretin, CCK, GIP, Motilin, Somatostatin</div></div></div><div class="region-right"><div><div class="region-mini-bar"><div class="region-mini-fill phys-mini"></div></div><div class="region-progress-text">0%</div></div><div class="toggle-icon">&#9660;</div></div></div>
+  <div class="region-body"><div class="cat-block"><ul class="check-list" style="gap:8px;">
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">Gastrin -- G cells, pyloric antrum</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-on">ON</span><span>Peptides/amino acids in stomach; vagal ACh (cephalic phase); stomach distension; rising pH (food buffers acid)</span></div>
+      <div class="fb-line"><span class="phys-chip chip-effect">EFFECT</span><span>Stimulates parietal cells (HCl); chief cells (pepsinogen); increases LES tone; promotes motility; stimulates ECL cells (histamine)</span></div>
+      <div class="fb-line"><span class="phys-chip chip-off">OFF</span><span>pH &lt; 3 directly inhibits G cells; somatostatin (D cells); secretin from duodenum</span></div>
+    </div></li>
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">Secretin -- S cells, duodenum</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-on">ON</span><span>Acid chyme in duodenum (pH &lt; 4.5); fatty acids in duodenum</span></div>
+      <div class="fb-line"><span class="phys-chip chip-effect">EFFECT</span><span>Pancreatic centroacinar cells secrete bicarbonate (neutralizes acid); inhibits gastric acid; inhibits gastrin; stimulates bile flow from liver</span></div>
+      <div class="fb-line"><span class="phys-chip chip-off">OFF</span><span>Rising duodenal pH removes the acid stimulus -- self-resolving negative feedback</span></div>
+      <div class="fb-line"><span class="phys-chip chip-integrate">LINK</span><span>Draw the acid-bicarbonate seesaw: parietal cell HCl --> duodenum pH drops --> secretin --> pancreatic HCO3- --> pH rises --> secretin stops</span></div>
+    </div></li>
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">CCK (Cholecystokinin) -- I cells, duodenum/jejunum</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-on">ON</span><span>Fats (fatty acids, monoglycerides) and proteins (peptides, amino acids) in duodenum</span></div>
+      <div class="fb-line"><span class="phys-chip chip-effect">EFFECT</span><span>Gallbladder contraction (bile release); pancreatic acinar enzymes; relaxes sphincter of Oddi; inhibits gastric emptying; satiety signal to hypothalamus</span></div>
+      <div class="fb-line"><span class="phys-chip chip-off">OFF</span><span>Digestion of fats/proteins removes duodenal stimulus; trypsin cleaves CCK-releasing factor</span></div>
+      <div class="fb-line"><span class="phys-chip chip-integrate">LINK</span><span>CCK coordinates THREE organs simultaneously: stomach (slow), gallbladder (contract), pancreas (release enzymes). Draw all three arrows from one I cell.</span></div>
+    </div></li>
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">GIP (Glucose-dependent Insulinotropic Peptide) -- K cells, duodenum/jejunum</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-on">ON</span><span>Glucose and fats in the duodenum (after a mixed meal)</span></div>
+      <div class="fb-line"><span class="phys-chip chip-effect">EFFECT</span><span>Inhibits gastric acid and motility; stimulates insulin from pancreatic beta cells (incretin effect)</span></div>
+      <div class="fb-line"><span class="phys-chip chip-off">OFF</span><span>Falling blood glucose; glucose absorption removes duodenal stimulus</span></div>
+      <div class="fb-line"><span class="phys-chip chip-integrate">LINK</span><span>Incretin effect: oral glucose causes more insulin release than IV glucose because the gut signals the pancreas in advance</span></div>
+    </div></li>
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">Motilin -- M cells, duodenum/jejunum</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-on">ON</span><span>Fasting state; released cyclically every 90-120 minutes between meals</span></div>
+      <div class="fb-line"><span class="phys-chip chip-effect">EFFECT</span><span>Initiates migrating motor complex (MMC): powerful peristaltic waves sweep residue from stomach through SI -- "intestinal housekeeper"</span></div>
+      <div class="fb-line"><span class="phys-chip chip-off">OFF</span><span>Food intake; secretin and CCK released after eating suppress the MMC</span></div>
+      <div class="fb-line"><span class="phys-chip chip-integrate">LINK</span><span>Borborygmi (stomach growling when hungry) = motilin-driven MMC. Erythromycin is a motilin agonist used for gastroparesis.</span></div>
+    </div></li>
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">Somatostatin -- D cells (stomach, pancreas, intestine)</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-on">ON</span><span>Low gastric pH; high blood glucose; fat/protein in gut -- generally "too much" of any GI stimulus</span></div>
+      <div class="fb-line"><span class="phys-chip chip-effect">EFFECT</span><span>Inhibits virtually everything: gastrin, secretin, CCK, GIP, insulin, glucagon, HCl, pancreatic enzymes, GI motility. The master brake of the GI system.</span></div>
+      <div class="fb-line"><span class="phys-chip chip-off">OFF</span><span>Removal of stimulus; vagal stimulation can suppress D cell activity</span></div>
+      <div class="fb-line"><span class="phys-chip chip-integrate">LINK</span><span>Somatostatin acts PARACRINE (on neighboring cells, not through blood). D cells are positioned beside G cells, parietal cells, and beta cells to provide local inhibition. Draw short local arrows.</span></div>
+    </div></li>
+  </ul></div></div></div>
+
+  <!-- ENZYME CASCADES -->
+  <div class="region-group"><div class="region-header" onclick="toggleRegion(this)"><div class="region-left"><div class="region-icon phys-icon">&#9881;</div><div><div class="region-name">Enzyme Activation Cascades</div><div class="region-tag-line">Proenzymes, activation sequences, brush border digestion</div></div></div><div class="region-right"><div><div class="region-mini-bar"><div class="region-mini-fill phys-mini"></div></div><div class="region-progress-text">0%</div></div><div class="toggle-icon">&#9660;</div></div></div>
+  <div class="region-body"><div class="cat-block"><ul class="check-list" style="gap:8px;">
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">Pepsinogen -- Pepsin cascade (stomach)</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-on">ON</span><span>Chief cells release pepsinogen (inactive); HCl drops luminal pH below 2</span></div>
+      <div class="fb-line"><span class="phys-chip chip-effect">EFFECT</span><span>Low pH cleaves pepsinogen --> pepsin; pepsin then autocatalytically activates more pepsinogen; cleaves peptide bonds in proteins</span></div>
+      <div class="fb-line"><span class="phys-chip chip-off">OFF</span><span>pH rises above 5: pepsin irreversibly inactivated; bicarbonate in duodenum immediately deactivates pepsin when chyme arrives</span></div>
+      <div class="fb-line"><span class="phys-chip chip-integrate">LINK</span><span>Draw the autocatalytic loop with a note: "self-amplifying but pH-dependent." Why proenzymes? Premature activation would digest the cell that made them.</span></div>
+    </div></li>
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">Trypsinogen -- Trypsin cascade (duodenum)</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-on">ON</span><span>Pancreas secretes trypsinogen; enteropeptidase (enterokinase) on duodenal brush border cleaves it to trypsin</span></div>
+      <div class="fb-line"><span class="phys-chip chip-effect">EFFECT</span><span>Trypsin activates itself (autocatalysis) AND activates chymotrypsinogen, proelastase, procarboxypeptidases, phospholipase A2. Trypsin = "master activator" of all pancreatic proenzymes.</span></div>
+      <div class="fb-line"><span class="phys-chip chip-off">OFF</span><span>Pancreatic secretory trypsin inhibitor (PSTI) prevents premature activation inside the gland; no enteropeptidase outside the duodenum</span></div>
+      <div class="fb-line"><span class="phys-chip chip-integrate">LINK</span><span>Draw the cascade tree: enterokinase --> trypsin --> everything else. In pancreatitis: premature intrapancreatic activation --> autodigestion.</span></div>
+    </div></li>
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">Brush Border Enzyme Digestion (small intestine)</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-on">ON</span><span>Substrate contacts enterocyte apical membrane (physical contact required -- these enzymes are NOT secreted into the lumen)</span></div>
+      <div class="fb-line"><span class="phys-chip chip-effect">EFFECT</span><span>Maltase: maltose --> 2 glucose. Sucrase: sucrose --> glucose + fructose. Lactase: lactose --> glucose + galactose. Aminopeptidases: complete protein digestion at cell surface.</span></div>
+      <div class="fb-line"><span class="phys-chip chip-off">OFF</span><span>No substrate = no activity; enzyme expression can be reduced (lactase decline in adults = lactose intolerance)</span></div>
+      <div class="fb-line"><span class="phys-chip chip-integrate">LINK</span><span>Final digestion happens AT the cell surface, not in the lumen. Draw a tiny enterocyte with enzymes sticking out of the brush border, products entering the cell.</span></div>
+    </div></li>
+  </ul></div></div></div>
+
+  <!-- BILE AND FAT DIGESTION LOOP -->
+  <div class="region-group"><div class="region-header" onclick="toggleRegion(this)"><div class="region-left"><div class="region-icon phys-icon">&#129518;</div><div><div class="region-name">Bile and Fat Digestion Loop</div><div class="region-tag-line">Emulsification, micelles, enterohepatic circulation</div></div></div><div class="region-right"><div><div class="region-mini-bar"><div class="region-mini-fill phys-mini"></div></div><div class="region-progress-text">0%</div></div><div class="toggle-icon">&#9660;</div></div></div>
+  <div class="region-body"><div class="cat-block"><ul class="check-list" style="gap:8px;">
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">Bile Release and Emulsification</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-on">ON</span><span>Fat in duodenum --> I cells release CCK; vagal stimulation also promotes gallbladder contraction</span></div>
+      <div class="fb-line"><span class="phys-chip chip-effect">EFFECT</span><span>Gallbladder contracts + sphincter of Oddi relaxes; bile salts emulsify fat globules into tiny droplets; dramatically increases surface area for pancreatic lipase</span></div>
+      <div class="fb-line"><span class="phys-chip chip-off">OFF</span><span>Fat digestion and absorption removes CCK stimulus; gallbladder relaxes</span></div>
+    </div></li>
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">Micelle Formation and Fat Absorption</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-on">ON</span><span>Pancreatic lipase cleaves triglycerides --> monoglycerides + fatty acids; bile salts aggregate around products</span></div>
+      <div class="fb-line"><span class="phys-chip chip-effect">EFFECT</span><span>Micelles ferry lipids to enterocyte brush border; lipids diffuse across membrane; reassembled into triglycerides inside cell; packaged into chylomicrons; secreted into lacteals (lymph, not portal blood)</span></div>
+      <div class="fb-line"><span class="phys-chip chip-off">OFF</span><span>Short/medium-chain FAs bypass lacteals and go directly to portal blood</span></div>
+    </div></li>
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">Enterohepatic Circulation of Bile Salts</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-on">ON</span><span>Bile salts reach terminal ileum after participating in fat digestion</span></div>
+      <div class="fb-line"><span class="phys-chip chip-effect">EFFECT</span><span>~95% of bile salts actively reabsorbed in terminal ileum; enter portal blood; returned to liver; re-secreted into bile -- recycled 2-3x per meal</span></div>
+      <div class="fb-line"><span class="phys-chip chip-off">OFF</span><span>~5% lost in feces; liver synthesizes new bile salts from cholesterol to replace losses</span></div>
+      <div class="fb-line"><span class="phys-chip chip-integrate">LINK</span><span>Draw the full loop: liver --> bile duct --> duodenum --> jejunum (micelles) --> ileum (reabsorbed) --> portal vein --> liver. Ileal disease (Crohn\'s) breaks this loop --> fat malabsorption.</span></div>
+    </div></li>
+  </ul></div></div></div>
+
+  <!-- NEURAL REGULATION -->
+  <div class="region-group"><div class="region-header" onclick="toggleRegion(this)"><div class="region-left"><div class="region-icon phys-icon">&#9889;</div><div><div class="region-name">Neural Regulation of GI Function</div><div class="region-tag-line">ENS reflexes, ANS control, motility patterns</div></div></div><div class="region-right"><div><div class="region-mini-bar"><div class="region-mini-fill phys-mini"></div></div><div class="region-progress-text">0%</div></div><div class="toggle-icon">&#9660;</div></div></div>
+  <div class="region-body"><div class="cat-block"><ul class="check-list" style="gap:8px;">
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">Peristalsis Reflex -- Law of the Intestine</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-on">ON</span><span>Distension of the gut wall activates intrinsic primary afferent neurons (IPANs)</span></div>
+      <div class="fb-line"><span class="phys-chip chip-effect">EFFECT</span><span>Ascending excitation (ACh): circular muscle contracts BEHIND the bolus. Descending inhibition (VIP, NO): circular muscle relaxes AHEAD of bolus. Net = propulsion.</span></div>
+      <div class="fb-line"><span class="phys-chip chip-integrate">LINK</span><span>Draw two arrows at any gut segment: "+" ACh behind, "-" VIP/NO ahead. Label: ascending excitation / descending inhibition.</span></div>
+    </div></li>
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">Segmentation vs. Peristalsis</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-on">ON</span><span>Segmentation: pacemaker cells in circular muscle; dominant in SI during active digestion. Peristalsis: dominant in esophagus always; SI between meals (MMC).</span></div>
+      <div class="fb-line"><span class="phys-chip chip-effect">EFFECT</span><span>Segmentation MIXES chyme with juices and maximizes contact time with absorptive surface (no net movement). Peristalsis PROPELS bolus forward.</span></div>
+      <div class="fb-line"><span class="phys-chip chip-integrate">LINK</span><span>Parasympathetic favors both; Sympathetic inhibits both. Draw the ANS balance beam: "rest and digest" vs. "fight or flight."</span></div>
+    </div></li>
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">Gastroileal and Gastrocolic Reflexes</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-on">ON</span><span>Food entering the stomach (distension and chemical stimulation)</span></div>
+      <div class="fb-line"><span class="phys-chip chip-effect">EFFECT</span><span>Gastroileal reflex: relaxes ileocecal valve (chyme from ileum --> cecum). Gastrocolic reflex: mass movements in large intestine -- why eating causes urge to defecate.</span></div>
+      <div class="fb-line"><span class="phys-chip chip-integrate">LINK</span><span>Draw a long reflex arc: stomach --> ileocecal valve and stomach --> colon. Mediated by vagus + ENS reflexes + gastrin/serotonin.</span></div>
+    </div></li>
+  </ul></div></div></div>
+
+  <!-- BLOOD GLUCOSE - GI/PANCREAS AXIS -->
+  <div class="region-group"><div class="region-header" onclick="toggleRegion(this)"><div class="region-left"><div class="region-icon phys-icon">&#128200;</div><div><div class="region-name">Blood Glucose -- GI-Pancreas Axis</div><div class="region-tag-line">Insulin, glucagon, incretin effect, seesaw feedback</div></div></div><div class="region-right"><div><div class="region-mini-bar"><div class="region-mini-fill phys-mini"></div></div><div class="region-progress-text">0%</div></div><div class="toggle-icon">&#9660;</div></div></div>
+  <div class="region-body"><div class="cat-block"><ul class="check-list" style="gap:8px;">
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">Insulin Secretion -- Beta cells</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-on">ON</span><span>Rising blood glucose (ATP closes K+ channel, depolarization, Ca2+ entry); GIP and GLP-1 incretins from gut; vagal ACh; amino acids</span></div>
+      <div class="fb-line"><span class="phys-chip chip-effect">EFFECT</span><span>GLUT4 translocated to surface in muscle and adipose (glucose uptake); glycogen synthesis; fat storage; protein synthesis; inhibits gluconeogenesis and lipolysis</span></div>
+      <div class="fb-line"><span class="phys-chip chip-off">OFF</span><span>Falling blood glucose; somatostatin (D cells); sympathetic stimulation suppresses insulin</span></div>
+      <div class="fb-line"><span class="phys-chip chip-integrate">LINK</span><span>Incretin loop: food in duodenum --> GIP/GLP-1 --> beta cells release insulin BEFORE glucose even peaks in blood. The gut anticipates the glucose load.</span></div>
+    </div></li>
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">Glucagon Secretion -- Alpha cells</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-on">ON</span><span>Falling blood glucose; amino acids (protein-only meal); sympathetic stimulation; cortisol</span></div>
+      <div class="fb-line"><span class="phys-chip chip-effect">EFFECT</span><span>Glycogenolysis: liver glycogen --> glucose. Gluconeogenesis: liver makes new glucose. Lipolysis: fat breakdown. Net: raises blood glucose.</span></div>
+      <div class="fb-line"><span class="phys-chip chip-off">OFF</span><span>Rising blood glucose; insulin (beta cells inhibit alpha cells paracrine); somatostatin</span></div>
+      <div class="fb-line"><span class="phys-chip chip-integrate">LINK</span><span>Draw the insulin-glucagon seesaw. High glucose --> insulin up, glucagon down. Low glucose --> glucagon up, insulin down. Somatostatin sits at the fulcrum inhibiting both.</span></div>
+    </div></li>
+  </ul></div></div></div>
+
+  <!-- FEEDBACK MAP DRAWING GUIDE -->
+  <div class="region-group"><div class="region-header" onclick="toggleRegion(this)"><div class="region-left"><div class="region-icon phys-icon">&#128393;</div><div><div class="region-name">Feedback Loop Drawing Guide</div><div class="region-tag-line">How to draw ON/OFF loops on your GI map</div></div></div><div class="region-right"><div><div class="region-mini-bar"><div class="region-mini-fill phys-mini"></div></div><div class="region-progress-text">0%</div></div><div class="toggle-icon">&#9660;</div></div></div>
+  <div class="region-body"><div class="cat-block"><ul class="check-list" style="gap:8px;">
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">Acid-Bicarbonate Feedback Loop</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-integrate">MAP IT</span><span>Parietal cell --> HCl --> duodenum pH drops --> S cells release secretin --> pancreas secretes HCO3- --> pH rises --> secretin stops. Draw as a closed circle with + and - arrows.</span></div>
+    </div></li>
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">Gastrin Negative Feedback Loop</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-integrate">MAP IT</span><span>G cell --(gastrin)--> parietal cell --(HCl, pH drops)--> D cell --(somatostatin)--> inhibits G cell. A tiny 3-cell loop with +/- arrows is all you need.</span></div>
+    </div></li>
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">CCK Three-Target Integration Map</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-integrate">MAP IT</span><span>I cell --> CCK --> [1] gallbladder contracts + [2] pancreatic enzymes released + [3] gastric emptying slows. One source, three arrows, three targets.</span></div>
+    </div></li>
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">Enterohepatic Circulation Circuit</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-integrate">MAP IT</span><span>Liver makes bile salts --> gallbladder stores --> duodenum (bile released) --> jejunum (micelles, fat absorption) --> ileum (95% reabsorbed) --> portal vein --> liver. Draw as a full loop with arrows.</span></div>
+    </div></li>
+    <li class="feedback-row" onclick="toggleCheck(this,'phys')"><div class="fb-header"><div class="check-box">&#10003;</div><div class="fb-title">Insulin-Glucagon Seesaw</div></div><div class="fb-rows">
+      <div class="fb-line"><span class="phys-chip chip-integrate">MAP IT</span><span>Draw a balance beam. Left: HIGH glucose --> insulin up, glucagon down. Right: LOW glucose --> glucagon up, insulin down. Somatostatin sits above the fulcrum, inhibiting both simultaneously.</span></div>
+    </div></li>
+  </ul></div></div></div>
+
+  <div class="reminder-box reminder-phys"><strong>Physiology Map Tips:</strong> Tiny labeled arrows are enough -- no paragraphs needed. A small circle with "+" and "-" communicates a feedback loop perfectly. Use a different ink color for physiology annotations so they stand out from anatomy labels. These loops are what your A&P course will expand on -- this panel gives you the scaffolding now.</div>
+
+</div><!-- end panel-phys -->
+</main>
+
+<script>
+  function toggleInstr() {
+    var body = document.getElementById('instrBody');
+    var toggle = document.getElementById('instrToggle');
+    var collapsed = body.classList.toggle('collapsed');
+    toggle.textContent = collapsed ? '&#9654; Expand' : '&#9660; Collapse';
+  }
+
+  var currentTab = 'anat';
+
+  function switchTab(tab) {
+    currentTab = tab;
+    document.getElementById('panel-anat').classList.toggle('active', tab === 'anat');
+    document.getElementById('panel-phys').classList.toggle('active', tab === 'phys');
+    document.getElementById('tabAnat').className = 'tab-btn' + (tab === 'anat' ? ' active-anat' : '');
+    document.getElementById('tabPhys').className = 'tab-btn' + (tab === 'phys' ? ' active-phys' : '');
+    document.getElementById('rubricStrip').style.display = tab === 'anat' ? '' : 'none';
+    var fill = document.getElementById('globalFill');
+    fill.className = 'progress-fill ' + (tab === 'anat' ? 'anat-fill' : 'phys-fill');
+    document.getElementById('progressLabel').textContent = tab === 'anat' ? 'Anatomy Progress' : 'Physiology Progress';
+    updateProgress();
+  }
+
+  function toggleRegion(header) {
+    var isOpen = header.classList.contains('open');
+    header.classList.toggle('open', !isOpen);
+    header.nextElementSibling.classList.toggle('open', !isOpen);
+  }
+
+  function toggleCheck(item, mode) {
+    item.classList.toggle('checked-' + mode);
+    updateProgress();
+  }
+
+  function updateProgress() {
+    var panel = document.getElementById('panel-' + currentTab);
+    var allItems = panel.querySelectorAll('.check-item, .feedback-row');
+    var checkedItems = panel.querySelectorAll('.checked-' + currentTab);
+    var total = allItems.length;
+    var checked = checkedItems.length;
+    var pct = total ? Math.round((checked / total) * 100) : 0;
+    document.getElementById('globalFill').style.width = pct + '%';
+    document.getElementById('globalCount').textContent = checked + ' / ' + total;
+
+    panel.querySelectorAll('.region-group').forEach(function(group) {
+      var rItems = group.querySelectorAll('.check-item, .feedback-row');
+      var rChecked = group.querySelectorAll('.checked-' + currentTab);
+      var rPct = rItems.length ? Math.round((rChecked.length / rItems.length) * 100) : 0;
+      var fill = group.querySelector('.region-mini-fill');
+      var label = group.querySelector('.region-progress-text');
+      if (fill) fill.style.width = rPct + '%';
+      if (label) label.textContent = rPct + '%';
+    });
+
+    if (currentTab === 'anat') updateRubricPills();
+  }
+
+  function updateRubricPills() {
+    var panel = document.getElementById('panel-anat');
+    var cats = {anatomy:0,histo:0,neural:0,function:0,cells:0,secrete:0};
+    var totals = {anatomy:0,histo:0,neural:0,function:0,cells:0,secrete:0};
+    panel.querySelectorAll('.check-item').forEach(function(item) {
+      (item.dataset.cats||'').split(' ').forEach(function(c){if(totals[c]!==undefined)totals[c]++;});
+    });
+    panel.querySelectorAll('.check-item.checked-anat').forEach(function(item) {
+      (item.dataset.cats||'').split(' ').forEach(function(c){if(cats[c]!==undefined)cats[c]++;});
+    });
+    var t = 0.5;
+    var anat = (cats.anatomy/(totals.anatomy||1)) >= t;
+    var histo = (cats.histo/(totals.histo||1)) >= t && (cats.cells/(totals.cells||1)) >= t;
+    var neural = (cats.neural/(totals.neural||1)) >= t;
+    var func = (cats.function/(totals.function||1)) >= t;
+    var all = panel.querySelectorAll('.check-item.checked-anat').length / (panel.querySelectorAll('.check-item').length||1);
+    var effort = all >= t;
+    ['rpAnat','rpHisto','rpNeural','rpFunc','rpVisual','rpAccuracy'].forEach(function(id){
+      document.getElementById(id).classList.remove('met');
+    });
+    if(anat) document.getElementById('rpAnat').classList.add('met');
+    if(histo) document.getElementById('rpHisto').classList.add('met');
+    if(neural) document.getElementById('rpNeural').classList.add('met');
+    if(func) document.getElementById('rpFunc').classList.add('met');
+    if(effort) document.getElementById('rpVisual').classList.add('met');
+    if(effort&&anat&&histo) document.getElementById('rpAccuracy').classList.add('met');
+  }
+
+  updateProgress();
+</script>
+</body>
+</html>
