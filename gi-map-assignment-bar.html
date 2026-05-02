@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GI MAP Assignment Bar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Lora:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sage-50:  #f3f6f1;
+    --sage-100: #e6ede2;
+    --sage-200: #c8d6c0;
+    --sage-300: #a3b89a;
+    --sage-500: #6b8a5d;
+    --sage-600: #4f6b44;
+    --sage-700: #3a5230;
+    --sage-800: #283a21;
+    --ink:      #1d2519;
+    --paper:    #ffffff;
+    --shadow-sm: 0 1px 3px rgba(40,58,33,.10), 0 1px 2px rgba(40,58,33,.06);
+    --shadow-md: 0 6px 16px rgba(40,58,33,.18);
+    --shadow-lg: 0 24px 60px rgba(40,58,33,.32);
+
+    /* Navy + gold bar palette */
+    --navy-700: #14213d;
+    --navy-800: #0e1730;
+    --navy-900: #08101f;
+    --gold-300: #e8c878;
+    --gold-400: #d4af37;
+    --gold-500: #b8932f;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    position: relative;
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    color: var(--ink);
+    background: transparent;
+    padding: 14px;
+    min-height: 0;
+    transition: min-height .15s ease;
+  }
+
+  body.modal-open {
+    min-height: 760px;
+    overflow: hidden;
+  }
+
+  /* ============ BAR REGION ============ */
+  .bar-region {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 640px) {
+    .bar-region { grid-template-columns: 1fr; }
+  }
+
+  /* ============ NAVY BAR ============ */
+  .bar {
+    appearance: none;
+    border: 0;
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+    color: #fff;
+    padding: 20px 22px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--navy-700) 0%, var(--navy-800) 100%);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .bar::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(212,175,55,.08), rgba(255,255,255,0) 60%);
+    pointer-events: none;
+  }
+
+  .bar:hover,
+  .bar:focus-visible {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(20, 33, 61, .35);
+    background: linear-gradient(135deg, var(--navy-800) 0%, var(--navy-900) 100%);
+    outline: none;
+  }
+
+  .bar:focus-visible {
+    outline: 3px solid var(--gold-400);
+    outline-offset: 2px;
+  }
+
+  .bar-text {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+  }
+
+  .bar-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--gold-400);
+  }
+
+  .bar-title {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    color: #ffffff;
+  }
+
+  .bar-sub {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--gold-300);
+    margin-top: 2px;
+  }
+
+  .bar-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(212, 175, 55, .14);
+    color: var(--gold-300);
+    border: 1px solid rgba(212, 175, 55, .35);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    font-size: 18px;
+    font-weight: 700;
+    transition: transform .2s ease, background .15s ease, color .15s ease;
+  }
+
+  .bar:hover .bar-icon,
+  .bar:focus-visible .bar-icon {
+    transform: translateX(3px);
+    background: rgba(212, 175, 55, .25);
+    color: #fff;
+  }
+
+  /* ============ MODAL ============ */
+  .modal-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 760px;
+    background: rgba(29, 37, 25, 0.62);
+    backdrop-filter: blur(2px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    z-index: 9999;
+  }
+
+  .modal-backdrop.open { display: flex; }
+
+  .modal {
+    background: var(--paper);
+    width: 100%;
+    max-width: 1000px;
+    height: 100%;
+    max-height: calc(760px - 32px);
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    animation: modalIn .22s cubic-bezier(.2,.8,.3,1);
+  }
+
+  @keyframes modalIn {
+    from { opacity: 0; transform: translateY(8px) scale(.985); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 18px;
+    background: var(--sage-50);
+    border-bottom: 1px solid var(--sage-200);
+    flex-shrink: 0;
+  }
+
+  .modal-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .modal-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--sage-500);
+    flex-shrink: 0;
+  }
+
+  .modal-title {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--sage-800);
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .btn {
+    appearance: none;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 7px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: background .12s ease, border-color .12s ease, transform .12s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    line-height: 1;
+  }
+
+  .btn:active { transform: translateY(1px); }
+
+  .btn-print {
+    background: var(--sage-600);
+    color: #fff;
+  }
+  .btn-print:hover { background: var(--sage-700); }
+  .btn-print:focus-visible {
+    outline: 3px solid var(--sage-200);
+    outline-offset: 2px;
+  }
+
+  .btn-close {
+    background: #fff;
+    color: var(--ink);
+    border-color: var(--sage-200);
+  }
+  .btn-close:hover {
+    background: var(--sage-100);
+    border-color: var(--sage-300);
+  }
+  .btn-close:focus-visible {
+    outline: 3px solid var(--sage-200);
+    outline-offset: 2px;
+  }
+
+  .modal-body {
+    flex: 1;
+    overflow: hidden;
+    background: #fff;
+    position: relative;
+  }
+
+  .modal-body iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+  }
+
+  .frame-loading {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    background: var(--sage-50);
+    color: var(--sage-700);
+    font-size: 14px;
+    font-weight: 600;
+    pointer-events: none;
+    transition: opacity .25s ease;
+  }
+  .frame-loading.hidden { opacity: 0; }
+</style>
+</head>
+<body>
+
+<div class="bar-region" role="group" aria-label="GI MAP resources">
+
+  <button type="button" class="bar" id="bar-assignment" aria-haspopup="dialog" aria-controls="modal-assignment">
+    <span class="bar-text">
+      <span class="bar-eyebrow">Assignment</span>
+      <span class="bar-title">GI MAP Assignment</span>
+      <span class="bar-sub">Open instructions, print or save as PDF</span>
+    </span>
+    <span class="bar-icon" aria-hidden="true">&rsaquo;</span>
+  </button>
+
+  <button type="button" class="bar" id="bar-structures" aria-haspopup="dialog" aria-controls="modal-structures">
+    <span class="bar-text">
+      <span class="bar-eyebrow">Reference</span>
+      <span class="bar-title">GI MAP Structure List</span>
+      <span class="bar-sub">Required structures to identify and label</span>
+    </span>
+    <span class="bar-icon" aria-hidden="true">&rsaquo;</span>
+  </button>
+
+</div>
+
+<!-- ============ ASSIGNMENT MODAL ============ -->
+<div class="modal-backdrop" id="modal-assignment" role="dialog" aria-modal="true" aria-labelledby="title-assignment" data-frame="frame-assignment">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title-wrap">
+        <span class="modal-dot" aria-hidden="true"></span>
+        <h2 class="modal-title" id="title-assignment">GI MAP Assignment Instructions</h2>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-print" data-print="frame-assignment" aria-label="Print or save as PDF">
+          <span aria-hidden="true">&#x1F5A8;</span> Print / PDF
+        </button>
+        <button type="button" class="btn btn-close" data-close="modal-assignment" aria-label="Close instructions">
+          Close &times;
+        </button>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="frame-loading" id="loading-assignment">Loading instructions...</div>
+      <iframe id="frame-assignment"
+              data-src="https://drsrennie-stack.github.io/arcbio431/gi-map-assignment.html"
+              title="GI MAP Assignment Instructions"
+              loading="lazy"></iframe>
+    </div>
+  </div>
+</div>
+
+<!-- ============ STRUCTURE LIST MODAL ============ -->
+<div class="modal-backdrop" id="modal-structures" role="dialog" aria-modal="true" aria-labelledby="title-structures" data-frame="frame-structures">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title-wrap">
+        <span class="modal-dot" aria-hidden="true"></span>
+        <h2 class="modal-title" id="title-structures">GI MAP Structure List</h2>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-print" data-print="frame-structures" aria-label="Print or save as PDF">
+          <span aria-hidden="true">&#x1F5A8;</span> Print / PDF
+        </button>
+        <button type="button" class="btn btn-close" data-close="modal-structures" aria-label="Close structure list">
+          Close &times;
+        </button>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="frame-loading" id="loading-structures">Loading structure list...</div>
+      <iframe id="frame-structures"
+              data-src="https://drsrennie-stack.github.io/arcbio431/gi-structure-list.html"
+              title="GI MAP Structure List"
+              loading="lazy"></iframe>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var lastTrigger = null;
+
+  function openModal(modalId, triggerEl) {
+    var modal = document.getElementById(modalId);
+    if (!modal) return;
+    var frameId = modal.getAttribute('data-frame');
+    var frame = document.getElementById(frameId);
+    var loader = document.getElementById('loading-' + frameId.replace('frame-', ''));
+
+    // Lazy-load iframe src on first open
+    if (frame && !frame.src && frame.dataset.src) {
+      frame.addEventListener('load', function once(){
+        if (loader) loader.classList.add('hidden');
+        frame.removeEventListener('load', once);
+      });
+      frame.src = frame.dataset.src;
+    } else if (loader) {
+      loader.classList.add('hidden');
+    }
+
+    lastTrigger = triggerEl || null;
+    document.body.classList.add('modal-open');
+    modal.classList.add('open');
+
+    // Move focus into the modal
+    var firstClose = modal.querySelector('[data-close]');
+    if (firstClose) setTimeout(function(){ firstClose.focus(); }, 30);
+
+    // Nudge the height-sender so Kajabi grows the iframe
+    window.dispatchEvent(new Event('resize'));
+  }
+
+  function closeModal(modalId) {
+    var modal = document.getElementById(modalId);
+    if (!modal) return;
+    modal.classList.remove('open');
+
+    // Only release body lock if no other modal is open
+    if (!document.querySelector('.modal-backdrop.open')) {
+      document.body.classList.remove('modal-open');
+    }
+
+    if (lastTrigger && typeof lastTrigger.focus === 'function') {
+      lastTrigger.focus();
+    }
+
+    // Tell Kajabi to shrink iframe back
+    setTimeout(function(){ window.dispatchEvent(new Event('resize')); }, 50);
+  }
+
+  // Bar triggers
+  var barAssignment = document.getElementById('bar-assignment');
+  var barStructures = document.getElementById('bar-structures');
+
+  barAssignment.addEventListener('click', function(){ openModal('modal-assignment', barAssignment); });
+  barStructures.addEventListener('click', function(){ openModal('modal-structures', barStructures); });
+
+  // Close buttons
+  document.querySelectorAll('[data-close]').forEach(function(btn){
+    btn.addEventListener('click', function(){ closeModal(btn.dataset.close); });
+  });
+
+  // Click backdrop to close
+  document.querySelectorAll('.modal-backdrop').forEach(function(bd){
+    bd.addEventListener('click', function(e){
+      if (e.target === bd) closeModal(bd.id);
+    });
+  });
+
+  // Escape to close
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') {
+      var open = document.querySelector('.modal-backdrop.open');
+      if (open) closeModal(open.id);
+    }
+  });
+
+  // Print buttons: print just the iframe contents
+  document.querySelectorAll('[data-print]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var frame = document.getElementById(btn.dataset.print);
+      if (!frame) return;
+      try {
+        frame.contentWindow.focus();
+        frame.contentWindow.print();
+      } catch (err) {
+        // Cross-origin fallback: open in new tab so the student can print there
+        window.open(frame.src || frame.dataset.src, '_blank', 'noopener');
+      }
+    });
+  });
+})();
+</script>
+
+<!-- ============ KAJABI IFRAME HEIGHT SENDER ============ -->
+<script>
+(function(){
+  var FRAME_ID = 'gi-map-assignment-bar';
+  var lastH = 0;
+
+  function sendHeight() {
+    var h = Math.max(
+      document.body.scrollHeight,
+      document.documentElement.scrollHeight,
+      document.body.offsetHeight,
+      document.documentElement.offsetHeight
+    );
+    if (h === lastH) return;
+    lastH = h;
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({ id: FRAME_ID, height: h }, '*');
+    }
+  }
+
+  window.addEventListener('load', sendHeight);
+  window.addEventListener('resize', sendHeight);
+  document.addEventListener('DOMContentLoaded', sendHeight);
+
+  if (window.ResizeObserver) {
+    var ro = new ResizeObserver(function(){ sendHeight(); });
+    ro.observe(document.body);
+  }
+
+  // Initial nudges
+  setTimeout(sendHeight, 100);
+  setTimeout(sendHeight, 400);
+  setTimeout(sendHeight, 1000);
+})();
+</script>
+
+</body>
+</html>
