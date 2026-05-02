@@ -329,8 +329,8 @@
   <button type="button" class="bar" id="bar-structures" aria-haspopup="dialog" aria-controls="modal-structures">
     <span class="bar-text">
       <span class="bar-eyebrow">Reference</span>
-      <span class="bar-title">GI MAP Structure List</span>
-      <span class="bar-sub">Required structures to identify and label</span>
+      <span class="bar-title">GI MAP</span>
+      <span class="bar-sub">Open the GI map for review and labeling</span>
     </span>
     <span class="bar-icon" aria-hidden="true">&rsaquo;</span>
   </button>
@@ -357,7 +357,7 @@
     <div class="modal-body">
       <div class="frame-loading" id="loading-assignment">Loading instructions...</div>
       <iframe id="frame-assignment"
-              data-src="https://drsrennie-stack.github.io/arcbio431/gi-map-assignment.html"
+              src="https://drsrennie-stack.github.io/arcbio431/gi-map-assignment.html"
               title="GI MAP Assignment Instructions"
               loading="lazy"></iframe>
     </div>
@@ -370,7 +370,7 @@
     <div class="modal-header">
       <div class="modal-title-wrap">
         <span class="modal-dot" aria-hidden="true"></span>
-        <h2 class="modal-title" id="title-structures">GI MAP Structure List</h2>
+        <h2 class="modal-title" id="title-structures">GI MAP</h2>
       </div>
       <div class="modal-actions">
         <button type="button" class="btn btn-print" data-print="frame-structures" aria-label="Print or save as PDF">
@@ -382,10 +382,10 @@
       </div>
     </div>
     <div class="modal-body">
-      <div class="frame-loading" id="loading-structures">Loading structure list...</div>
+      <div class="frame-loading" id="loading-structures">Loading GI MAP...</div>
       <iframe id="frame-structures"
-              data-src="https://drsrennie-stack.github.io/arcbio431/gi-structure-list.html"
-              title="GI MAP Structure List"
+              src="https://drsrennie-stack.github.io/arcbio431/GI-MAP.html"
+              title="GI MAP"
               loading="lazy"></iframe>
     </div>
   </div>
@@ -399,18 +399,19 @@
     var modal = document.getElementById(modalId);
     if (!modal) return;
     var frameId = modal.getAttribute('data-frame');
-    var frame = document.getElementById(frameId);
     var loader = document.getElementById('loading-' + frameId.replace('frame-', ''));
 
-    // Lazy-load iframe src on first open
-    if (frame && !frame.src && frame.dataset.src) {
-      frame.addEventListener('load', function once(){
-        if (loader) loader.classList.add('hidden');
-        frame.removeEventListener('load', once);
-      });
-      frame.src = frame.dataset.src;
-    } else if (loader) {
-      loader.classList.add('hidden');
+    // Hide loader once iframe finishes loading (or right away if already loaded)
+    if (loader) {
+      var frame = document.getElementById(frameId);
+      if (frame && frame.contentDocument && frame.contentDocument.readyState === 'complete') {
+        loader.classList.add('hidden');
+      } else if (frame) {
+        frame.addEventListener('load', function once(){
+          loader.classList.add('hidden');
+          frame.removeEventListener('load', once);
+        });
+      }
     }
 
     lastTrigger = triggerEl || null;
@@ -480,7 +481,7 @@
         frame.contentWindow.print();
       } catch (err) {
         // Cross-origin fallback: open in new tab so the student can print there
-        window.open(frame.src || frame.dataset.src, '_blank', 'noopener');
+        window.open(frame.src, '_blank', 'noopener');
       }
     });
   });
