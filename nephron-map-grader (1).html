@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nephron Map Grading Tool</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Lora:ital,wght@0,400;0,500;1,400;1,500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1E3D4C;
+    --navy-deep: #142a36;
+    --navy-tint: #EDF1F3;
+    --terra: #C2734D;
+    --terra-dark: #A0522D;
+    --terra-tint: #F4E4DA;
+    --gold: #c9a96e;
+    --gold-soft: #e6d4a8;
+    --white: #ffffff;
+    --off-white: #fafaf9;
+    --gray-300: #d4d4d4;
+    --gray-500: #737373;
+    --gray-700: #404040;
+    --shadow-sm: 0 1px 2px rgba(20, 42, 54, 0.04);
+    --shadow-md: 0 4px 12px rgba(20, 42, 54, 0.08);
+    --shadow-lg: 0 12px 32px rgba(20, 42, 54, 0.12);
+    --radius: 10px;
+    --radius-lg: 14px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    background: var(--off-white);
+    color: var(--navy-deep);
+    line-height: 1.6;
+    min-height: 100vh;
+    padding: 32px 20px 200px;
+  }
+
+  .skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: var(--navy);
+    color: var(--white);
+    padding: 8px 16px;
+    text-decoration: none;
+    z-index: 100;
+  }
+  .skip-link:focus { top: 0; }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* Header */
+  .header {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: 40px 44px;
+    box-shadow: var(--shadow-md);
+    margin-bottom: 28px;
+    border-top: 4px solid var(--terra);
+  }
+
+  .eyebrow {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--terra-dark);
+    margin-bottom: 14px;
+  }
+
+  h1 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    font-size: clamp(28px, 4vw, 40px);
+    color: var(--navy);
+    line-height: 1.15;
+    margin-bottom: 10px;
+    letter-spacing: -0.02em;
+  }
+
+  .subhead {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 600;
+    font-size: clamp(16px, 2vw, 19px);
+    color: var(--terra-dark);
+    margin-bottom: 18px;
+  }
+
+  .instructions {
+    font-family: 'Lora', serif;
+    font-style: italic;
+    font-size: 16px;
+    color: var(--gray-700);
+    max-width: 78ch;
+    line-height: 1.7;
+  }
+
+  /* Student info card */
+  .student-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: 28px 32px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 28px;
+    border: 1px solid var(--navy-tint);
+  }
+
+  .student-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+  }
+
+  .field-label {
+    display: block;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+
+  input[type="text"], input[type="date"], textarea, select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--gray-300);
+    border-radius: 8px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 15px;
+    color: var(--navy-deep);
+    background: var(--white);
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  input[type="text"]:focus, input[type="date"]:focus, textarea:focus, select:focus {
+    outline: 2px solid var(--gold);
+    outline-offset: 1px;
+    border-color: var(--terra);
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 70px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    line-height: 1.55;
+  }
+
+  /* Rubric criterion cards */
+  .criterion {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 22px;
+    overflow: hidden;
+    border: 2px dashed var(--gray-300);
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  }
+
+  .criterion.unlocked {
+    border: 2px solid var(--gold);
+    border-style: solid;
+  }
+
+  .criterion.completed {
+    border: 2px solid var(--navy);
+    background: var(--navy-tint);
+  }
+
+  .criterion-header {
+    padding: 22px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+    background: var(--navy);
+    color: var(--white);
+  }
+
+  .criterion-title-block { flex: 1; min-width: 240px; }
+
+  .criterion-name {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 19px;
+    margin-bottom: 4px;
+    letter-spacing: -0.01em;
+  }
+
+  .criterion-desc {
+    font-family: 'Lora', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: rgba(255,255,255,0.78);
+  }
+
+  .score-badge {
+    background: var(--white);
+    color: var(--navy);
+    padding: 8px 18px;
+    border-radius: 999px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    min-width: 80px;
+    text-align: center;
+    border: 2px solid var(--gold);
+  }
+
+  .criterion-body {
+    padding: 24px 28px 26px;
+  }
+
+  .level-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .level-btn {
+    background: var(--white);
+    border: 1.5px solid var(--gray-300);
+    border-radius: 10px;
+    padding: 14px 14px;
+    text-align: left;
+    cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    transition: all 0.15s;
+    color: var(--navy-deep);
+  }
+
+  .level-btn:hover {
+    border-color: var(--terra);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .level-btn:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+  }
+
+  .level-btn[aria-pressed="true"] {
+    background: var(--navy);
+    border-color: var(--navy);
+    color: var(--white);
+  }
+
+  .level-btn[aria-pressed="true"] .level-pts {
+    color: var(--gold-soft);
+  }
+
+  .level-name {
+    font-weight: 700;
+    font-size: 14px;
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  .level-pts {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--terra-dark);
+  }
+
+  .level-desc {
+    font-size: 12px;
+    line-height: 1.45;
+    color: var(--gray-700);
+    margin-top: 6px;
+  }
+
+  .level-btn[aria-pressed="true"] .level-desc {
+    color: rgba(255,255,255,0.85);
+  }
+
+  .checklist {
+    background: var(--off-white);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 18px;
+    border-left: 3px solid var(--terra);
+  }
+
+  .completed .checklist {
+    background: var(--white);
+  }
+
+  .checklist-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+
+  .checklist-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--terra-dark);
+  }
+
+  .bulk-actions {
+    display: flex;
+    gap: 6px;
+  }
+
+  .bulk-btn {
+    background: var(--white);
+    border: 1px solid var(--gray-300);
+    color: var(--navy);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .bulk-btn:hover {
+    border-color: var(--terra);
+    color: var(--terra-dark);
+  }
+
+  .bulk-btn:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 1px;
+  }
+
+  .checklist ul {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 4px 20px;
+  }
+
+  .checklist li {
+    font-size: 13px;
+    color: var(--gray-700);
+    line-height: 1.5;
+    padding: 4px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .checklist li::before { content: none; }
+
+  .check-btn {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    border: 1.5px solid var(--gray-300);
+    border-radius: 4px;
+    background: var(--white);
+    cursor: pointer;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    margin-top: 1px;
+  }
+
+  .check-btn:hover {
+    border-color: var(--terra);
+    transform: scale(1.05);
+  }
+
+  .check-btn:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+  }
+
+  .check-btn[data-state="present"] {
+    background: var(--navy);
+    border-color: var(--navy);
+  }
+
+  .check-btn[data-state="present"] .check-icon::before {
+    content: "✓";
+    color: var(--white);
+    font-weight: 700;
+    font-size: 13px;
+    line-height: 1;
+  }
+
+  .check-btn[data-state="missing"] {
+    background: var(--terra);
+    border-color: var(--terra);
+  }
+
+  .check-btn[data-state="missing"] .check-icon::before {
+    content: "✗";
+    color: var(--white);
+    font-weight: 700;
+    font-size: 13px;
+    line-height: 1;
+  }
+
+  .item-text { flex: 1; }
+
+  .region-tag {
+    display: inline-block;
+    flex-shrink: 0;
+    background: var(--terra-tint);
+    color: var(--terra-dark);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-top: 2px;
+    min-width: 56px;
+    text-align: center;
+  }
+
+  .completed .region-tag {
+    background: var(--white);
+    color: var(--terra-dark);
+  }
+
+  .comment-block label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--navy);
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  /* Overall feedback */
+  .feedback-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: 28px 32px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 28px;
+    border: 1px solid var(--navy-tint);
+  }
+
+  .feedback-card h2 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--navy);
+    margin-bottom: 18px;
+    letter-spacing: -0.01em;
+  }
+
+  .feedback-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  /* Sticky total bar */
+  .total-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--navy);
+    color: var(--white);
+    padding: 18px 24px;
+    box-shadow: 0 -4px 20px rgba(20, 42, 54, 0.18);
+    z-index: 50;
+  }
+
+  .total-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .total-display {
+    display: flex;
+    align-items: baseline;
+    gap: 18px;
+    flex-wrap: wrap;
+  }
+
+  .total-score {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    font-size: 32px;
+    color: var(--gold);
+    letter-spacing: -0.02em;
+  }
+
+  .total-of {
+    font-size: 18px;
+    color: rgba(255,255,255,0.7);
+  }
+
+  .total-percent {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--gold-soft);
+  }
+
+  .total-letter {
+    background: var(--gold);
+    color: var(--navy-deep);
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    min-width: 44px;
+    text-align: center;
+  }
+
+  .progress-track {
+    flex: 1;
+    min-width: 120px;
+    height: 8px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 4px;
+    overflow: hidden;
+    max-width: 280px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--gold-soft));
+    transition: width 0.3s ease;
+    width: 0%;
+  }
+
+  .actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    background: var(--gold);
+    color: var(--navy-deep);
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+  }
+
+  .btn:hover { background: var(--gold-soft); }
+  .btn:active { transform: translateY(1px); }
+  .btn:focus-visible {
+    outline: 2px solid var(--white);
+    outline-offset: 2px;
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--white);
+    border: 1.5px solid rgba(255,255,255,0.4);
+  }
+
+  .btn-secondary:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: var(--white);
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 110px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--navy-deep);
+    color: var(--white);
+    padding: 12px 22px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 14px;
+    box-shadow: var(--shadow-lg);
+    opacity: 0;
+    transition: opacity 0.2s, transform 0.2s;
+    pointer-events: none;
+    z-index: 100;
+    border: 1.5px solid var(--gold);
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .criterion-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .level-display {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold-soft);
+    display: none;
+  }
+
+  .level-display.shown { display: inline-block; }
+
+  /* Print-only utility */
+  .print-only { display: none; }
+
+  /* Print */
+  @media print {
+    @page { margin: 0.5in; }
+    body { padding: 0; background: white; font-size: 11pt; color: #000; }
+    .total-bar, .actions, .level-grid, .skip-link, .bulk-actions { display: none !important; }
+    .print-only { display: block !important; }
+    .print-hide { display: none !important; }
+
+    .header {
+      box-shadow: none;
+      border-top: 3px solid #333;
+      padding: 18px 22px;
+      margin-bottom: 14px;
+      page-break-after: avoid;
+      break-after: avoid;
+    }
+    h1 { color: #000 !important; font-size: 22pt; }
+    .eyebrow { color: #444 !important; }
+    .subhead { color: #333 !important; }
+    .instructions { display: none; }
+
+    .student-card, .feedback-card {
+      box-shadow: none;
+      border: 1px solid #999;
+      padding: 14px 18px;
+      margin-bottom: 14px;
+    }
+    .student-card { page-break-inside: avoid; break-inside: avoid; }
+
+    .print-summary-card {
+      border: 2px solid #000;
+      padding: 14px 18px;
+      margin-bottom: 16px;
+      page-break-inside: avoid;
+      break-inside: avoid;
+      background: white;
+      border-radius: 6px;
+    }
+    .ps-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+      border-bottom: 1px dotted #ccc;
+    }
+    .ps-row:last-child { border-bottom: none; }
+    .ps-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 10pt;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #555;
+    }
+    .ps-value { font-weight: 600; color: #000; }
+    .ps-final { padding-top: 8px; border-top: 1px solid #000; margin-top: 4px; }
+    .ps-final .ps-value { font-size: 13pt; font-weight: 800; }
+
+    /* Allow criteria to break across pages so long comments flow */
+    .criterion {
+      page-break-inside: auto;
+      break-inside: auto;
+      box-shadow: none;
+      border: 1px solid #999 !important;
+      background: white !important;
+      margin-bottom: 14px;
+      border-radius: 4px;
+    }
+    .criterion-header {
+      background: white !important;
+      color: #000 !important;
+      border-bottom: 2px solid #333;
+      padding: 12px 18px;
+      page-break-after: avoid;
+      break-after: avoid;
+    }
+    .criterion-name, .criterion-desc { color: #000 !important; }
+    .criterion-desc { color: #444 !important; font-size: 10pt; }
+    .score-badge {
+      color: #000 !important;
+      border-color: #333;
+      background: white;
+    }
+    .level-display {
+      color: #000 !important;
+      display: inline-block !important;
+    }
+    .criterion-body { padding: 12px 18px; }
+
+    /* Show checklist in print with state indicators visible */
+    .checklist {
+      display: block !important;
+      background: transparent !important;
+      border-left: 2px solid #999;
+      padding: 10px 14px;
+      margin-bottom: 10px;
+      page-break-inside: auto;
+      break-inside: auto;
+    }
+    .checklist-header { margin-bottom: 6px; }
+    .checklist-label {
+      color: #555 !important;
+      font-size: 9pt;
+    }
+    .checklist ul {
+      display: block !important;
+      grid-template-columns: none !important;
+    }
+    .checklist li {
+      page-break-inside: avoid;
+      break-inside: avoid;
+      padding: 2px 0;
+      font-size: 10pt;
+      color: #000 !important;
+    }
+    .check-btn {
+      width: 13px;
+      height: 13px;
+      border: 1px solid #666 !important;
+      background: white !important;
+      margin-top: 2px;
+    }
+    .check-btn[data-state="present"] {
+      background: #1E3D4C !important;
+      border-color: #1E3D4C !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .check-btn[data-state="present"] .check-icon::before {
+      font-size: 9pt;
+      color: white !important;
+    }
+    .check-btn[data-state="missing"] {
+      background: #C2734D !important;
+      border-color: #C2734D !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .check-btn[data-state="missing"] .check-icon::before {
+      font-size: 9pt;
+      color: white !important;
+    }
+    .region-tag {
+      background: #f4e4da !important;
+      color: #A0522D !important;
+      font-size: 8pt;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    textarea { display: none !important; }
+    input { border: none !important; padding: 0 !important; font-weight: 600; background: transparent !important; }
+    .field-label { color: #666 !important; font-size: 9pt; }
+
+    /* Long comments flow naturally across pages */
+    .print-comment {
+      display: block !important;
+      font-family: 'Lora', serif;
+      font-size: 11pt;
+      line-height: 1.55;
+      color: #000;
+      margin-top: 6px;
+      white-space: pre-wrap;
+      page-break-inside: auto;
+      break-inside: auto;
+      orphans: 3;
+      widows: 3;
+    }
+
+    .comment-block { page-break-inside: auto; break-inside: auto; }
+    .comment-block label { font-size: 9pt; color: #666 !important; }
+    .feedback-card h2 { font-size: 14pt; color: #000 !important; }
+    .feedback-grid { display: block; }
+    .feedback-grid > div { margin-bottom: 10px; page-break-inside: avoid; }
+
+    body { padding-bottom: 0 !important; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  @media (max-width: 640px) {
+    body { padding: 16px 12px 240px; }
+    .header { padding: 28px 22px; }
+    .student-card, .feedback-card { padding: 22px 20px; }
+    .criterion-header { padding: 18px 20px; }
+    .criterion-body { padding: 20px 20px 22px; }
+    .total-inner { flex-direction: column; align-items: stretch; }
+    .total-display { justify-content: space-between; }
+  }
+</style>
+</head>
+<body>
+
+<a href="#main" class="skip-link">Skip to main content</a>
+
+<div class="container" id="main">
+
+  <header class="header">
+    <div class="eyebrow">BIO 005 · Human Physiology</div>
+    <h1>Nephron Map Grading Tool</h1>
+    <div class="subhead">Drawing assessment rubric, 50 points total</div>
+    <p class="instructions">
+      Score each criterion using the level buttons below. Add specific feedback in each comment box. The total score, percentage, and letter grade calculate automatically. Use the action buttons to copy a clean feedback report to your clipboard, download as a text file, or print the completed rubric for the gradebook.
+    </p>
+  </header>
+
+  <section class="student-card" aria-label="Student information">
+    <div class="student-grid">
+      <div>
+        <label class="field-label" for="student-name">Student name</label>
+        <input type="text" id="student-name" placeholder="Last, First">
+      </div>
+      <div>
+        <label class="field-label" for="student-id">Student ID (optional)</label>
+        <input type="text" id="student-id" placeholder="W-number or ID">
+      </div>
+      <div>
+        <label class="field-label" for="course-section">Course / Section</label>
+        <input type="text" id="course-section" value="BIO 005">
+      </div>
+      <div>
+        <label class="field-label" for="grade-date">Date graded</label>
+        <input type="date" id="grade-date">
+      </div>
+    </div>
+  </section>
+
+  <section class="print-only print-summary-card" id="print-summary" aria-hidden="true"></section>
+
+  <main id="rubric-container" aria-label="Rubric"></main>
+
+  <section class="feedback-card">
+    <h2>Overall Feedback</h2>
+    <div class="feedback-grid">
+      <div>
+        <label class="field-label" for="strengths">Strengths</label>
+        <textarea id="strengths" placeholder="What did this student do well?"></textarea>
+      </div>
+      <div>
+        <label class="field-label" for="growth">Growth areas</label>
+        <textarea id="growth" placeholder="Where can they improve?"></textarea>
+      </div>
+      <div>
+        <label class="field-label" for="next-steps">Next steps</label>
+        <textarea id="next-steps" placeholder="Specific recommendations for the next assignment"></textarea>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div class="total-bar" role="status" aria-live="polite" aria-atomic="true">
+  <div class="total-inner">
+    <div class="total-display">
+      <div>
+        <span class="total-score" id="total-score">0</span><span class="total-of"> / 50</span>
+      </div>
+      <span class="total-percent" id="total-percent">0%</span>
+      <span class="total-letter" id="total-letter">,</span>
+    </div>
+    <div class="progress-track" aria-hidden="true">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+    <div class="actions">
+      <button class="btn" id="copy-btn" type="button">Copy Report</button>
+      <button class="btn btn-secondary" id="download-btn" type="button">Download .txt</button>
+      <button class="btn btn-secondary" id="print-btn" type="button">Print</button>
+      <button class="btn btn-secondary" id="reset-btn" type="button">Reset</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+  // Rubric data, items mirror the structure list given to students
+  const RUBRIC = [
+    {
+      id: 'anatomy',
+      name: 'Anatomical Accuracy',
+      max: 10,
+      desc: 'Structural items from the ANATOMY rows of the structure list',
+      checklist: [
+        { region: 'Corpuscle', text: 'Glomerulus, tuft of fenestrated capillaries' },
+        { region: 'Corpuscle', text: 'Bowman\'s capsule, double-walled epithelial sac' },
+        { region: 'Corpuscle', text: 'Parietal layer + visceral layer + Bowman\'s space' },
+        { region: 'Corpuscle', text: 'Vascular pole + urinary pole both labeled' },
+        { region: 'PCT', text: 'Most convoluted segment, located entirely in cortex' },
+        { region: 'PCT', text: 'Receives filtrate from Bowman\'s space at urinary pole, drains into descending limb' },
+        { region: 'Loop', text: 'U-shaped hairpin: descending > thin ascending > TAL' },
+        { region: 'Loop', text: 'Cortical (~85%) vs juxtamedullary (~15%) nephrons distinguished' },
+        { region: 'DCT', text: 'Located entirely in cortex, begins at macula densa, less convoluted than PCT' },
+        { region: 'DCT', text: 'Early DCT (NCC) transitions to late DCT (principal + intercalated)' },
+        { region: 'CD', text: 'Cortical CD > outer medullary > inner medullary > papillary duct (Bellini) > minor calyx' },
+        { region: 'CD', text: 'Multiple nephrons drain into a single collecting duct (convergence)' },
+        { region: 'JGA', text: 'Triangular zone at vascular pole where DCT contacts afferent arteriole of its OWN glomerulus' }
+      ]
+    },
+    {
+      id: 'histology',
+      name: 'Histology + Cell Types',
+      max: 10,
+      desc: 'Items from the HISTOLOGY and CELLS rows of the structure list',
+      checklist: [
+        { region: 'Corpuscle', text: '3-layer filtration membrane: fenestrated endothelium + GBM + slit diaphragms (KEY zoom-in)' },
+        { region: 'Corpuscle', text: 'GBM negatively charged (heparan sulfate), repels anions like albumin' },
+        { region: 'Corpuscle', text: 'Size cutoff: <5 kDa freely filtered, 5 to 70 kDa restricted, >70 kDa excluded' },
+        { region: 'Corpuscle', text: 'Podocytes: visceral layer with pedicels, slit diaphragms (nephrin/podocin)' },
+        { region: 'Corpuscle', text: 'Intraglomerular mesangial cells: support, phagocytose, regulate Kf' },
+        { region: 'Corpuscle', text: 'Fenestrated endothelial cells: ~70 to 100 nm pores' },
+        { region: 'PCT', text: 'Simple cuboidal with prominent apical brush border (tallest in nephron)' },
+        { region: 'PCT', text: 'Basal striations from densely packed mitochondria' },
+        { region: 'PCT', text: '"Leaky" tight junctions, paracellular movement of water and small ions' },
+        { region: 'Loop', text: 'Thin descending + thin ascending = simple squamous' },
+        { region: 'Loop', text: 'TAL = simple cuboidal, abundant mitochondria' },
+        { region: 'DCT', text: 'Simple cuboidal, few or no microvilli (no brush border)' },
+        { region: 'DCT', text: 'Abundant mitochondria, smaller lumen than PCT' },
+        { region: 'CD', text: 'Simple cuboidal in cortex transitioning to simple columnar in inner medulla' },
+        { region: 'CD', text: 'Distinct, well-defined cell borders' },
+        { region: 'CD', text: 'Principal cells (~70%): ENaC, ROMK, AQP2' },
+        { region: 'CD', text: 'Alpha (Type A) intercalated cells, active in acidosis' },
+        { region: 'CD', text: 'Beta (Type B) intercalated cells, active in alkalosis' },
+        { region: 'JGA', text: 'Macula densa: tall narrow DCT cells sensing luminal NaCl via NKCC2' },
+        { region: 'JGA', text: 'JG cells: modified smooth muscle in afferent arteriole, renin granules' },
+        { region: 'JGA', text: 'Extraglomerular mesangial cells (Lacis cells) in the triangle' }
+      ]
+    },
+    {
+      id: 'vascular',
+      name: 'Vascular + Tubular Flow',
+      max: 5,
+      desc: 'Items from the Nephron Microvasculature panel (DRAW ON YOUR MAP + annotations)',
+      checklist: [
+        { region: 'Draw', text: 'Afferent arteriole entering glomerulus at vascular pole' },
+        { region: 'Draw', text: 'Glomerular capillary tuft (fenestrated), high-pressure filtration bed' },
+        { region: 'Draw', text: 'Efferent arteriole leaving glomerulus at vascular pole' },
+        { region: 'Draw', text: 'Peritubular capillaries wrapping PCT and DCT (cortical nephrons)' },
+        { region: 'Draw', text: 'Vasa recta parallel to Loop of Henle (juxtamedullary nephrons)' },
+        { region: 'Annotate', text: 'Two-capillary-bed design: glomerular (high pressure, filtration) + peritubular/vasa recta (low pressure, reabsorption)' },
+        { region: 'Annotate', text: 'Arteriole diameter modulates GFR: constrict afferent > GFR drops, constrict efferent > GFR rises' },
+        { region: 'Annotate', text: 'Vasa recta countercurrent exchange preserves medullary osmotic gradient' }
+      ]
+    },
+    {
+      id: 'functional',
+      name: 'Functional Annotations',
+      max: 5,
+      desc: 'Items from TRANSPORT, NEURAL/HORMONAL, and FUNCTION rows of the structure list',
+      checklist: [
+        { region: 'PCT', text: 'Na/K ATPase basolateral drives secondary active transport' },
+        { region: 'PCT', text: 'SGLT2/SGLT1 (glucose), amino acids, phosphate' },
+        { region: 'PCT', text: 'Reabsorbs ~65% Na+, water, Cl-, K+; 100% glucose, AAs; 85% HCO3-' },
+        { region: 'PCT', text: 'Secretes H+ (NHE3), organic acids (PAH, urate, penicillin), creatinine, drugs' },
+        { region: 'PCT', text: 'Bulk isosmotic reabsorption, ~300 mOsm in/out, volume reduced 65%' },
+        { region: 'Loop', text: 'Descending: AQP1, water permeable, NaCl impermeable, concentrates' },
+        { region: 'Loop', text: 'Thin ascending: water impermeable, NaCl permeable (passive), dilutes' },
+        { region: 'Loop', text: 'TAL: NKCC2 + ROMK, water impermeable, creates + lumen voltage' },
+        { region: 'Loop', text: 'TAL paracellular Ca2+ and Mg2+ reabsorption' },
+        { region: 'Loop', text: 'Countercurrent multiplication: 300 mOsm at junction > 1200 mOsm at papilla' },
+        { region: 'Loop', text: 'Reabsorbs ~25% NaCl, TAL diluting segment, filtrate leaves ~100 mOsm' },
+        { region: 'DCT', text: 'NCC apical (thiazide-sensitive), reabsorbs ~5 to 7% Na+' },
+        { region: 'DCT', text: 'Ca2+ reabsorption: TRPV5, calbindin, NCX/PMCA, PTH-stimulated' },
+        { region: 'DCT', text: 'Impermeable to water, continues diluting filtrate' },
+        { region: 'CD', text: 'Alpha IC: H+-ATPase + H+/K+-ATPase apical, AE1 basolateral' },
+        { region: 'CD', text: 'Beta IC: pendrin apical HCO3- secretion, H+-ATPase basolateral' },
+        { region: 'CD', text: 'ADH: V2 receptor > cAMP > AQP2 inserted apical > water reabsorbed' },
+        { region: 'CD', text: 'Aldosterone: upregulates ENaC, ROMK, Na/K ATPase, Na+ retention + K+ secretion' },
+        { region: 'CD', text: 'Final regulation of water (ADH), Na+/K+ (aldosterone), acid-base (IC cells)' },
+        { region: 'JGA', text: 'Renin release triggers: low perfusion, low NaCl at macula densa, sympathetic (β1)' },
+        { region: 'JGA', text: 'Tubuloglomerular feedback: macula densa > adenosine > afferent constriction' },
+        { region: 'JGA', text: 'RAAS initiation: renin > angiotensin II > aldosterone' },
+        { region: 'Neural', text: 'Sympathetic (T10-L1): renal plexus, arterioles, JG cells (β1 > renin), PCT/TAL' },
+        { region: 'Neural', text: 'Parasympathetic (S2-S4): bladder, minimal nephron role' },
+        { region: 'Neural', text: 'Somatic motor (pudendal): external urethral sphincter' },
+        { region: 'Hormonal', text: 'Renin > Ang I > ACE > Ang II > aldosterone + ADH + thirst + vasoconstriction' },
+        { region: 'Hormonal', text: 'ADH (posterior pituitary): V2 > AQP2 > water reabsorption' },
+        { region: 'Hormonal', text: 'ANP/BNP: dilates afferent, constricts efferent, inhibits RAAS/ADH' },
+        { region: 'Hormonal', text: 'PTH: Ca2+ in DCT, activates 1-alpha-hydroxylase in PCT (calcitriol), inhibits phosphate' },
+        { region: 'Hormonal', text: 'EPO (peritubular fibroblasts): hypoxia > RBC production' }
+      ]
+    },
+    {
+      id: 'organization',
+      name: 'Visual Organization',
+      max: 10,
+      desc: 'Items from the Drawing Reminders and Practical Layout Tips',
+      checklist: [
+        { region: 'Format', text: 'Single page, front side only' },
+        { region: 'Format', text: 'Arrows and brief captions, no paragraphs' },
+        { region: 'Color', text: 'Color-coded segments, blood vessels, and hormones separately' },
+        { region: 'Color', text: 'Legend in the corner' },
+        { region: 'Zoom-in', text: 'At least one filtration membrane zoom-in' },
+        { region: 'Zoom-in', text: 'At least one JGA zoom-in (triangular contact zone)' },
+        { region: 'Layout', text: 'Cortex/medulla boundary clearly labeled' },
+        { region: 'Layout', text: 'Captions are 1 to 5 word phrases connected by arrows' },
+        { region: 'Layout', text: 'Labels legible at full size in digital scan' }
+      ]
+    },
+    {
+      id: 'effort',
+      name: 'Accuracy + Effort',
+      max: 10,
+      desc: 'Synthesis indicators, optional extras, and overall fidelity to directions',
+      checklist: [
+        { region: 'Accuracy', text: 'No major anatomical or physiological errors' },
+        { region: 'Accuracy', text: 'Drew first, labeled accurately, kept text short (no prose paragraphs)' },
+        { region: 'Synthesis', text: 'Feedback loops drawn as small circles with + and - arrows (RAAS, TGF)' },
+        { region: 'Synthesis', text: 'Evidence of integration across regions, not just isolated labeling' },
+        { region: 'Optional', text: 'Mnemonics or memory aids included' },
+        { region: 'Optional', text: 'Brief clinical correlations (kidney stones, diabetes insipidus, SIADH)' },
+        { region: 'Quality', text: 'Scanned or photographed at high resolution, labels legible' }
+      ]
+    }
+  ];
+
+  // Level definitions, applied to each criterion
+  const LEVELS = [
+    { name: 'Excellent', pct: 1.0, desc: 'Complete and accurate, exceeds expectations' },
+    { name: 'Proficient', pct: 0.85, desc: 'Mostly complete, minor gaps or errors' },
+    { name: 'Developing', pct: 0.7, desc: 'Partial completion, several gaps' },
+    { name: 'Beginning', pct: 0.5, desc: 'Significant gaps, attempted but incomplete' },
+    { name: 'Not Present', pct: 0, desc: 'Missing or no credit earned' }
+  ];
+
+  // Build rubric DOM
+  const container = document.getElementById('rubric-container');
+  RUBRIC.forEach(crit => {
+    const card = document.createElement('section');
+    card.className = 'criterion';
+    card.id = `crit-${crit.id}`;
+    card.dataset.score = '';
+    card.setAttribute('aria-labelledby', `name-${crit.id}`);
+
+    const checklistHtml = crit.checklist.map((item, idx) => `
+      <li>
+        <button type="button" class="check-btn" data-state="empty" data-crit="${crit.id}" data-idx="${idx}" aria-label="Mark ${item.text} as present or missing" title="Click to cycle: empty, present (✓), missing (✗)">
+          <span class="check-icon" aria-hidden="true"></span>
+        </button>
+        <span class="region-tag">${item.region}</span>
+        <span class="item-text">${item.text}</span>
+      </li>
+    `).join('');
+
+    const levelsHtml = LEVELS.map(lvl => {
+      const pts = Math.round(crit.max * lvl.pct * 10) / 10;
+      const ptsDisplay = pts % 1 === 0 ? pts : pts.toFixed(1);
+      return `
+        <button type="button" class="level-btn" data-pts="${pts}" aria-pressed="false">
+          <span class="level-name">${lvl.name}</span>
+          <span class="level-pts">${ptsDisplay} / ${crit.max} pts</span>
+          <span class="level-desc">${lvl.desc}</span>
+        </button>
+      `;
+    }).join('');
+
+    card.innerHTML = `
+      <header class="criterion-header">
+        <div class="criterion-title-block">
+          <div class="criterion-name" id="name-${crit.id}">${crit.name}</div>
+          <div class="criterion-desc">${crit.desc}</div>
+        </div>
+        <div class="criterion-meta">
+          <span class="level-display" id="level-${crit.id}"></span>
+          <div class="score-badge" id="badge-${crit.id}" aria-label="Score for ${crit.name}">, / ${crit.max}</div>
+        </div>
+      </header>
+      <div class="criterion-body">
+        <div class="checklist" aria-label="Specific items to look for">
+          <div class="checklist-header">
+            <div class="checklist-label">Look for · click to mark ✓ present or ✗ missing</div>
+            <div class="bulk-actions">
+              <button type="button" class="bulk-btn" data-action="mark-present" data-crit="${crit.id}">Mark all ✓</button>
+              <button type="button" class="bulk-btn" data-action="clear" data-crit="${crit.id}">Clear marks</button>
+            </div>
+          </div>
+          <ul>${checklistHtml}</ul>
+        </div>
+        <div class="level-grid" role="radiogroup" aria-label="Performance level for ${crit.name}">
+          ${levelsHtml}
+        </div>
+        <div class="comment-block">
+          <label for="comment-${crit.id}">Specific feedback for ${crit.name}</label>
+          <textarea id="comment-${crit.id}" placeholder="What you saw, what was missing, what to do next time"></textarea>
+        </div>
+      </div>
+    `;
+
+    container.appendChild(card);
+  });
+
+  // Wire up level button selection
+  document.querySelectorAll('.criterion').forEach(card => {
+    const buttons = card.querySelectorAll('.level-btn');
+    const badge = card.querySelector('.score-badge');
+    const levelDisplay = card.querySelector('.level-display');
+    const max = parseInt(badge.textContent.split('/')[1].trim());
+
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        buttons.forEach(b => b.setAttribute('aria-pressed', 'false'));
+        btn.setAttribute('aria-pressed', 'true');
+        const pts = parseFloat(btn.dataset.pts);
+        const display = pts % 1 === 0 ? pts : pts.toFixed(1);
+        badge.textContent = `${display} / ${max}`;
+        const levelName = btn.querySelector('.level-name').textContent;
+        levelDisplay.textContent = levelName;
+        levelDisplay.classList.add('shown');
+        card.dataset.score = pts;
+        card.classList.remove('unlocked');
+        card.classList.add('completed');
+        updateTotal();
+      });
+    });
+  });
+
+  // Wire up check button tri-state cycling
+  document.querySelectorAll('.check-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const states = ['empty', 'present', 'missing'];
+      const current = btn.dataset.state || 'empty';
+      const next = states[(states.indexOf(current) + 1) % 3];
+      btn.dataset.state = next;
+    });
+  });
+
+  // Wire up bulk action buttons
+  document.querySelectorAll('.bulk-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const action = btn.dataset.action;
+      const critId = btn.dataset.crit;
+      const card = document.getElementById('crit-' + critId);
+      const checks = card.querySelectorAll('.check-btn');
+      if (action === 'mark-present') {
+        checks.forEach(c => c.dataset.state = 'present');
+      } else if (action === 'clear') {
+        checks.forEach(c => c.dataset.state = 'empty');
+      }
+    });
+  });
+
+  // Total calculation
+  function updateTotal() {
+    let total = 0;
+    let allScored = true;
+    document.querySelectorAll('.criterion').forEach(card => {
+      const score = card.dataset.score;
+      if (score === '') {
+        allScored = false;
+      } else {
+        total += parseFloat(score);
+      }
+    });
+
+    const totalRounded = Math.round(total * 10) / 10;
+    const display = totalRounded % 1 === 0 ? totalRounded : totalRounded.toFixed(1);
+    document.getElementById('total-score').textContent = display;
+
+    const pct = (total / 50) * 100;
+    const pctRounded = Math.round(pct * 10) / 10;
+    const pctDisplay = pctRounded % 1 === 0 ? pctRounded : pctRounded.toFixed(1);
+    document.getElementById('total-percent').textContent = `${pctDisplay}%`;
+    document.getElementById('progress-fill').style.width = `${Math.min(pct, 100)}%`;
+
+    const letter = letterGrade(pct);
+    document.getElementById('total-letter').textContent = letter;
+  }
+
+  function letterGrade(pct) {
+    if (pct >= 93) return 'A';
+    if (pct >= 90) return 'A-';
+    if (pct >= 87) return 'B+';
+    if (pct >= 83) return 'B';
+    if (pct >= 80) return 'B-';
+    if (pct >= 77) return 'C+';
+    if (pct >= 73) return 'C';
+    if (pct >= 70) return 'C-';
+    if (pct >= 67) return 'D+';
+    if (pct >= 60) return 'D';
+    return 'F';
+  }
+
+  // Set today's date
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, '0');
+  const dd = String(today.getDate()).padStart(2, '0');
+  document.getElementById('grade-date').value = `${yyyy}-${mm}-${dd}`;
+
+  // Build report text
+  function buildReport() {
+    const name = document.getElementById('student-name').value || '[Name not entered]';
+    const id = document.getElementById('student-id').value;
+    const course = document.getElementById('course-section').value;
+    const date = document.getElementById('grade-date').value;
+    const total = document.getElementById('total-score').textContent;
+    const pct = document.getElementById('total-percent').textContent;
+    const letter = document.getElementById('total-letter').textContent;
+
+    let report = '';
+    report += '======================================================\n';
+    report += '  NEPHRON MAP, GRADING REPORT\n';
+    report += '  ' + course + '\n';
+    report += '======================================================\n\n';
+    report += 'Student: ' + name + '\n';
+    if (id) report += 'ID: ' + id + '\n';
+    report += 'Date graded: ' + date + '\n';
+    report += 'Final score: ' + total + ' / 50  (' + pct + ',  ' + letter + ')\n\n';
+    report += '------------------------------------------------------\n';
+    report += 'CRITERION BREAKDOWN\n';
+    report += '------------------------------------------------------\n\n';
+
+    RUBRIC.forEach(crit => {
+      const card = document.getElementById('crit-' + crit.id);
+      const score = card.dataset.score === '' ? 'Not scored' : card.dataset.score + ' / ' + crit.max;
+      const comment = document.getElementById('comment-' + crit.id).value.trim();
+      report += crit.name.toUpperCase() + '\n';
+      report += '  Score: ' + score + '\n';
+      if (comment) report += '  Feedback: ' + comment + '\n';
+      report += '\n';
+    });
+
+    report += '------------------------------------------------------\n';
+    report += 'OVERALL FEEDBACK\n';
+    report += '------------------------------------------------------\n\n';
+
+    const strengths = document.getElementById('strengths').value.trim();
+    const growth = document.getElementById('growth').value.trim();
+    const nextSteps = document.getElementById('next-steps').value.trim();
+
+    if (strengths) report += 'Strengths:\n' + strengths + '\n\n';
+    if (growth) report += 'Growth areas:\n' + growth + '\n\n';
+    if (nextSteps) report += 'Next steps:\n' + nextSteps + '\n\n';
+
+    report += '------------------------------------------------------\n';
+    report += 'Dr. Sharilyn Rennie\n';
+
+    return report;
+  }
+
+  // Toast helper
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 1800);
+  }
+
+  // Action buttons
+  document.getElementById('copy-btn').addEventListener('click', async () => {
+    const report = buildReport();
+    try {
+      await navigator.clipboard.writeText(report);
+      showToast('Report copied to clipboard');
+    } catch (e) {
+      // Fallback
+      const ta = document.createElement('textarea');
+      ta.value = report;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      showToast('Report copied');
+    }
+  });
+
+  document.getElementById('download-btn').addEventListener('click', () => {
+    const report = buildReport();
+    const name = document.getElementById('student-name').value || 'student';
+    const safeName = name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    const blob = new Blob([report], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'nephron_map_' + safeName + '.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('Report downloaded');
+  });
+
+  document.getElementById('print-btn').addEventListener('click', () => {
+    window.print();
+  });
+
+  document.getElementById('reset-btn').addEventListener('click', () => {
+    if (!confirm('Reset all scores and comments? This cannot be undone.')) return;
+    document.querySelectorAll('.criterion').forEach(card => {
+      card.dataset.score = '';
+      card.classList.remove('completed', 'unlocked');
+      card.querySelectorAll('.level-btn').forEach(b => b.setAttribute('aria-pressed', 'false'));
+      const max = parseInt(card.querySelector('.score-badge').textContent.split('/')[1]);
+      card.querySelector('.score-badge').textContent = ', / ' + max;
+      const ld = card.querySelector('.level-display');
+      if (ld) { ld.textContent = ''; ld.classList.remove('shown'); }
+    });
+    document.querySelectorAll('textarea').forEach(t => t.value = '');
+    document.getElementById('student-name').value = '';
+    document.getElementById('student-id').value = '';
+    updateTotal();
+    showToast('Reset complete');
+  });
+
+  // Initial render
+  updateTotal();
+
+  // Auto-grow textareas so all comment text is visible on screen
+  function autoGrow(ta) {
+    ta.style.height = 'auto';
+    ta.style.height = (ta.scrollHeight + 2) + 'px';
+  }
+  document.querySelectorAll('textarea').forEach(ta => {
+    ta.style.overflow = 'hidden';
+    ta.addEventListener('input', () => { autoGrow(ta); sendHeight(); });
+    autoGrow(ta);
+  });
+
+  // Print preparation: replace textareas with full-text divs so nothing truncates
+  // Hide empty comment blocks so the printed report is clean
+  function preparePrint() {
+    // Update print summary
+    const ps = document.getElementById('print-summary');
+    if (ps) {
+      const name = document.getElementById('student-name').value || '[Name not entered]';
+      const id = document.getElementById('student-id').value;
+      const course = document.getElementById('course-section').value;
+      const date = document.getElementById('grade-date').value;
+      const score = document.getElementById('total-score').textContent;
+      const pct = document.getElementById('total-percent').textContent;
+      const letter = document.getElementById('total-letter').textContent;
+      ps.innerHTML = `
+        <div class="ps-row"><span class="ps-label">Student</span><span class="ps-value">${name}${id ? ' (' + id + ')' : ''}</span></div>
+        <div class="ps-row"><span class="ps-label">Course</span><span class="ps-value">${course}</span></div>
+        <div class="ps-row"><span class="ps-label">Date graded</span><span class="ps-value">${date}</span></div>
+        <div class="ps-row ps-final"><span class="ps-label">Final score</span><span class="ps-value">${score} / 50 &nbsp; ${pct} &nbsp; ${letter}</span></div>
+      `;
+    }
+    // Convert textareas to divs
+    document.querySelectorAll('textarea').forEach(ta => {
+      const block = ta.closest('.comment-block') || ta.closest('.feedback-grid > div') || ta.parentElement;
+      if (!ta.value.trim()) {
+        if (block) block.classList.add('print-hide');
+        return;
+      }
+      const div = document.createElement('div');
+      div.className = 'print-comment';
+      div.textContent = ta.value;
+      ta.parentNode.insertBefore(div, ta.nextSibling);
+    });
+  }
+
+  function cleanupPrint() {
+    document.querySelectorAll('.print-comment').forEach(el => el.remove());
+    document.querySelectorAll('.print-hide').forEach(el => el.classList.remove('print-hide'));
+  }
+
+  window.addEventListener('beforeprint', preparePrint);
+  window.addEventListener('afterprint', cleanupPrint);
+
+  // iframe height sender for Kajabi/GitHub Pages embedding
+  function sendHeight() {
+    const height = document.documentElement.scrollHeight;
+    if (window.parent !== window) {
+      window.parent.postMessage({
+        type: 'iframe-height',
+        id: 'nephron-map-grader',
+        height: height
+      }, '*');
+    }
+  }
+  window.addEventListener('load', sendHeight);
+  window.addEventListener('resize', sendHeight);
+  if (typeof ResizeObserver !== 'undefined') {
+    const ro = new ResizeObserver(sendHeight);
+    ro.observe(document.body);
+  }
+</script>
+
+</body>
+</html>
