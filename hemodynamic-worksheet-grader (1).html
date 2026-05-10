@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hemodynamic Calculations Worksheet Grader | BIO 005</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1E3D4C;
+    --navy-deep: #142a36;
+    --navy-tint: #EDF1F3;
+    --terra: #C2734D;
+    --terra-dark: #A0522D;
+    --terra-tint: #F4E4DA;
+    --gold: #c9a96e;
+    --gold-soft: #e6d4a8;
+    --white: #ffffff;
+    --off-white: #fafaf9;
+    --gray-line: #d6dde0;
+    --gray-text: #5a6b73;
+    --shadow: 0 2px 8px rgba(20, 42, 54, 0.08);
+    --shadow-lg: 0 8px 24px rgba(20, 42, 54, 0.12);
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    background: var(--off-white);
+    color: var(--navy);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 24px 64px;
+  }
+
+  /* HEADER */
+  .page-header {
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 2px solid var(--gold);
+  }
+  .eyebrow {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--terra-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0 0 8px;
+  }
+  h1.page-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: clamp(28px, 4vw, 38px);
+    font-weight: 800;
+    color: var(--navy);
+    margin: 0 0 8px;
+    line-height: 1.15;
+  }
+  .subhead {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--terra-dark);
+    margin: 0 0 12px;
+  }
+  .instructions {
+    font-family: 'Lora', serif;
+    font-style: italic;
+    font-size: 15px;
+    color: var(--gray-text);
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  /* STUDENT INFO */
+  .student-info {
+    background: var(--navy-tint);
+    border: 1px solid var(--gold);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 24px;
+  }
+  .student-info-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 700px) {
+    .student-info-grid { grid-template-columns: 1fr; }
+  }
+  .field-label {
+    display: block;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--terra-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+  }
+  .field-input {
+    width: 100%;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 15px;
+    color: var(--navy);
+    background: var(--white);
+    border: 1px solid var(--gray-line);
+    border-radius: 6px;
+    padding: 10px 12px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .field-input:focus {
+    outline: none;
+    border-color: var(--terra);
+    box-shadow: 0 0 0 3px var(--terra-tint);
+  }
+
+  /* PRINT SUMMARY CARD (only visible in print) */
+  .print-summary {
+    display: none;
+  }
+
+  /* AI SUSPICION FLAG */
+  .ai-flag-card {
+    background: var(--terra-tint);
+    border: 1.5px solid var(--terra);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin: 20px 0 0;
+  }
+  .ai-flag-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .ai-flag-row input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--terra-dark);
+    cursor: pointer;
+    margin: 0;
+    flex-shrink: 0;
+  }
+  .ai-flag-row label {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 600;
+    color: var(--terra-dark);
+    cursor: pointer;
+    font-size: 14px;
+    flex: 1;
+    min-width: 200px;
+  }
+  .ai-flag-note {
+    width: 100%;
+    min-height: 50px;
+    margin-top: 10px;
+    padding: 10px 12px;
+    border: 1px solid var(--terra-tint);
+    border-radius: 6px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    background: var(--white);
+    color: var(--navy);
+    resize: none;
+    overflow: hidden;
+    display: none;
+  }
+  .ai-flag-note.visible {
+    display: block;
+  }
+  .ai-flag-note:focus {
+    outline: none;
+    border-color: var(--terra);
+    box-shadow: 0 0 0 3px var(--terra-tint);
+  }
+
+  /* UTILITY BUTTON */
+  .btn-utility {
+    background: var(--white);
+    color: var(--terra-dark);
+    border: 1.5px solid var(--terra-tint);
+    font-size: 13px;
+    padding: 10px 16px;
+  }
+  .btn-utility:hover {
+    background: var(--terra-tint);
+    border-color: var(--terra);
+  }
+
+  /* SECTIONS */
+  .section-block {
+    background: var(--white);
+    border: 1px solid var(--gray-line);
+    border-radius: 12px;
+    margin-bottom: 24px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .section-header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .section-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.3;
+  }
+  .section-subtotal-display {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    background: var(--gold);
+    color: var(--navy-deep);
+    padding: 6px 14px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+
+  /* QUESTION CARDS */
+  .questions-list {
+    padding: 16px 24px 8px;
+  }
+  .q-card {
+    background: var(--off-white);
+    border: 1px solid var(--gray-line);
+    border-radius: 8px;
+    padding: 16px 18px;
+    margin-bottom: 12px;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .q-card:hover {
+    border-color: var(--terra-tint);
+  }
+  .q-card.scored {
+    background: var(--white);
+    border-color: var(--gold-soft);
+  }
+  .q-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .q-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 0;
+  }
+  .q-id-pill {
+    display: inline-block;
+    background: var(--terra);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.04em;
+    margin-right: 8px;
+  }
+  .q-score-display {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gray-text);
+  }
+  .q-score-display strong {
+    color: var(--navy);
+    font-weight: 700;
+  }
+
+  /* COMPONENT ROWS */
+  .components-list {
+    display: grid;
+    gap: 8px;
+  }
+  .component-row {
+    display: grid;
+    grid-template-columns: minmax(140px, 1fr) auto auto;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 0;
+  }
+  @media (max-width: 600px) {
+    .component-row { grid-template-columns: 1fr; }
+  }
+  .component-label {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--navy-deep);
+  }
+  .component-label .pts {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--gray-text);
+    margin-left: 4px;
+  }
+  .button-group {
+    display: inline-flex;
+    gap: 6px;
+  }
+  .btn-state {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1.5px solid var(--gray-line);
+    background: var(--white);
+    color: var(--gray-text);
+    cursor: pointer;
+    transition: all 0.12s;
+    white-space: nowrap;
+  }
+  .btn-state:hover {
+    border-color: var(--terra);
+    color: var(--terra-dark);
+  }
+  .btn-state:focus-visible {
+    outline: 2px solid var(--terra);
+    outline-offset: 2px;
+  }
+  .btn-state.selected.full {
+    background: var(--navy-tint);
+    border-color: var(--navy);
+    color: var(--navy-deep);
+  }
+  .btn-state.selected.half {
+    background: var(--gold-soft);
+    border-color: var(--gold);
+    color: var(--navy-deep);
+  }
+  .btn-state.selected.none {
+    background: var(--terra-tint);
+    border-color: var(--terra-dark);
+    color: var(--terra-dark);
+  }
+  .component-points {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gray-text);
+    min-width: 38px;
+    text-align: right;
+  }
+  .component-points.has-score {
+    color: var(--navy);
+  }
+
+  /* Q COMMENT */
+  .q-comment-wrapper {
+    margin-top: 12px;
+  }
+  .q-comment-toggle {
+    background: transparent;
+    border: none;
+    color: var(--terra-dark);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 0;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .q-comment-toggle:hover { color: var(--terra); }
+  .q-comment-area {
+    margin-top: 8px;
+    display: none;
+  }
+  .q-comment-area.shown { display: block; }
+  .q-comment-area textarea {
+    width: 100%;
+    min-height: 60px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    color: var(--navy);
+    background: var(--white);
+    border: 1px solid var(--gray-line);
+    border-radius: 6px;
+    padding: 10px 12px;
+    resize: vertical;
+    line-height: 1.5;
+  }
+  .q-comment-area textarea:focus {
+    outline: none;
+    border-color: var(--terra);
+    box-shadow: 0 0 0 3px var(--terra-tint);
+  }
+
+  /* SECTION COMMENT */
+  .section-comment-block {
+    padding: 0 24px 20px;
+  }
+  .section-comment-block label {
+    display: block;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--terra-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 12px 0 8px;
+  }
+  .section-comment-block textarea {
+    width: 100%;
+    min-height: 80px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    color: var(--navy);
+    background: var(--off-white);
+    border: 1px solid var(--gray-line);
+    border-radius: 6px;
+    padding: 10px 12px;
+    resize: vertical;
+    line-height: 1.5;
+  }
+  .section-comment-block textarea:focus {
+    outline: none;
+    border-color: var(--terra);
+    box-shadow: 0 0 0 3px var(--terra-tint);
+  }
+
+  /* OVERALL FEEDBACK */
+  .overall-block {
+    background: var(--navy-tint);
+    border: 1px solid var(--gold);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+  .overall-block h2 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 0 0 16px;
+  }
+  .overall-field {
+    margin-bottom: 14px;
+  }
+  .overall-field:last-child { margin-bottom: 0; }
+  .overall-field label {
+    display: block;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--terra-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+  }
+  .overall-field textarea {
+    width: 100%;
+    min-height: 90px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    color: var(--navy);
+    background: var(--white);
+    border: 1px solid var(--gray-line);
+    border-radius: 6px;
+    padding: 10px 12px;
+    resize: vertical;
+    line-height: 1.5;
+  }
+  .overall-field textarea:focus {
+    outline: none;
+    border-color: var(--terra);
+    box-shadow: 0 0 0 3px var(--terra-tint);
+  }
+
+  /* FINAL TOTAL */
+  .final-total {
+    background: var(--navy);
+    color: var(--white);
+    border-radius: 12px;
+    padding: 24px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-lg);
+  }
+  @media (max-width: 600px) {
+    .final-total { grid-template-columns: 1fr; text-align: center; }
+  }
+  .final-total-label {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gold-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0 0 4px;
+  }
+  .final-total-score {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 32px;
+    font-weight: 800;
+    line-height: 1;
+    margin: 0;
+  }
+  .final-total-pct {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--gold-soft);
+    margin: 6px 0 0;
+  }
+  .final-total-gradebook {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--gold-soft);
+    margin: 8px 0 0;
+    padding-top: 8px;
+    border-top: 1px solid rgba(230, 212, 168, 0.25);
+  }
+  .final-total-gradebook strong {
+    color: var(--white);
+    font-weight: 800;
+    font-size: 18px;
+  }
+  .final-total-grade {
+    background: var(--gold);
+    color: var(--navy-deep);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    padding: 14px 28px;
+    border-radius: 8px;
+    min-width: 80px;
+    text-align: center;
+  }
+
+  /* ACTION BAR */
+  .action-bar {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: 6px;
+    border: 1.5px solid;
+    cursor: pointer;
+    transition: all 0.12s;
+  }
+  .btn-primary {
+    background: var(--terra);
+    border-color: var(--terra);
+    color: var(--white);
+  }
+  .btn-primary:hover {
+    background: var(--terra-dark);
+    border-color: var(--terra-dark);
+  }
+  .btn-secondary {
+    background: var(--white);
+    border-color: var(--gray-line);
+    color: var(--navy);
+  }
+  .btn-secondary:hover {
+    border-color: var(--terra);
+    color: var(--terra-dark);
+  }
+  .btn:focus-visible {
+    outline: 2px solid var(--terra);
+    outline-offset: 2px;
+  }
+
+  /* FOOTER */
+  .footer-sig {
+    text-align: center;
+    font-family: 'Lora', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--gray-text);
+    padding: 24px 0 0;
+    border-top: 1px solid var(--gray-line);
+  }
+
+  /* SKIP LINK */
+  .skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: var(--navy);
+    color: var(--white);
+    padding: 8px 12px;
+    z-index: 100;
+    text-decoration: none;
+    border-radius: 0 0 6px 0;
+  }
+  .skip-link:focus { top: 0; }
+
+  /* PRINT STYLES */
+  @media print {
+    @page { margin: 0.5in; }
+    body {
+      background: white;
+      font-size: 11pt;
+    }
+    .container { padding: 0; max-width: 100%; }
+    .action-bar, .student-info, .skip-link, .q-comment-toggle, .btn { display: none !important; }
+    /* AI flag: hide entirely unless checked */
+    .ai-flag-card:not(.is-flagged) { display: none !important; }
+    .ai-flag-card.is-flagged {
+      background: var(--terra-tint);
+      border: 1.5px solid var(--terra);
+      page-break-inside: avoid;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .ai-flag-card.is-flagged input[type="checkbox"] { display: none !important; }
+    .ai-flag-card.is-flagged label::before {
+      content: "⚠ AI Flag: ";
+      font-weight: 700;
+      color: var(--terra-dark);
+    }
+    .ai-flag-card.is-flagged label {
+      flex: none;
+      width: 100%;
+    }
+    .page-header {
+      border-bottom: 2px solid var(--gold);
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      page-break-after: avoid;
+    }
+    .print-summary {
+      display: block;
+      background: var(--navy-tint);
+      border: 2px solid var(--gold);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      page-break-inside: avoid;
+    }
+    .print-summary-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 16px;
+      font-size: 12pt;
+    }
+    .print-summary-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 9pt;
+      font-weight: 600;
+      color: var(--terra-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .print-summary-value {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700;
+      color: var(--navy);
+    }
+    .print-summary-value.big-score {
+      font-size: 16pt;
+    }
+    .print-summary-gradebook {
+      grid-column: 1 / -1;
+      background: var(--gold-soft);
+      border-radius: 6px;
+      padding: 8px 12px;
+      margin-top: 4px;
+    }
+    .print-summary-gradebook .print-summary-label {
+      color: var(--terra-dark);
+    }
+    .print-summary-gradebook .print-summary-value.big-score {
+      font-size: 20pt;
+      color: var(--navy);
+    }
+    .section-block {
+      box-shadow: none;
+      page-break-inside: avoid;
+      margin-bottom: 12px;
+    }
+    .q-card {
+      page-break-inside: avoid;
+      margin-bottom: 8px;
+      padding: 10px 12px;
+    }
+    .btn-state {
+      padding: 2px 8px;
+      font-size: 9pt;
+      pointer-events: none;
+    }
+    .btn-state:not(.selected) { display: none; }
+    .q-comment-area { display: block !important; }
+    .q-comment-area:empty { display: none !important; }
+    textarea {
+      border: none !important;
+      background: transparent !important;
+      padding: 0 !important;
+      min-height: 0 !important;
+    }
+    .print-text {
+      white-space: pre-wrap;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 10pt;
+      color: var(--navy);
+      padding: 4px 8px;
+      background: var(--off-white);
+      border-radius: 4px;
+      border-left: 2px solid var(--terra);
+      line-height: 1.4;
+    }
+    .print-text:empty { display: none; }
+    .final-total {
+      box-shadow: none;
+      page-break-inside: avoid;
+    }
+  }
+</style>
+</head>
+<body>
+
+<a href="#main" class="skip-link">Skip to grading worksheet</a>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <header class="page-header">
+    <p class="eyebrow">BIO 005 · Human Physiology · MedMasters Collaborative</p>
+    <h1 class="page-title">Hemodynamic Calculations Worksheet Grader</h1>
+    <p class="subhead">Cardiovascular System · 22 questions · 110 internal points · 50 gradebook points</p>
+    <p class="instructions">Grade each question by component: Calculation, Classification, and the two Physiology Reasoning blocks (Increase and Decrease). Click Full, Half, or None for each component. Unselected components count as 0. Print to PDF when finished.</p>
+  </header>
+
+  <!-- STUDENT INFO -->
+  <section class="student-info" aria-labelledby="student-info-heading">
+    <h2 id="student-info-heading" class="field-label" style="margin-bottom:12px;font-size:13px;">Student Information</h2>
+    <div class="student-info-grid">
+      <div>
+        <label class="field-label" for="student-name">Student Name</label>
+        <input class="field-input" type="text" id="student-name" placeholder="Enter student name">
+      </div>
+      <div>
+        <label class="field-label" for="student-course">Course</label>
+        <input class="field-input" type="text" id="student-course" value="BIO 005">
+      </div>
+      <div>
+        <label class="field-label" for="student-date">Date</label>
+        <input class="field-input" type="date" id="student-date">
+      </div>
+    </div>
+  </section>
+
+  <!-- PRINT-ONLY SUMMARY CARD -->
+  <section class="print-summary" aria-hidden="true">
+    <div class="print-summary-grid">
+      <div>
+        <p class="print-summary-label">Student</p>
+        <p class="print-summary-value" id="print-name">-</p>
+      </div>
+      <div>
+        <p class="print-summary-label">Course</p>
+        <p class="print-summary-value" id="print-course">-</p>
+      </div>
+      <div>
+        <p class="print-summary-label">Date</p>
+        <p class="print-summary-value" id="print-date">-</p>
+      </div>
+      <div>
+        <p class="print-summary-label">Worksheet Score</p>
+        <p class="print-summary-value big-score" id="print-score">0 / 110</p>
+        <p class="print-summary-value" id="print-pct-grade">0% · F</p>
+      </div>
+      <div class="print-summary-gradebook">
+        <p class="print-summary-label">Gradebook (out of 50)</p>
+        <p class="print-summary-value big-score" id="print-gradebook">0 / 50</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN GRADING WORKSHEET (rendered by JS) -->
+  <main id="main" aria-label="Worksheet grading"></main>
+
+  <!-- OVERALL FEEDBACK -->
+  <section class="overall-block" aria-labelledby="overall-heading">
+    <h2 id="overall-heading">Overall Feedback</h2>
+    <div class="overall-field">
+      <label for="overall-strengths">Strengths</label>
+      <textarea id="overall-strengths" placeholder="What did this student do well across the worksheet..."></textarea>
+    </div>
+    <div class="overall-field">
+      <label for="overall-growth">Growth Areas</label>
+      <textarea id="overall-growth" placeholder="Specific patterns or content gaps to address..."></textarea>
+    </div>
+    <div class="overall-field">
+      <label for="overall-next">Next Steps</label>
+      <textarea id="overall-next" placeholder="What this student should do next, and how this connects to clinical years..."></textarea>
+    </div>
+
+    <!-- AI SUSPICION FLAG -->
+    <div class="ai-flag-card" id="ai-flag-card">
+      <div class="ai-flag-row">
+        <input type="checkbox" id="ai-flag-check">
+        <label for="ai-flag-check">Flag this submission for AI suspicion (per current policy: no point deduction, note for review)</label>
+      </div>
+      <textarea class="ai-flag-note" id="ai-flag-note" placeholder="Optional: specific reasons for the AI flag (generic phrasing, padded responses, lack of question-specific detail, mismatched style across sections, etc.)"></textarea>
+    </div>
+  </section>
+
+  <!-- FINAL TOTAL -->
+  <section class="final-total" aria-live="polite" aria-atomic="true">
+    <div>
+      <p class="final-total-label">Final Total</p>
+      <p class="final-total-score"><span id="final-score">0</span> / 110</p>
+      <p class="final-total-pct"><span id="final-pct">0</span>%</p>
+      <p class="final-total-gradebook">Gradebook: <strong><span id="final-gradebook">0</span> / 50</strong></p>
+    </div>
+    <div class="final-total-grade" id="final-grade">F</div>
+  </section>
+
+  <!-- ACTION BAR -->
+  <div class="action-bar">
+    <button class="btn btn-secondary" id="reset-btn" type="button">Reset All</button>
+    <button class="btn btn-utility" id="mark-ungraded-zero-btn" type="button">Mark All Ungraded as Zero</button>
+    <button class="btn btn-primary" id="print-btn" type="button">Print to PDF</button>
+  </div>
+
+  <!-- FOOTER SIGNATURE -->
+  <footer class="footer-sig">
+    Graded by Dr. Sharilyn Rennie · MedMasters Collaborative
+  </footer>
+
+</div>
+
+<script>
+  // ============================================================
+  // WORKSHEET DATA
+  // ============================================================
+  const SECTIONS = [
+    {
+      id: 'A',
+      title: 'Section A · Cardiac Output and Index',
+      questions: [
+        { id: 'q1',  title: 'Cardiac Output' },
+        { id: 'q2',  title: 'Cardiac Index' },
+        { id: 'q3',  title: 'CO and CI After Cardiac Arrest' },
+        { id: 'q4',  title: 'Back-Calculate CO from CI' },
+        { id: 'q5',  title: 'CO Comparison, Three Patients' },
+      ],
+    },
+    {
+      id: 'B',
+      title: 'Section B · Stroke Volume and Ejection Fraction',
+      questions: [
+        { id: 'q6',  title: 'SV and EF, Normal Echo' },
+        { id: 'q7',  title: 'SV from EF, Hypertensive Patient' },
+        { id: 'q8',  title: 'Ischemic Cardiomyopathy, Change Over Time' },
+      ],
+    },
+    {
+      id: 'C',
+      title: 'Section C · Blood Pressure Calculations',
+      questions: [
+        { id: 'q9',  title: 'MAP, Hypertensive Patient' },
+        { id: 'q10', title: 'MAP and PP, Hemorrhagic Shock' },
+        { id: 'q11', title: 'MAP and PP, Two Patient Comparison' },
+        { id: 'q12', title: 'Septic Shock, MAP Goal Tracking' },
+      ],
+    },
+    {
+      id: 'D',
+      title: 'Section D · Vascular Resistance',
+      questions: [
+        { id: 'q13', title: 'SVR, Normal Baseline' },
+        { id: 'q14', title: 'SVR Before and After Norepinephrine' },
+        { id: 'q15', title: 'PVR, Pulmonary Arterial Hypertension' },
+      ],
+    },
+    {
+      id: 'E',
+      title: 'Section E · Shock Index',
+      questions: [
+        { id: 'q16', title: 'Shock Index, Trauma Patient' },
+        { id: 'q17', title: 'Shock Index, Postpartum Hemorrhage' },
+      ],
+    },
+    {
+      id: 'F',
+      title: 'Section F · Multi-Step and Integrated Problems',
+      questions: [
+        { id: 'q18', title: 'Integrated Profile, Cardiogenic Shock?' },
+        { id: 'q19', title: 'Integrated Profile, Septic Shock' },
+        { id: 'q20', title: 'Hypertension, CO vs. SVR Driver' },
+        { id: 'q21', title: 'Exercise Stress Test, Cardiac Reserve' },
+        { id: 'q22', title: 'Night Shift Full Hemodynamic Profile' },
+      ],
+    },
+  ];
+
+  // Components per question: 4 components, total 5 pts per Q
+  const COMPONENTS = [
+    { key: 'calc',  label: 'Calculation',    pts: 2, desc: 'Formula + work + answer with units' },
+    { key: 'class', label: 'Classification', pts: 1, desc: 'Normal / High / Low' },
+    { key: 'inc',   label: 'Increase',       pts: 1, desc: 'Cause + mechanism' },
+    { key: 'dec',   label: 'Decrease',       pts: 1, desc: 'Cause + mechanism' },
+  ];
+
+  const STATE_MULT = { full: 1, half: 0.5, none: 0 };
+
+  // ============================================================
+  // RENDER
+  // ============================================================
+  const main = document.getElementById('main');
+  let qNum = 0;
+
+  SECTIONS.forEach(section => {
+    const sectionMaxPts = section.questions.length * 5;
+    const sectionEl = document.createElement('section');
+    sectionEl.className = 'section-block';
+    sectionEl.dataset.section = section.id;
+    sectionEl.setAttribute('aria-labelledby', `sec-${section.id}-title`);
+
+    sectionEl.innerHTML = `
+      <div class="section-header">
+        <h2 class="section-title" id="sec-${section.id}-title">${section.title}</h2>
+        <div class="section-subtotal-display" aria-live="polite">
+          <span id="sec-${section.id}-score">0</span> / ${sectionMaxPts}
+        </div>
+      </div>
+      <div class="questions-list" id="sec-${section.id}-questions"></div>
+      <div class="section-comment-block">
+        <label for="sec-${section.id}-comment">Section comment (optional)</label>
+        <textarea id="sec-${section.id}-comment" placeholder="Section-level feedback..."></textarea>
+      </div>
+    `;
+
+    const qList = sectionEl.querySelector(`#sec-${section.id}-questions`);
+
+    section.questions.forEach(q => {
+      qNum += 1;
+      const qEl = document.createElement('article');
+      qEl.className = 'q-card';
+      qEl.dataset.qid = q.id;
+      qEl.setAttribute('aria-labelledby', `${q.id}-title`);
+
+      let componentsHTML = '';
+      COMPONENTS.forEach(comp => {
+        componentsHTML += `
+          <div class="component-row" data-component="${comp.key}">
+            <div class="component-label">${comp.label}<span class="pts">${comp.pts} pt${comp.pts > 1 ? 's' : ''}</span></div>
+            <div class="button-group" role="group" aria-label="${comp.label} grade for ${q.title}">
+              <button type="button" class="btn-state" data-state="full" aria-label="Full credit">Full</button>
+              <button type="button" class="btn-state" data-state="half" aria-label="Half credit">Half</button>
+              <button type="button" class="btn-state" data-state="none" aria-label="No credit">None</button>
+            </div>
+            <div class="component-points" data-points-display>0 / ${comp.pts}</div>
+          </div>
+        `;
+      });
+
+      qEl.innerHTML = `
+        <div class="q-header">
+          <h3 class="q-title" id="${q.id}-title">
+            <span class="q-id-pill">Q${qNum}</span>${q.title}
+          </h3>
+          <div class="q-score-display" aria-live="polite">
+            <strong><span data-q-score>0</span></strong> / 5
+          </div>
+        </div>
+        <div class="components-list">${componentsHTML}</div>
+        <div class="q-comment-wrapper">
+          <button type="button" class="q-comment-toggle" data-comment-toggle>+ Add comment for this question</button>
+          <div class="q-comment-area" data-comment-area>
+            <textarea id="${q.id}-comment" placeholder="Specific feedback for this question..."></textarea>
+          </div>
+        </div>
+      `;
+      qList.appendChild(qEl);
+    });
+
+    main.appendChild(sectionEl);
+  });
+
+  // ============================================================
+  // INTERACTIVITY
+  // ============================================================
+
+  // Comment toggle
+  main.addEventListener('click', (e) => {
+    if (e.target.matches('[data-comment-toggle]')) {
+      const wrapper = e.target.closest('.q-comment-wrapper');
+      const area = wrapper.querySelector('[data-comment-area]');
+      area.classList.toggle('shown');
+      e.target.textContent = area.classList.contains('shown')
+        ? '− Hide comment'
+        : '+ Add comment for this question';
+    }
+  });
+
+  // State button clicks
+  main.addEventListener('click', (e) => {
+    if (!e.target.matches('.btn-state')) return;
+    const btn = e.target;
+    const state = btn.dataset.state;
+    const group = btn.parentElement;
+    const componentRow = btn.closest('.component-row');
+    const qCard = btn.closest('.q-card');
+
+    // Toggle behavior: if already selected, deselect; otherwise select
+    const wasSelected = btn.classList.contains('selected');
+    group.querySelectorAll('.btn-state').forEach(b => {
+      b.classList.remove('selected', 'full', 'half', 'none');
+      b.setAttribute('aria-pressed', 'false');
+    });
+    if (!wasSelected) {
+      btn.classList.add('selected', state);
+      btn.setAttribute('aria-pressed', 'true');
+    }
+
+    updateQuestionScore(qCard);
+    updateAllTotals();
+  });
+
+  function getComponentMaxPts(componentKey) {
+    return COMPONENTS.find(c => c.key === componentKey).pts;
+  }
+
+  function getComponentScore(componentRow) {
+    const componentKey = componentRow.dataset.component;
+    const maxPts = getComponentMaxPts(componentKey);
+    const selected = componentRow.querySelector('.btn-state.selected');
+    if (!selected) return 0;
+    return maxPts * STATE_MULT[selected.dataset.state];
+  }
+
+  function updateQuestionScore(qCard) {
+    let qScore = 0;
+    qCard.querySelectorAll('.component-row').forEach(row => {
+      const score = getComponentScore(row);
+      const maxPts = getComponentMaxPts(row.dataset.component);
+      const displayEl = row.querySelector('[data-points-display]');
+      const displayText = `${formatScore(score)} / ${maxPts}`;
+      displayEl.textContent = displayText;
+      if (score > 0) {
+        displayEl.classList.add('has-score');
+      } else {
+        displayEl.classList.remove('has-score');
+      }
+      qScore += score;
+    });
+    qCard.querySelector('[data-q-score]').textContent = formatScore(qScore);
+    if (qScore > 0) {
+      qCard.classList.add('scored');
+    } else {
+      qCard.classList.remove('scored');
+    }
+  }
+
+  function updateAllTotals() {
+    let totalScore = 0;
+    let totalMax = 0;
+
+    SECTIONS.forEach(section => {
+      let secScore = 0;
+      section.questions.forEach(q => {
+        const qCard = document.querySelector(`[data-qid="${q.id}"]`);
+        qCard.querySelectorAll('.component-row').forEach(row => {
+          secScore += getComponentScore(row);
+        });
+      });
+      const secMax = section.questions.length * 5;
+      document.getElementById(`sec-${section.id}-score`).textContent = formatScore(secScore);
+      totalScore += secScore;
+      totalMax += secMax;
+    });
+
+    const pct = totalMax > 0 ? (totalScore / totalMax * 100) : 0;
+    // Gradebook score: convert 110-point internal score to 50-point gradebook
+    // Round to nearest 0.5 for clean entry into Canvas
+    const gradebookRaw = (totalScore / 110) * 50;
+    const gradebookRounded = Math.round(gradebookRaw * 2) / 2;
+    document.getElementById('final-score').textContent = formatScore(totalScore);
+    document.getElementById('final-pct').textContent = pct.toFixed(1);
+    document.getElementById('final-grade').textContent = letterGrade(pct);
+    document.getElementById('final-gradebook').textContent = formatScore(gradebookRounded);
+  }
+
+  function formatScore(n) {
+    return Number.isInteger(n) ? n.toString() : n.toFixed(1);
+  }
+
+  function letterGrade(pct) {
+    if (pct >= 93) return 'A';
+    if (pct >= 90) return 'A-';
+    if (pct >= 87) return 'B+';
+    if (pct >= 83) return 'B';
+    if (pct >= 80) return 'B-';
+    if (pct >= 77) return 'C+';
+    if (pct >= 73) return 'C';
+    if (pct >= 70) return 'C-';
+    if (pct >= 67) return 'D+';
+    if (pct >= 63) return 'D';
+    if (pct >= 60) return 'D-';
+    return 'F';
+  }
+
+  // ============================================================
+  // AUTO-GROW TEXTAREAS
+  // ============================================================
+  function autoGrow(el) {
+    el.style.height = 'auto';
+    el.style.height = (el.scrollHeight + 2) + 'px';
+  }
+  document.addEventListener('input', (e) => {
+    if (e.target && e.target.tagName === 'TEXTAREA') {
+      autoGrow(e.target);
+    }
+  });
+
+  // ============================================================
+  // ACTIONS: PRINT & RESET
+  // ============================================================
+  document.getElementById('print-btn').addEventListener('click', () => {
+    window.print();
+  });
+
+  document.getElementById('reset-btn').addEventListener('click', () => {
+    if (!confirm('Reset all grading? This will clear all scores and comments for this student.')) return;
+    document.querySelectorAll('.btn-state').forEach(b => {
+      b.classList.remove('selected', 'full', 'half', 'none');
+      b.setAttribute('aria-pressed', 'false');
+    });
+    document.querySelectorAll('textarea').forEach(t => t.value = '');
+    document.querySelectorAll('[data-comment-area]').forEach(a => a.classList.remove('shown'));
+    document.querySelectorAll('[data-comment-toggle]').forEach(t => {
+      t.textContent = '+ Add comment for this question';
+    });
+    document.getElementById('student-name').value = '';
+    // Reset AI flag
+    const aiCheck = document.getElementById('ai-flag-check');
+    const aiNote = document.getElementById('ai-flag-note');
+    aiCheck.checked = false;
+    aiNote.classList.remove('visible');
+    document.querySelectorAll('.q-card').forEach(updateQuestionScore);
+    updateAllTotals();
+  });
+
+  // ============================================================
+  // AI SUSPICION FLAG TOGGLE
+  // ============================================================
+  document.getElementById('ai-flag-check').addEventListener('change', (e) => {
+    const note = document.getElementById('ai-flag-note');
+    if (e.target.checked) {
+      note.classList.add('visible');
+    } else {
+      note.classList.remove('visible');
+    }
+  });
+
+  // ============================================================
+  // BULK: MARK ALL UNGRADED COMPONENTS AS ZERO
+  // For students who skip entire questions, this snaps every
+  // untouched component to None (0) in one click.
+  // ============================================================
+  document.getElementById('mark-ungraded-zero-btn').addEventListener('click', () => {
+    let touched = 0;
+    document.querySelectorAll('.q-card').forEach(card => {
+      COMPONENTS.forEach(comp => {
+        const buttons = card.querySelectorAll(`.btn-state[data-comp="${comp.key}"]`);
+        const anySelected = Array.from(buttons).some(b => b.classList.contains('selected'));
+        if (!anySelected) {
+          const noneBtn = card.querySelector(`.btn-state[data-comp="${comp.key}"][data-state="none"]`);
+          if (noneBtn) {
+            noneBtn.click();
+            touched++;
+          }
+        }
+      });
+    });
+    if (touched === 0) {
+      alert('All components are already graded. Nothing to update.');
+    }
+  });
+
+  // ============================================================
+  // INITIAL STATE
+  // ============================================================
+  // Set default date to today
+  document.getElementById('student-date').valueAsDate = new Date();
+
+  // Init all aria-pressed and scores
+  document.querySelectorAll('.btn-state').forEach(b => b.setAttribute('aria-pressed', 'false'));
+  document.querySelectorAll('.q-card').forEach(updateQuestionScore);
+  updateAllTotals();
+
+  // ============================================================
+  // PRINT HANDLERS: Swap textareas for print-text divs so all
+  // comment content shows in the PDF (no truncation)
+  // ============================================================
+  function swapTextareasForPrint() {
+    document.querySelectorAll('textarea').forEach(t => {
+      if (t.dataset.printSwapped) return;
+      const div = document.createElement('div');
+      div.className = 'print-text';
+      div.textContent = t.value;
+      div.dataset.printSwap = 'true';
+      t.dataset.printSwapped = 'true';
+      t.style.display = 'none';
+      t.parentNode.insertBefore(div, t.nextSibling);
+
+      // Hide empty comment wrappers entirely so they don't leave gaps in the PDF
+      if (!t.value.trim()) {
+        const wrapper = t.closest('.q-comment-wrapper, .section-comment-block, .overall-field');
+        if (wrapper) {
+          wrapper.dataset.printHidden = 'true';
+          wrapper.style.display = 'none';
+        }
+      }
+    });
+
+    // Hide questions that scored zero and have no comment, to keep the PDF focused
+    // (Scrubs can still see them in the on-screen view)
+    document.querySelectorAll('.q-card').forEach(card => {
+      const scoreText = card.querySelector('[data-q-score]').textContent;
+      const score = parseFloat(scoreText);
+      const commentArea = card.querySelector('[data-comment-area] textarea');
+      const hasComment = commentArea && commentArea.value.trim();
+      // Keep all questions visible in the PDF regardless of score, since blanks
+      // also tell a story. No hiding here. Reserved for future toggle.
+      void score; void hasComment;
+    });
+
+    // Update print summary
+    document.getElementById('print-name').textContent = document.getElementById('student-name').value || "-";
+    document.getElementById('print-course').textContent = document.getElementById('student-course').value || "-";
+    const dateVal = document.getElementById('student-date').value;
+    document.getElementById('print-date').textContent = dateVal
+      ? new Date(dateVal + 'T00:00').toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+      : "-";
+    const score = document.getElementById('final-score').textContent;
+    const pct = document.getElementById('final-pct').textContent;
+    const grade = document.getElementById('final-grade').textContent;
+    const gradebook = document.getElementById('final-gradebook').textContent;
+    document.getElementById('print-score').textContent = `${score} / 110`;
+    document.getElementById('print-pct-grade').textContent = `${pct}% · ${grade}`;
+    document.getElementById('print-gradebook').textContent = `${gradebook} / 50`;
+
+    // AI flag: mark card as flagged or not so print CSS can hide it when unchecked
+    const aiCheck = document.getElementById('ai-flag-check');
+    const aiCard = document.getElementById('ai-flag-card');
+    if (aiCheck.checked) {
+      aiCard.classList.add('is-flagged');
+    } else {
+      aiCard.classList.remove('is-flagged');
+    }
+  }
+
+  function restoreTextareasAfterPrint() {
+    document.querySelectorAll('[data-print-swap]').forEach(d => d.remove());
+    document.querySelectorAll('[data-print-hidden]').forEach(el => {
+      delete el.dataset.printHidden;
+      el.style.display = '';
+    });
+    document.querySelectorAll('textarea').forEach(t => {
+      delete t.dataset.printSwapped;
+      t.style.display = '';
+    });
+  }
+
+  window.addEventListener('beforeprint', swapTextareasForPrint);
+  window.addEventListener('afterprint', restoreTextareasAfterPrint);
+
+  // ============================================================
+  // IFRAME HEIGHT SENDER (for Kajabi / GitHub Pages embed)
+  // ============================================================
+  (function() {
+    const widgetId = 'hemodynamic-worksheet-grader';
+    function sendHeight() {
+      const h = document.documentElement.scrollHeight;
+      if (window.parent && window.parent !== window) {
+        window.parent.postMessage({ type: 'iframeHeight', id: widgetId, height: h }, '*');
+      }
+    }
+    window.addEventListener('load', sendHeight);
+    window.addEventListener('resize', sendHeight);
+    if (window.ResizeObserver) {
+      new ResizeObserver(sendHeight).observe(document.body);
+    }
+    // Also send on any state change
+    document.addEventListener('click', () => setTimeout(sendHeight, 50));
+    document.addEventListener('input', () => setTimeout(sendHeight, 50));
+  })();
+</script>
+
+</body>
+</html>
