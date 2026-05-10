@@ -1,0 +1,1611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GI Map Grading Tool</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Lora:ital,wght@0,400;0,500;1,400;1,500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1E3D4C;
+    --navy-deep: #142a36;
+    --navy-tint: #EDF1F3;
+    --terra: #C2734D;
+    --terra-dark: #A0522D;
+    --terra-tint: #F4E4DA;
+    --gold: #c9a96e;
+    --gold-soft: #e6d4a8;
+    --white: #ffffff;
+    --off-white: #fafaf9;
+    --gray-300: #d4d4d4;
+    --gray-500: #737373;
+    --gray-700: #404040;
+    --shadow-sm: 0 1px 2px rgba(20, 42, 54, 0.04);
+    --shadow-md: 0 4px 12px rgba(20, 42, 54, 0.08);
+    --shadow-lg: 0 12px 32px rgba(20, 42, 54, 0.12);
+    --radius: 10px;
+    --radius-lg: 14px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    background: var(--off-white);
+    color: var(--navy-deep);
+    line-height: 1.6;
+    min-height: 100vh;
+    padding: 32px 20px 200px;
+  }
+
+  .skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: var(--navy);
+    color: var(--white);
+    padding: 8px 16px;
+    text-decoration: none;
+    z-index: 100;
+  }
+  .skip-link:focus { top: 0; }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* Header */
+  .header {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: 40px 44px;
+    box-shadow: var(--shadow-md);
+    margin-bottom: 28px;
+    border-top: 4px solid var(--terra);
+  }
+
+  .eyebrow {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--terra-dark);
+    margin-bottom: 14px;
+  }
+
+  h1 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    font-size: clamp(28px, 4vw, 40px);
+    color: var(--navy);
+    line-height: 1.15;
+    margin-bottom: 10px;
+    letter-spacing: -0.02em;
+  }
+
+  .subhead {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 600;
+    font-size: clamp(16px, 2vw, 19px);
+    color: var(--terra-dark);
+    margin-bottom: 18px;
+  }
+
+  .instructions {
+    font-family: 'Lora', serif;
+    font-style: italic;
+    font-size: 16px;
+    color: var(--gray-700);
+    max-width: 78ch;
+    line-height: 1.7;
+  }
+
+  /* Student info card */
+  .student-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: 28px 32px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 28px;
+    border: 1px solid var(--navy-tint);
+  }
+
+  .student-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+  }
+
+  .field-label {
+    display: block;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+
+  input[type="text"], input[type="date"], input[type="number"], textarea, select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--gray-300);
+    border-radius: 8px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 15px;
+    color: var(--navy-deep);
+    background: var(--white);
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus, textarea:focus, select:focus {
+    outline: 2px solid var(--gold);
+    outline-offset: 1px;
+    border-color: var(--terra);
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 70px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    line-height: 1.55;
+  }
+
+  /* Section card (top-level rubric category) */
+  .section {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 22px;
+    overflow: hidden;
+    border: 2px solid var(--gray-300);
+  }
+
+  .section-header {
+    padding: 22px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+    background: var(--navy);
+    color: var(--white);
+  }
+
+  .section-title-block { flex: 1; min-width: 240px; }
+
+  .section-name {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 19px;
+    margin-bottom: 4px;
+    letter-spacing: -0.01em;
+  }
+
+  .section-desc {
+    font-family: 'Lora', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: rgba(255,255,255,0.78);
+  }
+
+  .section-score-badge {
+    background: var(--white);
+    color: var(--navy);
+    padding: 8px 18px;
+    border-radius: 999px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    min-width: 80px;
+    text-align: center;
+    border: 2px solid var(--gold);
+  }
+
+  .section-body {
+    padding: 12px 18px 18px;
+  }
+
+  /* Line item (sub-criterion) */
+  .line-item {
+    background: var(--off-white);
+    border: 1.5px solid var(--gray-300);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    margin-bottom: 14px;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .line-item.scored {
+    border-color: var(--navy);
+    background: var(--navy-tint);
+  }
+
+  .line-item-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+
+  .line-item-title-block {
+    flex: 1;
+    min-width: 220px;
+  }
+
+  .line-item-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--navy-deep);
+    line-height: 1.4;
+  }
+
+  .line-item-max {
+    display: inline-block;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--terra-dark);
+    background: var(--terra-tint);
+    padding: 2px 8px;
+    border-radius: 999px;
+    margin-left: 8px;
+    white-space: nowrap;
+  }
+
+  .line-item-scoring {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .score-btn {
+    background: var(--white);
+    border: 1.5px solid var(--gray-300);
+    color: var(--navy-deep);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .score-btn:hover {
+    border-color: var(--terra);
+    transform: translateY(-1px);
+  }
+
+  .score-btn:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+  }
+
+  .score-btn[aria-pressed="true"] {
+    background: var(--navy);
+    color: var(--white);
+    border-color: var(--navy);
+  }
+
+  .score-input {
+    width: 60px !important;
+    padding: 6px 8px !important;
+    text-align: center;
+    font-weight: 700;
+    font-size: 13px !important;
+  }
+
+  .score-current {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--navy);
+    background: var(--white);
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1.5px solid var(--gold);
+    min-width: 70px;
+    text-align: center;
+  }
+
+  /* Checklist within line item */
+  .checklist {
+    background: var(--white);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-top: 10px;
+    border-left: 3px solid var(--terra);
+  }
+
+  .checklist-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+
+  .checklist-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--terra-dark);
+  }
+
+  .bulk-actions {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+
+  .bulk-btn {
+    background: var(--white);
+    border: 1px solid var(--gray-300);
+    color: var(--navy);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+
+  .bulk-btn:hover {
+    border-color: var(--terra);
+    color: var(--terra-dark);
+  }
+
+  .bulk-btn:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 1px;
+  }
+
+  .checklist ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .checklist li {
+    font-size: 13px;
+    color: var(--gray-700);
+    line-height: 1.5;
+    padding: 3px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .check-btn {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid var(--gray-300);
+    border-radius: 4px;
+    background: var(--white);
+    cursor: pointer;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    margin-top: 2px;
+  }
+
+  .check-btn:hover {
+    border-color: var(--terra);
+    transform: scale(1.05);
+  }
+
+  .check-btn:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+  }
+
+  .check-btn[data-state="present"] {
+    background: var(--navy);
+    border-color: var(--navy);
+  }
+
+  .check-btn[data-state="present"] .check-icon::before {
+    content: "✓";
+    color: var(--white);
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 1;
+  }
+
+  .check-btn[data-state="missing"] {
+    background: var(--terra);
+    border-color: var(--terra);
+  }
+
+  .check-btn[data-state="missing"] .check-icon::before {
+    content: "✗";
+    color: var(--white);
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 1;
+  }
+
+  .item-text { flex: 1; }
+
+  /* Section comment */
+  .section-comment {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--gray-300);
+  }
+
+  .section-comment label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--navy);
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  /* Overall feedback */
+  .feedback-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: 28px 32px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 28px;
+    border: 1px solid var(--navy-tint);
+  }
+
+  .feedback-card h2 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--navy);
+    margin-bottom: 18px;
+    letter-spacing: -0.01em;
+  }
+
+  .feedback-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  /* Sticky total bar */
+  .total-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--navy);
+    color: var(--white);
+    padding: 18px 24px;
+    box-shadow: 0 -4px 20px rgba(20, 42, 54, 0.18);
+    z-index: 50;
+  }
+
+  .total-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .total-display {
+    display: flex;
+    align-items: baseline;
+    gap: 18px;
+    flex-wrap: wrap;
+  }
+
+  .total-score {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    font-size: 32px;
+    color: var(--gold);
+    letter-spacing: -0.02em;
+  }
+
+  .total-of {
+    font-size: 18px;
+    color: rgba(255,255,255,0.7);
+  }
+
+  .total-percent {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--gold-soft);
+  }
+
+  .total-letter {
+    background: var(--gold);
+    color: var(--navy-deep);
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    min-width: 44px;
+    text-align: center;
+  }
+
+  .progress-track {
+    flex: 1;
+    min-width: 120px;
+    height: 8px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 4px;
+    overflow: hidden;
+    max-width: 280px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--gold-soft));
+    transition: width 0.3s ease;
+    width: 0%;
+  }
+
+  .actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    background: var(--gold);
+    color: var(--navy-deep);
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+  }
+
+  .btn:hover { background: var(--gold-soft); }
+  .btn:active { transform: translateY(1px); }
+  .btn:focus-visible {
+    outline: 2px solid var(--white);
+    outline-offset: 2px;
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--white);
+    border: 1.5px solid rgba(255,255,255,0.4);
+  }
+
+  .btn-secondary:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: var(--white);
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 110px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--navy-deep);
+    color: var(--white);
+    padding: 12px 22px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 14px;
+    box-shadow: var(--shadow-lg);
+    opacity: 0;
+    transition: opacity 0.2s, transform 0.2s;
+    pointer-events: none;
+    z-index: 100;
+    border: 1.5px solid var(--gold);
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* Print-only utility */
+  .print-only { display: none; }
+
+  /* Print */
+  @media print {
+    @page { margin: 0.5in; }
+    body { padding: 0; background: white; font-size: 11pt; color: #000; }
+    .total-bar, .actions, .skip-link, .bulk-actions, .line-item-scoring .score-btn, .score-input { display: none !important; }
+    .print-only { display: block !important; }
+    .print-hide { display: none !important; }
+
+    .header {
+      box-shadow: none;
+      border-top: 3px solid #333;
+      padding: 18px 22px;
+      margin-bottom: 14px;
+      page-break-after: avoid;
+      break-after: avoid;
+    }
+    h1 { color: #000 !important; font-size: 22pt; }
+    .eyebrow { color: #444 !important; }
+    .subhead { color: #333 !important; }
+    .instructions { display: none; }
+
+    .student-card, .feedback-card {
+      box-shadow: none;
+      border: 1px solid #999;
+      padding: 14px 18px;
+      margin-bottom: 14px;
+    }
+    .student-card { page-break-inside: avoid; break-inside: avoid; }
+
+    .print-summary-card {
+      border: 2px solid #000;
+      padding: 14px 18px;
+      margin-bottom: 16px;
+      page-break-inside: avoid;
+      break-inside: avoid;
+      background: white;
+      border-radius: 6px;
+    }
+    .ps-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+      border-bottom: 1px dotted #ccc;
+    }
+    .ps-row:last-child { border-bottom: none; }
+    .ps-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 10pt;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #555;
+    }
+    .ps-value { font-weight: 600; color: #000; }
+    .ps-final { padding-top: 8px; border-top: 1px solid #000; margin-top: 4px; }
+    .ps-final .ps-value { font-size: 13pt; font-weight: 800; }
+
+    .section {
+      page-break-inside: auto;
+      break-inside: auto;
+      box-shadow: none;
+      border: 1px solid #999 !important;
+      background: white !important;
+      margin-bottom: 14px;
+      border-radius: 4px;
+    }
+    .section-header {
+      background: white !important;
+      color: #000 !important;
+      border-bottom: 2px solid #333;
+      padding: 12px 18px;
+      page-break-after: avoid;
+      break-after: avoid;
+    }
+    .section-name, .section-desc { color: #000 !important; }
+    .section-desc { color: #444 !important; font-size: 10pt; }
+    .section-score-badge {
+      color: #000 !important;
+      border-color: #333;
+      background: white;
+    }
+    .section-body { padding: 10px 18px; }
+
+    .line-item {
+      background: white !important;
+      border: 1px solid #ccc !important;
+      page-break-inside: avoid;
+      break-inside: avoid;
+      margin-bottom: 10px;
+      padding: 10px 14px;
+    }
+    .line-item.scored { background: white !important; }
+    .line-item-title { font-size: 11pt; }
+    .line-item-max {
+      background: #f4e4da !important;
+      color: #A0522D !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .score-current {
+      color: #000 !important;
+      border-color: #666;
+    }
+
+    .checklist {
+      display: block !important;
+      background: transparent !important;
+      border-left: 2px solid #999;
+      padding: 8px 12px;
+      margin-top: 8px;
+    }
+    .checklist-label { color: #555 !important; font-size: 9pt; }
+    .checklist li {
+      page-break-inside: avoid;
+      padding: 2px 0;
+      font-size: 10pt;
+      color: #000 !important;
+    }
+    .check-btn {
+      width: 12px;
+      height: 12px;
+      border: 1px solid #666 !important;
+      background: white !important;
+    }
+    .check-btn[data-state="present"] {
+      background: #1E3D4C !important;
+      border-color: #1E3D4C !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .check-btn[data-state="present"] .check-icon::before {
+      font-size: 8pt;
+      color: white !important;
+    }
+    .check-btn[data-state="missing"] {
+      background: #C2734D !important;
+      border-color: #C2734D !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .check-btn[data-state="missing"] .check-icon::before {
+      font-size: 8pt;
+      color: white !important;
+    }
+
+    textarea { display: none !important; }
+    input { border: none !important; padding: 0 !important; font-weight: 600; background: transparent !important; }
+    .field-label { color: #666 !important; font-size: 9pt; }
+
+    .print-comment {
+      display: block !important;
+      font-family: 'Lora', serif;
+      font-size: 11pt;
+      line-height: 1.55;
+      color: #000;
+      margin-top: 6px;
+      white-space: pre-wrap;
+      page-break-inside: auto;
+      break-inside: auto;
+      orphans: 3;
+      widows: 3;
+    }
+
+    .section-comment { page-break-inside: auto; break-inside: auto; }
+    .section-comment label { font-size: 9pt; color: #666 !important; }
+    .feedback-card h2 { font-size: 14pt; color: #000 !important; }
+    .feedback-grid { display: block; }
+    .feedback-grid > div { margin-bottom: 10px; page-break-inside: avoid; }
+
+    body { padding-bottom: 0 !important; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  @media (max-width: 640px) {
+    body { padding: 16px 12px 240px; }
+    .header { padding: 28px 22px; }
+    .student-card, .feedback-card { padding: 22px 20px; }
+    .section-header { padding: 18px 20px; }
+    .section-body { padding: 12px 14px 16px; }
+    .line-item { padding: 14px 14px; }
+    .total-inner { flex-direction: column; align-items: stretch; }
+    .total-display { justify-content: space-between; }
+  }
+</style>
+</head>
+<body>
+
+<a href="#main" class="skip-link">Skip to main content</a>
+
+<div class="container" id="main">
+
+  <header class="header">
+    <div class="eyebrow">BIO 005 · Human Physiology</div>
+    <h1>GI Map Grading Tool</h1>
+    <div class="subhead">In-class assignment rubric, 50 points total</div>
+    <p class="instructions">
+      Score each line item using Full, Half, or None. The Half option matches the rule that items mentioned but not properly labeled receive half credit. The numeric input next to each item lets you override for partial credit (useful for the 5-point hormones item if a student got, say, 3 of 5). Mark structure list items as ✓ present or ✗ missing so students see exactly what they got and missed. Add specific feedback at the section level. Total, percentage, and letter grade calculate automatically. Use the action buttons to copy a clean report, download as text, or print to PDF.
+    </p>
+  </header>
+
+  <section class="student-card" aria-label="Student information">
+    <div class="student-grid">
+      <div>
+        <label class="field-label" for="student-name">Student name</label>
+        <input type="text" id="student-name" placeholder="Last, First">
+      </div>
+      <div>
+        <label class="field-label" for="student-id">Student ID (optional)</label>
+        <input type="text" id="student-id" placeholder="W-number or ID">
+      </div>
+      <div>
+        <label class="field-label" for="course-section">Course / Section</label>
+        <input type="text" id="course-section" value="BIO 005">
+      </div>
+      <div>
+        <label class="field-label" for="grade-date">Date graded</label>
+        <input type="date" id="grade-date">
+      </div>
+    </div>
+  </section>
+
+  <section class="print-only print-summary-card" id="print-summary" aria-hidden="true"></section>
+
+  <main id="rubric-container" aria-label="Rubric"></main>
+
+  <section class="feedback-card">
+    <h2>Overall Feedback</h2>
+    <div class="feedback-grid">
+      <div>
+        <label class="field-label" for="strengths">Strengths</label>
+        <textarea id="strengths" placeholder="What did this student do well?"></textarea>
+      </div>
+      <div>
+        <label class="field-label" for="growth">Growth areas</label>
+        <textarea id="growth" placeholder="Where can they improve?"></textarea>
+      </div>
+      <div>
+        <label class="field-label" for="next-steps">Next steps</label>
+        <textarea id="next-steps" placeholder="Specific recommendations for the next assignment"></textarea>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div class="total-bar" role="status" aria-live="polite" aria-atomic="true">
+  <div class="total-inner">
+    <div class="total-display">
+      <div>
+        <span class="total-score" id="total-score">0</span><span class="total-of"> / 50</span>
+      </div>
+      <span class="total-percent" id="total-percent">0%</span>
+      <span class="total-letter" id="total-letter">,</span>
+    </div>
+    <div class="progress-track" aria-hidden="true">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+    <div class="actions">
+      <button class="btn" id="copy-btn" type="button">Copy Report</button>
+      <button class="btn btn-secondary" id="download-btn" type="button">Download .txt</button>
+      <button class="btn btn-secondary" id="print-btn" type="button">Print</button>
+      <button class="btn btn-secondary" id="reset-btn" type="button">Reset</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+  // Rubric data: 6 sections, 20 line items, 50 max points
+  const RUBRIC = [
+    {
+      id: 'anatomical-framework',
+      title: 'Anatomical Framework',
+      maxPoints: 8,
+      desc: 'GI tract drawn correctly with all regions and accessory organs',
+      items: [
+        {
+          id: 'gi-tract-sequence',
+          title: 'GI tract drawn in correct sequence (oral cavity to anal canal)',
+          maxPoints: 3,
+          checklist: [
+            'Continuous tract drawn (not separated boxes or text list)',
+            'Sequence anatomically correct (oral > esophagus > stomach > SI > LI > anus)',
+            'Drawing shows recognizable GI anatomy'
+          ]
+        },
+        {
+          id: 'regions-labeled',
+          title: 'Regions clearly labeled',
+          maxPoints: 3,
+          checklist: [
+            'Mouth / oral cavity',
+            'Esophagus',
+            'Stomach',
+            'Duodenum',
+            'Jejunum',
+            'Ileum',
+            'Large intestine'
+          ]
+        },
+        {
+          id: 'accessory-organs',
+          title: 'Accessory organs present with ducts reaching the tract',
+          maxPoints: 2,
+          checklist: [
+            'Salivary glands',
+            'Liver',
+            'Gallbladder',
+            'Pancreas',
+            'Ducts shown reaching the GI tract'
+          ]
+        }
+      ]
+    },
+    {
+      id: 'digestion',
+      title: 'Digestion',
+      maxPoints: 12,
+      desc: 'Mechanical and chemical digestion at each region with enzymes, substrates, and products',
+      items: [
+        {
+          id: 'mechanical-digestion',
+          title: 'Mechanical digestion locations and mechanisms',
+          maxPoints: 3,
+          checklist: [
+            'Mastication (mouth, chewing)',
+            'Churning (stomach, mixing)',
+            'Segmentation (small intestine, mixing)'
+          ]
+        },
+        {
+          id: 'carb-digestion',
+          title: 'Carbohydrate digestion: salivary amylase, pancreatic amylase, brush border enzymes',
+          maxPoints: 3,
+          checklist: [
+            'Salivary amylase (mouth, starch breakdown)',
+            'Pancreatic amylase (small intestine)',
+            'Maltase (brush border, maltose to glucose)',
+            'Sucrase (brush border, sucrose to glucose + fructose)',
+            'Lactase (brush border, lactose to glucose + galactose)'
+          ]
+        },
+        {
+          id: 'protein-digestion',
+          title: 'Protein digestion: pepsin, trypsin, chymotrypsin, peptidases. Activation cascades shown',
+          maxPoints: 3,
+          checklist: [
+            'Pepsin (stomach, proteins to polypeptides)',
+            'Trypsin (small intestine)',
+            'Chymotrypsin (small intestine)',
+            'Peptidases (brush border, peptides to amino acids)',
+            'Pepsinogen to Pepsin (activated by HCl/low pH)',
+            'Trypsinogen to Trypsin (activated by enterokinase)',
+            'Chymotrypsinogen to Chymotrypsin (activated by trypsin)'
+          ]
+        },
+        {
+          id: 'lipid-digestion',
+          title: 'Lipid digestion: bile emulsification, pancreatic lipase, micelle formation',
+          maxPoints: 3,
+          checklist: [
+            'Bile emulsification (breaks fat globules into smaller droplets)',
+            'Pancreatic lipase (triglycerides to fatty acids + monoglycerides)',
+            'Micelle formation (bile salts encapsulate digestion products)'
+          ]
+        }
+      ]
+    },
+    {
+      id: 'secretion',
+      title: 'Secretion',
+      maxPoints: 8,
+      desc: 'Stomach, pancreatic, and biliary secretions with cells of origin and target action',
+      items: [
+        {
+          id: 'stomach-secretions',
+          title: 'Stomach secretions identified with cell of origin',
+          maxPoints: 3,
+          checklist: [
+            'HCl (parietal cells)',
+            'Pepsinogen (chief cells)',
+            'Intrinsic factor (parietal cells, for B12 absorption)',
+            'Mucus (mucous cells, protects gastric lining)'
+          ]
+        },
+        {
+          id: 'pancreatic-secretions',
+          title: 'Pancreatic secretions: enzymes plus bicarbonate, with target action',
+          maxPoints: 3,
+          checklist: [
+            'Pancreatic amylase (carb digestion target)',
+            'Pancreatic lipase (lipid digestion target)',
+            'Proteases: trypsin, chymotrypsin (protein digestion target)',
+            'Bicarbonate (neutralizes acidic chyme from stomach)',
+            'Released into small intestine via pancreatic duct'
+          ]
+        },
+        {
+          id: 'bile',
+          title: 'Bile: where produced, where stored, what it does',
+          maxPoints: 2,
+          checklist: [
+            'Produced in the liver (hepatocytes)',
+            'Stored in the gallbladder',
+            'Released into duodenum via common bile duct',
+            'Function: emulsifies fats, aids lipid digestion'
+          ]
+        }
+      ]
+    },
+    {
+      id: 'absorption',
+      title: 'Absorption',
+      maxPoints: 8,
+      desc: 'Where each macronutrient and water/electrolyte is absorbed and by what mechanism',
+      items: [
+        {
+          id: 'carb-absorption',
+          title: 'Carbohydrates: monosaccharide absorption (SGLT1, GLUT2, GLUT5)',
+          maxPoints: 2,
+          checklist: [
+            'SGLT1 (apical, Na+ co-transport, glucose & galactose)',
+            'GLUT5 (apical, facilitated diffusion, fructose)',
+            'GLUT2 (basolateral, monosaccharides exit enterocyte)'
+          ]
+        },
+        {
+          id: 'amino-acid-absorption',
+          title: 'Amino acid absorption mechanism noted',
+          maxPoints: 2,
+          checklist: [
+            'Na+-dependent secondary active transport',
+            'Multiple amino acid transporter types',
+            'PepT1 transporter for di/tripeptides',
+            'Basolateral exit (facilitated diffusion)'
+          ]
+        },
+        {
+          id: 'lipid-absorption',
+          title: 'Lipid absorption: micelle to enterocyte to chylomicron to lacteal',
+          maxPoints: 2,
+          checklist: [
+            'Micelle delivers FAs and monoglycerides to enterocyte',
+            'FAs and monoglycerides diffuse into enterocyte',
+            'Re-esterified to triglycerides inside enterocyte',
+            'Packaged into chylomicrons',
+            'Chylomicrons enter lacteals (lymph), not blood capillaries'
+          ]
+        },
+        {
+          id: 'water-electrolyte-absorption',
+          title: 'Water and electrolyte absorption locations',
+          maxPoints: 2,
+          checklist: [
+            'Small intestine: bulk of water absorption (~7-8 L/day)',
+            'Large intestine: final water absorption (~1 L)',
+            'Electrolytes (Na+, Cl-, K+) absorbed in small intestine',
+            'Colon fine-tunes Na+ absorption (aldosterone-sensitive)'
+          ]
+        }
+      ]
+    },
+    {
+      id: 'hormones-motility',
+      title: 'Hormones & Motility',
+      maxPoints: 8,
+      desc: 'GI hormones with stimulus/source/target/effect plus motility patterns at each region',
+      items: [
+        {
+          id: 'major-hormones',
+          title: 'Major hormones mapped (gastrin, secretin, CCK, GIP, motilin) with stimulus, source, target, effect',
+          maxPoints: 5,
+          checklist: [
+            'Gastrin: G cells, stimulus protein/distension, target parietal/chief, effect HCl/pepsinogen',
+            'Secretin: S cells (duodenum), stimulus acidic chyme, target pancreas/liver, effect bicarbonate',
+            'CCK: I cells (duodenum), stimulus fat/AAs, target gallbladder/pancreas, effect bile + enzymes',
+            'GIP: K cells (duodenum), stimulus glucose/fat, target pancreas, effect insulin (incretin)',
+            'Motilin: M cells (duodenum/jejunum), stimulus fasting, target smooth muscle, effect MMC',
+            'All four attributes shown for each hormone (stimulus, source, target, effect)'
+          ]
+        },
+        {
+          id: 'motility-patterns',
+          title: 'Motility patterns labeled at correct regions',
+          maxPoints: 3,
+          checklist: [
+            'Peristalsis: esophagus, stomach, intestines (propulsive)',
+            'Segmentation: small intestine (mixing)',
+            'Mass movement: large intestine (3-4 times per day, propulsive)',
+            'MMC: stomach + small intestine, fasting state, "housekeeping"'
+          ]
+        }
+      ]
+    },
+    {
+      id: 'one-page-clarity',
+      title: 'One-Page Constraint & Clarity',
+      maxPoints: 6,
+      desc: 'Submission requirements and visual clarity',
+      items: [
+        {
+          id: 'one-page',
+          title: 'Submission is one page, one side only',
+          maxPoints: 2,
+          checklist: [
+            'Single page submission',
+            'No back side / no continuation page',
+            'Not split across multiple pages'
+          ]
+        },
+        {
+          id: 'legibility',
+          title: 'Map is legible, all labels clearly attached to structures',
+          maxPoints: 2,
+          checklist: [
+            'Handwriting is legible at full size',
+            'Labels connected to structures (arrows or proximity)',
+            'No ambiguous floating labels',
+            'Photo or scan is clear and well-lit'
+          ]
+        },
+        {
+          id: 'color-coding',
+          title: 'Color coding or visual organization with legend',
+          maxPoints: 1,
+          checklist: [
+            'Color used to distinguish categories (or clear visual sectioning)',
+            'Legend present if colors used'
+          ]
+        },
+        {
+          id: 'name-on-map',
+          title: 'Name clearly written on the map itself',
+          maxPoints: 1,
+          checklist: [
+            'Name visible on the map itself, not just the filename'
+          ]
+        }
+      ]
+    }
+  ];
+
+  // State storage: itemId -> score
+  const itemScores = {};
+
+  // Build rubric DOM
+  const container = document.getElementById('rubric-container');
+
+  RUBRIC.forEach(section => {
+    const sectionEl = document.createElement('section');
+    sectionEl.className = 'section';
+    sectionEl.id = 'sec-' + section.id;
+    sectionEl.setAttribute('aria-labelledby', 'name-' + section.id);
+
+    const itemsHtml = section.items.map(item => {
+      const checklistHtml = item.checklist.map((text, idx) => `
+        <li>
+          <button type="button" class="check-btn" data-state="empty" data-item="${item.id}" data-idx="${idx}" aria-label="Mark ${text} as present or missing" title="Click to cycle: empty, present (✓), missing (✗)">
+            <span class="check-icon" aria-hidden="true"></span>
+          </button>
+          <span class="item-text">${text}</span>
+        </li>
+      `).join('');
+
+      const halfPts = item.maxPoints / 2;
+      const halfDisplay = halfPts % 1 === 0 ? halfPts : halfPts.toFixed(1);
+
+      return `
+        <div class="line-item" id="item-${item.id}" data-max="${item.maxPoints}">
+          <div class="line-item-header">
+            <div class="line-item-title-block">
+              <span class="line-item-title">${item.title}</span>
+              <span class="line-item-max">${item.maxPoints} pts</span>
+            </div>
+            <div class="line-item-scoring">
+              <button type="button" class="score-btn" data-pts="${item.maxPoints}" data-item="${item.id}">Full (${item.maxPoints})</button>
+              <button type="button" class="score-btn" data-pts="${halfPts}" data-item="${item.id}">Half (${halfDisplay})</button>
+              <button type="button" class="score-btn" data-pts="0" data-item="${item.id}">None (0)</button>
+              <input type="number" class="score-input" id="input-${item.id}" min="0" max="${item.maxPoints}" step="0.5" placeholder="—" aria-label="Override score for ${item.title}">
+              <span class="score-current" id="score-${item.id}">— / ${item.maxPoints}</span>
+            </div>
+          </div>
+          <div class="checklist" aria-label="Specific items to look for">
+            <div class="checklist-header">
+              <div class="checklist-label">Look for · click to mark ✓ or ✗</div>
+              <div class="bulk-actions">
+                <button type="button" class="bulk-btn" data-action="mark-present" data-item="${item.id}">Mark all ✓</button>
+                <button type="button" class="bulk-btn" data-action="mark-missing" data-item="${item.id}">Mark all ✗</button>
+                <button type="button" class="bulk-btn" data-action="clear" data-item="${item.id}">Clear</button>
+              </div>
+            </div>
+            <ul>${checklistHtml}</ul>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    sectionEl.innerHTML = `
+      <header class="section-header">
+        <div class="section-title-block">
+          <div class="section-name" id="name-${section.id}">${section.title}</div>
+          <div class="section-desc">${section.desc}</div>
+        </div>
+        <div class="section-score-badge" id="badge-${section.id}" aria-label="Score for ${section.title}">— / ${section.maxPoints}</div>
+      </header>
+      <div class="section-body">
+        ${itemsHtml}
+        <div class="section-comment">
+          <label for="comment-${section.id}">Section feedback</label>
+          <textarea id="comment-${section.id}" placeholder="Specific feedback for this section: what was strong, what was missing, what to do next time"></textarea>
+        </div>
+      </div>
+    `;
+
+    container.appendChild(sectionEl);
+  });
+
+  // Wire up score buttons
+  document.querySelectorAll('.score-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const itemId = btn.dataset.item;
+      const pts = parseFloat(btn.dataset.pts);
+      setItemScore(itemId, pts, btn);
+    });
+  });
+
+  // Wire up score inputs (manual override)
+  document.querySelectorAll('.score-input').forEach(input => {
+    input.addEventListener('input', () => {
+      const itemId = input.id.replace('input-', '');
+      const val = input.value.trim();
+      if (val === '') {
+        clearItemScore(itemId);
+        return;
+      }
+      const pts = parseFloat(val);
+      if (!isNaN(pts)) {
+        setItemScore(itemId, pts, null);
+      }
+    });
+  });
+
+  function setItemScore(itemId, pts, sourceBtn) {
+    const card = document.getElementById('item-' + itemId);
+    if (!card) return;
+    const max = parseFloat(card.dataset.max);
+    const clamped = Math.max(0, Math.min(max, pts));
+    itemScores[itemId] = clamped;
+
+    // Update display
+    const displayPts = clamped % 1 === 0 ? clamped : clamped.toFixed(1);
+    document.getElementById('score-' + itemId).textContent = `${displayPts} / ${max}`;
+
+    // Update button states
+    card.querySelectorAll('.score-btn').forEach(b => {
+      const bPts = parseFloat(b.dataset.pts);
+      b.setAttribute('aria-pressed', bPts === clamped ? 'true' : 'false');
+    });
+
+    // Update input if change came from button (don't overwrite if user is typing)
+    if (sourceBtn) {
+      const input = document.getElementById('input-' + itemId);
+      if (input && document.activeElement !== input) {
+        input.value = displayPts;
+      }
+    }
+
+    card.classList.add('scored');
+    updateTotal();
+  }
+
+  function clearItemScore(itemId) {
+    const card = document.getElementById('item-' + itemId);
+    if (!card) return;
+    const max = parseFloat(card.dataset.max);
+    delete itemScores[itemId];
+
+    document.getElementById('score-' + itemId).textContent = `— / ${max}`;
+    card.querySelectorAll('.score-btn').forEach(b => b.setAttribute('aria-pressed', 'false'));
+    card.classList.remove('scored');
+    updateTotal();
+  }
+
+  // Wire up check button tri-state cycling
+  document.querySelectorAll('.check-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const states = ['empty', 'present', 'missing'];
+      const current = btn.dataset.state || 'empty';
+      const next = states[(states.indexOf(current) + 1) % 3];
+      btn.dataset.state = next;
+    });
+  });
+
+  // Wire up bulk action buttons
+  document.querySelectorAll('.bulk-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const action = btn.dataset.action;
+      const itemId = btn.dataset.item;
+      const card = document.getElementById('item-' + itemId);
+      if (!card) return;
+      const checks = card.querySelectorAll('.check-btn');
+      if (action === 'mark-present') {
+        checks.forEach(c => c.dataset.state = 'present');
+      } else if (action === 'mark-missing') {
+        checks.forEach(c => c.dataset.state = 'missing');
+      } else if (action === 'clear') {
+        checks.forEach(c => c.dataset.state = 'empty');
+      }
+    });
+  });
+
+  // Total calculation
+  function updateTotal() {
+    let total = 0;
+    RUBRIC.forEach(section => {
+      let sectionTotal = 0;
+      let sectionAny = false;
+      section.items.forEach(item => {
+        if (item.id in itemScores) {
+          sectionTotal += itemScores[item.id];
+          sectionAny = true;
+        }
+      });
+      total += sectionTotal;
+
+      // Update section badge
+      const badge = document.getElementById('badge-' + section.id);
+      if (badge) {
+        const display = sectionTotal % 1 === 0 ? sectionTotal : sectionTotal.toFixed(1);
+        if (sectionAny) {
+          badge.textContent = `${display} / ${section.maxPoints}`;
+        } else {
+          badge.textContent = `— / ${section.maxPoints}`;
+        }
+      }
+    });
+
+    const totalRounded = Math.round(total * 10) / 10;
+    const display = totalRounded % 1 === 0 ? totalRounded : totalRounded.toFixed(1);
+    document.getElementById('total-score').textContent = display;
+
+    const pct = (total / 50) * 100;
+    const pctRounded = Math.round(pct * 10) / 10;
+    const pctDisplay = pctRounded % 1 === 0 ? pctRounded : pctRounded.toFixed(1);
+    document.getElementById('total-percent').textContent = `${pctDisplay}%`;
+    document.getElementById('progress-fill').style.width = `${Math.min(pct, 100)}%`;
+
+    document.getElementById('total-letter').textContent = letterGrade(pct);
+  }
+
+  function letterGrade(pct) {
+    if (pct >= 93) return 'A';
+    if (pct >= 90) return 'A-';
+    if (pct >= 87) return 'B+';
+    if (pct >= 83) return 'B';
+    if (pct >= 80) return 'B-';
+    if (pct >= 77) return 'C+';
+    if (pct >= 73) return 'C';
+    if (pct >= 70) return 'C-';
+    if (pct >= 67) return 'D+';
+    if (pct >= 60) return 'D';
+    return 'F';
+  }
+
+  // Set today's date
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, '0');
+  const dd = String(today.getDate()).padStart(2, '0');
+  document.getElementById('grade-date').value = `${yyyy}-${mm}-${dd}`;
+
+  // Build report text
+  function buildReport() {
+    const name = document.getElementById('student-name').value || '[Name not entered]';
+    const id = document.getElementById('student-id').value;
+    const course = document.getElementById('course-section').value;
+    const date = document.getElementById('grade-date').value;
+    const total = document.getElementById('total-score').textContent;
+    const pct = document.getElementById('total-percent').textContent;
+    const letter = document.getElementById('total-letter').textContent;
+
+    let report = '';
+    report += '======================================================\n';
+    report += '  GI MAP, GRADING REPORT\n';
+    report += '  ' + course + '\n';
+    report += '======================================================\n\n';
+    report += 'Student: ' + name + '\n';
+    if (id) report += 'ID: ' + id + '\n';
+    report += 'Date graded: ' + date + '\n';
+    report += 'Final score: ' + total + ' / 50  (' + pct + ',  ' + letter + ')\n\n';
+    report += '------------------------------------------------------\n';
+    report += 'SECTION BREAKDOWN\n';
+    report += '------------------------------------------------------\n\n';
+
+    RUBRIC.forEach(section => {
+      const badge = document.getElementById('badge-' + section.id).textContent;
+      report += section.title.toUpperCase() + '   (' + badge + ')\n';
+      section.items.forEach(item => {
+        const score = item.id in itemScores ? itemScores[item.id] : null;
+        const scoreText = score === null ? 'Not scored' : score + ' / ' + item.maxPoints;
+        report += '  · ' + item.title + '\n';
+        report += '    Score: ' + scoreText + '\n';
+      });
+      const comment = document.getElementById('comment-' + section.id).value.trim();
+      if (comment) report += '\n  Feedback: ' + comment + '\n';
+      report += '\n';
+    });
+
+    report += '------------------------------------------------------\n';
+    report += 'OVERALL FEEDBACK\n';
+    report += '------------------------------------------------------\n\n';
+
+    const strengths = document.getElementById('strengths').value.trim();
+    const growth = document.getElementById('growth').value.trim();
+    const nextSteps = document.getElementById('next-steps').value.trim();
+
+    if (strengths) report += 'Strengths:\n' + strengths + '\n\n';
+    if (growth) report += 'Growth areas:\n' + growth + '\n\n';
+    if (nextSteps) report += 'Next steps:\n' + nextSteps + '\n\n';
+
+    report += '------------------------------------------------------\n';
+    report += 'Dr. Sharilyn Rennie\n';
+
+    return report;
+  }
+
+  // Toast helper
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 1800);
+  }
+
+  // Action buttons
+  document.getElementById('copy-btn').addEventListener('click', async () => {
+    const report = buildReport();
+    try {
+      await navigator.clipboard.writeText(report);
+      showToast('Report copied to clipboard');
+    } catch (e) {
+      const ta = document.createElement('textarea');
+      ta.value = report;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      showToast('Report copied');
+    }
+  });
+
+  document.getElementById('download-btn').addEventListener('click', () => {
+    const report = buildReport();
+    const name = document.getElementById('student-name').value || 'student';
+    const safeName = name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    const blob = new Blob([report], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'gi_map_' + safeName + '.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('Report downloaded');
+  });
+
+  document.getElementById('print-btn').addEventListener('click', () => {
+    window.print();
+  });
+
+  document.getElementById('reset-btn').addEventListener('click', () => {
+    if (!confirm('Reset all scores and comments? This cannot be undone.')) return;
+    Object.keys(itemScores).forEach(id => delete itemScores[id]);
+    document.querySelectorAll('.line-item').forEach(card => {
+      const itemId = card.id.replace('item-', '');
+      const max = parseFloat(card.dataset.max);
+      card.classList.remove('scored');
+      card.querySelectorAll('.score-btn').forEach(b => b.setAttribute('aria-pressed', 'false'));
+      card.querySelector('.score-current').textContent = `— / ${max}`;
+      const input = card.querySelector('.score-input');
+      if (input) input.value = '';
+      card.querySelectorAll('.check-btn').forEach(b => b.dataset.state = 'empty');
+    });
+    document.querySelectorAll('textarea').forEach(t => t.value = '');
+    document.getElementById('student-name').value = '';
+    document.getElementById('student-id').value = '';
+    updateTotal();
+    showToast('Reset complete');
+  });
+
+  // Auto-grow textareas so all comment text is visible on screen
+  function autoGrow(ta) {
+    ta.style.height = 'auto';
+    ta.style.height = (ta.scrollHeight + 2) + 'px';
+  }
+  document.querySelectorAll('textarea').forEach(ta => {
+    ta.style.overflow = 'hidden';
+    ta.addEventListener('input', () => { autoGrow(ta); sendHeight(); });
+    autoGrow(ta);
+  });
+
+  // Print preparation: replace textareas with full-text divs so nothing truncates
+  function preparePrint() {
+    const ps = document.getElementById('print-summary');
+    if (ps) {
+      const name = document.getElementById('student-name').value || '[Name not entered]';
+      const id = document.getElementById('student-id').value;
+      const course = document.getElementById('course-section').value;
+      const date = document.getElementById('grade-date').value;
+      const score = document.getElementById('total-score').textContent;
+      const pct = document.getElementById('total-percent').textContent;
+      const letter = document.getElementById('total-letter').textContent;
+      ps.innerHTML = `
+        <div class="ps-row"><span class="ps-label">Student</span><span class="ps-value">${name}${id ? ' (' + id + ')' : ''}</span></div>
+        <div class="ps-row"><span class="ps-label">Course</span><span class="ps-value">${course}</span></div>
+        <div class="ps-row"><span class="ps-label">Date graded</span><span class="ps-value">${date}</span></div>
+        <div class="ps-row ps-final"><span class="ps-label">Final score</span><span class="ps-value">${score} / 50 &nbsp; ${pct} &nbsp; ${letter}</span></div>
+      `;
+    }
+    document.querySelectorAll('textarea').forEach(ta => {
+      const block = ta.closest('.section-comment') || ta.closest('.feedback-grid > div') || ta.parentElement;
+      if (!ta.value.trim()) {
+        if (block) block.classList.add('print-hide');
+        return;
+      }
+      const div = document.createElement('div');
+      div.className = 'print-comment';
+      div.textContent = ta.value;
+      ta.parentNode.insertBefore(div, ta.nextSibling);
+    });
+  }
+
+  function cleanupPrint() {
+    document.querySelectorAll('.print-comment').forEach(el => el.remove());
+    document.querySelectorAll('.print-hide').forEach(el => el.classList.remove('print-hide'));
+  }
+
+  window.addEventListener('beforeprint', preparePrint);
+  window.addEventListener('afterprint', cleanupPrint);
+
+  // Initial render
+  updateTotal();
+
+  // iframe height sender for Kajabi/GitHub Pages embedding
+  function sendHeight() {
+    const height = document.documentElement.scrollHeight;
+    if (window.parent !== window) {
+      window.parent.postMessage({
+        type: 'iframe-height',
+        id: 'gi-map-grader',
+        height: height
+      }, '*');
+    }
+  }
+  window.addEventListener('load', sendHeight);
+  window.addEventListener('resize', sendHeight);
+  if (typeof ResizeObserver !== 'undefined') {
+    const ro = new ResizeObserver(sendHeight);
+    ro.observe(document.body);
+  }
+</script>
+
+</body>
+</html>
