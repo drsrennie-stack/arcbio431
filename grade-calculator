@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BIO 431 Grade Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Atkinson+Hyperlegible:wght@400;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0A1322; --navy-mid: #1F2D44;
+    --gold: #D4A24C; --gold-text: #6E5018; --gold-bright: #E5B45C;
+    --terra: #C25A3E; --terra-text: #7A2F18; --terra-bright: #E59575;
+    --teal-text: #2C5F66; --teal-bright: #5B9AA0;
+    --plum-text: #5C2A66; --plum-bright: #8D5099;
+    --ink-soft: #14202F; --ink-muted: #3D4860;
+    --rule: #B8BEC8; --rule-soft: #DCE0E6; --rule-faint: #E8EBEF;
+    --success: #2E7D5C; --success-bg: #E5F1EB;
+    --shadow-card: 0 1px 3px rgba(10,19,34,0.08), 0 1px 2px rgba(10,19,34,0.05);
+    --shadow-hover: 0 6px 16px rgba(10,19,34,0.10), 0 3px 6px rgba(10,19,34,0.06);
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  em, i, cite, dfn, var { font-style: normal; }
+  html, body { margin: 0; padding: 0; background: #ffffff; color: var(--ink-soft); font-family: 'Atkinson Hyperlegible', Arial, sans-serif; font-size: 16px; line-height: 1.55; }
+  .page { max-width: 980px; margin: 0 auto; padding: 32px 24px 64px; }
+
+  /* Header */
+  .eyebrow { color: var(--terra-text); font-family: 'DM Sans', 'Plus Jakarta Sans', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
+  h1 { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; color: var(--navy); font-size: clamp(28px, 4vw, 38px); line-height: 1.15; margin: 0 0 8px; letter-spacing: -0.01em; }
+  .subhead { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 600; color: var(--terra-text); font-size: 17px; margin: 0; }
+  .description { color: var(--ink-muted); margin: 12px 0 0; font-size: 15px; max-width: 72ch; }
+
+  /* Summary card */
+  .summary { background: var(--navy); color: #ffffff; border-radius: 4px; padding: 28px 28px 24px; margin: 24px 0; box-shadow: var(--shadow-card); display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: center; }
+  .summary-left .label { font-family: 'DM Sans', 'Plus Jakarta Sans', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold-bright); margin-bottom: 6px; }
+  .summary-left .grade-line { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+  .summary-pct { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 56px; line-height: 1; letter-spacing: -0.02em; color: #ffffff; }
+  .summary-letter { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 28px; color: var(--gold-bright); padding: 6px 16px; border: 1.5px solid var(--gold-bright); border-radius: 99px; line-height: 1; }
+  .summary-note { margin-top: 10px; color: #C8D0DD; font-size: 14px; }
+  .summary-right { display: flex; flex-direction: column; gap: 4px; min-width: 240px; }
+  .weight-row { display: flex; justify-content: space-between; align-items: baseline; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.12); font-size: 14px; color: #C8D0DD; gap: 12px; }
+  .weight-row:last-child { border-bottom: none; }
+  .weight-row .name { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 600; }
+  .weight-row .value { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; color: #ffffff; white-space: nowrap; }
+  .weight-row.bonus-row .name, .weight-row.bonus-row .value { color: var(--gold-bright); }
+  .progress-meta { margin-top: 14px; font-size: 13px; color: #C8D0DD; display: flex; justify-content: space-between; gap: 8px; }
+  .progress-bar { margin-top: 6px; height: 6px; background: rgba(255,255,255,0.12); border-radius: 99px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--gold-bright); width: 0%; transition: width 0.3s ease; }
+
+  /* Sections */
+  .section { background: #ffffff; border: 1px solid var(--rule-soft); border-left: 4px solid var(--rule); border-radius: 4px; padding: 22px 24px 24px; margin-bottom: 20px; box-shadow: var(--shadow-card); }
+  .section.cat { border-left-color: var(--terra); }
+  .section.cum { border-left-color: var(--navy-mid); }
+  .section.scholar { border-left-color: var(--plum-bright); }
+  .section.target { border-left-color: var(--navy-mid); }
+
+  .section-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 16px; flex-wrap: wrap; }
+  .section-title { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; color: var(--terra-text); font-size: 20px; margin: 0; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .cum .section-title { color: var(--navy); }
+  .scholar .section-title { color: var(--plum-text); }
+  .target .section-title { color: var(--navy); }
+
+  .weight-pill { display: inline-block; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 0.04em; padding: 4px 12px; border-radius: 99px; background: #F8E5DD; color: var(--terra-text); }
+  .cum .weight-pill { background: var(--rule-faint); color: var(--navy); }
+  .scholar .weight-pill { background: #EBDFEE; color: var(--plum-text); }
+  .section-avg { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 14px; color: var(--ink-muted); }
+  .section-avg strong { color: var(--navy); font-size: 16px; margin-left: 6px; }
+
+  /* Fields grid */
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
+  .field { border: 1px solid var(--rule-soft); border-radius: 4px; padding: 12px 14px 14px; background: #ffffff; }
+  .field:focus-within { border-color: var(--navy-mid); box-shadow: 0 0 0 2px rgba(31,45,68,0.10); }
+  .field.replaced { border-color: var(--success); box-shadow: 0 0 0 1px var(--success-bg); }
+  .field-label { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 13px; color: var(--navy); margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+  .replaced-tag { display: inline-block; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 7px; border-radius: 99px; background: var(--success); color: #ffffff; }
+  .input-row { display: grid; grid-template-columns: 1fr auto 1fr; gap: 8px; align-items: center; }
+  .input-row .sep { color: var(--ink-muted); font-weight: 700; }
+  .field input[type="number"] { width: 100%; font-family: 'Atkinson Hyperlegible', sans-serif; font-size: 15px; font-weight: 700; color: var(--navy); padding: 8px 10px; border: 1px solid var(--rule); border-radius: 4px; background: #ffffff; text-align: center; -moz-appearance: textfield; }
+  .field input[type="number"]::-webkit-outer-spin-button, .field input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .field input[type="number"]:focus { outline: none; border-color: var(--navy); }
+  .field input[type="number"]::placeholder { color: var(--rule); font-weight: 500; }
+  .field-pct { margin-top: 8px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 14px; color: var(--ink-muted); text-align: center; min-height: 20px; }
+  .field-pct.set { color: var(--navy); }
+  .field-pct .raw { color: var(--ink-muted); text-decoration: line-through; font-weight: 500; margin-right: 6px; }
+  .field-pct .new { color: var(--success); }
+
+  /* Dynamic list (TBL) */
+  .dyn-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+  .dyn-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin-bottom: 12px; }
+  .dyn-row { display: grid; grid-template-columns: 1fr 110px auto; gap: 8px; align-items: center; padding: 10px 12px; border: 1px solid var(--rule-soft); border-radius: 4px; background: #ffffff; }
+  .dyn-row.dropped { opacity: 0.55; border-style: dashed; }
+  .dyn-row .dyn-label { font-family: 'Atkinson Hyperlegible', sans-serif; font-size: 14px; font-weight: 700; color: var(--navy); padding: 7px 10px; border: 1px solid var(--rule); border-radius: 4px; background: #ffffff; }
+  .dyn-row .dyn-label:focus { outline: none; border-color: var(--navy); }
+  .dyn-value-wrap { display: flex; align-items: center; gap: 6px; }
+  .dyn-row .dyn-value { width: 70px; font-family: 'Atkinson Hyperlegible', sans-serif; font-size: 15px; font-weight: 700; color: var(--navy); padding: 7px 8px; border: 1px solid var(--rule); border-radius: 4px; background: #ffffff; text-align: center; -moz-appearance: textfield; }
+  .dyn-row .dyn-value::-webkit-outer-spin-button, .dyn-row .dyn-value::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .dyn-row .dyn-value:focus { outline: none; border-color: var(--navy); }
+  .dyn-of { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; color: var(--ink-muted); font-size: 13px; white-space: nowrap; }
+  .dyn-remove { background: transparent; border: 1px solid var(--rule); color: var(--ink-muted); width: 32px; height: 32px; border-radius: 4px; cursor: pointer; font-size: 18px; line-height: 1; font-weight: 700; }
+  .dyn-remove:hover { background: var(--terra); color: #ffffff; border-color: var(--terra); }
+  .dyn-empty { padding: 20px; text-align: center; color: var(--ink-muted); font-size: 14px; border: 1px dashed var(--rule); border-radius: 4px; margin-bottom: 12px; }
+  .dyn-summary { padding: 12px 14px; background: #ffffff; border: 1px solid var(--rule-soft); border-radius: 4px; font-size: 14px; color: var(--ink-muted); line-height: 1.5; }
+  .btn-add-dyn { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 13px; color: var(--teal-text); background: #ffffff; border: 1.5px solid var(--teal-bright); border-radius: 4px; padding: 8px 14px; cursor: pointer; }
+  .btn-add-dyn:hover { background: #DDEAEC; }
+
+  /* Info notes */
+  .info-note { margin-top: 14px; padding: 12px 14px; border: 1px solid var(--rule-soft); border-radius: 4px; background: #ffffff; font-size: 14px; color: var(--ink-muted); line-height: 1.5; }
+  .info-note strong { color: var(--navy); font-weight: 700; }
+
+  /* Cumulative section */
+  .cum-tip { padding: 12px 14px; background: #ffffff; border: 1px solid var(--rule-soft); border-left: 3px solid var(--gold); border-radius: 4px; font-size: 14px; color: var(--ink-soft); margin-bottom: 16px; line-height: 1.55; }
+  .cum-tip strong { color: var(--gold-text); font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; }
+  .cum-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+  .cum-card { border: 1px solid var(--rule-soft); border-radius: 4px; padding: 16px 18px 18px; background: #ffffff; }
+  .cum-card h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; color: var(--navy); font-size: 15px; margin: 0 0 10px; }
+  .cum-input-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .cum-input-row input { width: 120px; font-family: 'Atkinson Hyperlegible', sans-serif; font-size: 16px; font-weight: 700; color: var(--navy); padding: 8px 10px; border: 1px solid var(--rule); border-radius: 4px; text-align: center; -moz-appearance: textfield; }
+  .cum-input-row input::-webkit-outer-spin-button, .cum-input-row input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .cum-input-row input:focus { outline: none; border-color: var(--navy); }
+  .cum-input-row .of { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; color: var(--ink-muted); font-size: 14px; }
+  .cum-effect { font-size: 14px; color: var(--ink-muted); line-height: 1.5; padding: 10px 12px; background: var(--rule-faint); border-radius: 4px; }
+  .cum-effect.applied { background: var(--success-bg); color: var(--ink-soft); }
+  .cum-effect .boost { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; color: var(--success); }
+  .cum-effect strong { font-family: 'Plus Jakarta Sans', sans-serif; color: var(--navy); }
+
+  /* Scholar points */
+  .scholar-intro { color: var(--ink-muted); margin: 0 0 16px; font-size: 14px; line-height: 1.55; max-width: 72ch; }
+  .path-picker { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-bottom: 18px; }
+  .path-option { position: relative; cursor: pointer; display: block; padding: 14px 16px 14px 44px; border: 1.5px solid var(--rule); border-radius: 4px; background: #ffffff; transition: border-color 0.15s ease, background-color 0.15s ease; }
+  .path-option:hover { border-color: var(--plum-bright); }
+  .path-option input[type="radio"] { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); accent-color: var(--plum-bright); width: 18px; height: 18px; cursor: pointer; }
+  .path-option-title { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 14px; color: var(--navy); margin: 0 0 2px; }
+  .path-option-sub { font-size: 12px; color: var(--ink-muted); margin: 0; line-height: 1.4; }
+  .path-option:has(input:checked) { border-color: var(--plum-bright); background: #FAF6FB; }
+  .path-option:has(input:checked) .path-option-title { color: var(--plum-text); }
+
+  .path-detail { border: 1px solid var(--rule-soft); border-radius: 4px; padding: 18px 20px; background: #ffffff; margin-bottom: 16px; }
+  .path-detail h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; color: var(--plum-text); font-size: 15px; margin: 0 0 6px; }
+  .path-detail .max { font-family: 'DM Sans', 'Plus Jakarta Sans', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 10px; }
+  .path-detail .rules { font-size: 13px; color: var(--ink-muted); margin-bottom: 14px; line-height: 1.5; }
+  .path-detail .rules ul { margin: 6px 0 0; padding-left: 20px; }
+  .path-detail .rules li { margin-bottom: 4px; }
+  .path-detail .rules strong { color: var(--navy); font-weight: 700; font-family: 'Plus Jakarta Sans', sans-serif; }
+
+  .ssc-row { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: #FAFBFC; border: 1px solid var(--rule-soft); border-radius: 4px; }
+  .ssc-row input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--plum-bright); cursor: pointer; flex-shrink: 0; }
+  .ssc-row label { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 600; color: var(--navy); cursor: pointer; font-size: 14px; line-height: 1.4; }
+
+  .hours-input-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+  .hours-input-row input { width: 100px; font-family: 'Atkinson Hyperlegible', sans-serif; font-size: 16px; font-weight: 700; color: var(--navy); padding: 8px 10px; border: 1px solid var(--rule); border-radius: 4px; text-align: center; -moz-appearance: textfield; }
+  .hours-input-row input::-webkit-outer-spin-button, .hours-input-row input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .hours-input-row input:focus { outline: none; border-color: var(--plum-bright); }
+  .hours-input-row .of { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; color: var(--ink-muted); font-size: 14px; }
+  .hours-bar { height: 6px; background: var(--rule-faint); border-radius: 99px; overflow: hidden; margin-bottom: 10px; }
+  .hours-bar-fill { height: 100%; background: var(--plum-bright); width: 0%; transition: width 0.3s ease; }
+  .hours-status { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 14px; color: var(--ink-soft); }
+  .hours-status .pill { display: inline-block; padding: 3px 12px; border-radius: 99px; font-size: 13px; margin-left: 8px; }
+  .hours-status .pill.earned { background: var(--success-bg); color: var(--success); }
+  .hours-status .pill.pending { background: var(--rule-faint); color: var(--ink-muted); }
+
+  .academic-card { border: 1px solid var(--rule-soft); border-radius: 4px; padding: 16px 18px 16px; background: #ffffff; margin-bottom: 16px; }
+  .academic-card.unavailable { background: #FAFBFC; opacity: 0.75; }
+  .academic-card h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; color: var(--plum-text); font-size: 15px; margin: 0 0 4px; }
+  .academic-card.unavailable h3 { color: var(--ink-muted); }
+  .academic-card .max { font-family: 'DM Sans', 'Plus Jakarta Sans', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 8px; }
+  .academic-card .status { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 14px; color: var(--ink-soft); }
+  .academic-card .status .pill { display: inline-block; padding: 3px 12px; border-radius: 99px; font-size: 13px; margin-left: 8px; }
+  .academic-card .status .pill.earned { background: var(--success-bg); color: var(--success); }
+  .academic-card .status .pill.pending { background: var(--rule-faint); color: var(--ink-muted); }
+
+  .scholar-total { padding: 14px 16px; background: #ffffff; border: 1.5px solid var(--plum-bright); border-radius: 4px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+  .scholar-total .label { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; color: var(--plum-text); font-size: 15px; }
+  .scholar-total .value { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 26px; color: var(--plum-text); }
+  .scholar-total .cap-note { font-size: 12px; color: var(--ink-muted); font-weight: 500; margin-left: 6px; font-family: 'DM Sans', 'Plus Jakarta Sans', sans-serif; }
+
+  /* Target section */
+  .target p.intro { color: var(--ink-muted); margin: 0 0 16px; font-size: 15px; }
+  .target-controls { display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: center; margin-bottom: 16px; }
+  .target-controls label { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 14px; color: var(--navy); }
+  .target-controls input[type="number"] { width: 120px; font-family: 'Atkinson Hyperlegible', sans-serif; font-size: 16px; font-weight: 700; color: var(--navy); padding: 10px 12px; border: 1px solid var(--rule); border-radius: 4px; text-align: center; -moz-appearance: textfield; }
+  .target-controls input[type="number"]::-webkit-outer-spin-button, .target-controls input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .target-result { padding: 14px 16px; border: 1px solid var(--rule-soft); border-radius: 4px; background: #ffffff; font-size: 15px; line-height: 1.6; color: var(--ink-soft); }
+  .target-result.empty { color: var(--ink-muted); }
+  .target-result strong { font-family: 'Plus Jakarta Sans', sans-serif; color: var(--navy); font-weight: 700; }
+  .target-result .need { display: inline-block; padding: 2px 10px; border-radius: 99px; background: var(--navy); color: #ffffff; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 14px; margin: 0 2px; }
+  .target-result .need.impossible { background: var(--terra); }
+  .target-result .need.locked-in { background: var(--success); }
+  .target-fineprint { margin-top: 10px; font-size: 13px; color: var(--ink-muted); line-height: 1.5; }
+  .required-cum-block { margin-top: 14px; padding: 14px 16px; border: 1px solid var(--rule-soft); border-radius: 4px; background: #FAFBFC; }
+  .required-cum-block h4 { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; color: var(--navy); font-size: 14px; margin: 0 0 8px; letter-spacing: 0.01em; }
+  .required-cum-row { padding: 6px 0; font-size: 14px; color: var(--ink-soft); }
+  .required-cum-row strong { font-family: 'Plus Jakarta Sans', sans-serif; color: var(--navy); }
+  .required-cum-row .need { display: inline-block; padding: 2px 10px; border-radius: 99px; background: var(--navy); color: #ffffff; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 13px; margin: 0 4px; }
+  .required-cum-row .need.impossible { background: var(--terra); }
+  .required-cum-row .need.locked-in { background: var(--success); }
+
+  /* Toolbar */
+  .toolbar { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
+  .btn { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 14px; letter-spacing: 0.02em; padding: 11px 20px; border-radius: 4px; border: 1px solid transparent; cursor: pointer; }
+  .btn-secondary { background: #ffffff; color: var(--navy); border-color: var(--rule); }
+  .btn-secondary:hover { background: var(--rule-faint); border-color: var(--ink-muted); }
+  .btn:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+  .signature { margin-top: 24px; color: var(--ink-muted); font-size: 13px; }
+
+  /* Skip link */
+  .skip-link { position: absolute; left: -9999px; top: 0; background: var(--navy); color: #ffffff; padding: 8px 14px; border-radius: 4px; font-weight: 700; }
+  .skip-link:focus { left: 16px; top: 16px; z-index: 100; }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    .page { padding: 24px 16px 48px; }
+    .summary { grid-template-columns: 1fr; padding: 22px 20px; }
+    .summary-pct { font-size: 44px; }
+    .target-controls { grid-template-columns: 1fr; gap: 8px; }
+    .target-controls input[type="number"] { width: 100%; }
+    .dyn-row { grid-template-columns: 1fr 100px auto; }
+    .scholar-total { flex-direction: column; align-items: flex-start; gap: 8px; }
+  }
+
+  /* Print */
+  @media print {
+    .toolbar, .dyn-remove, .btn-add-dyn { display: none; }
+    body { background: #ffffff; }
+    .summary { background: #ffffff; color: var(--ink-soft); border: 2px solid var(--navy); }
+    .summary-pct, .summary-letter, .summary-note, .weight-row .name, .weight-row .value, .progress-meta { color: var(--ink-soft); }
+    .summary-letter { border-color: var(--navy); color: var(--navy); }
+  }
+
+  input:focus-visible { outline: none; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to main content</a>
+<main class="page" id="main">
+
+  <header style="margin-bottom: 28px;">
+    <div class="eyebrow">BIO 431 &middot; Human Anatomy &amp; Physiology &middot; MedMasters Collaborative</div>
+    <h1>Grade Calculator</h1>
+    <p class="subhead">Track your standing, plan your finals, see your finish line</p>
+    <p class="description">Enter your scores as you receive them. Your grade updates live and your entries save in this browser. Experiment with cumulative final scores and Scholar Points to see exactly what you need to land your goal grade.</p>
+  </header>
+
+  <section class="summary" aria-live="polite" aria-atomic="true">
+    <div class="summary-left">
+      <div class="label">Current Course Grade</div>
+      <div class="grade-line">
+        <div class="summary-pct" id="summary-pct">&mdash;</div>
+        <div class="summary-letter" id="summary-letter">&mdash;</div>
+      </div>
+      <div class="summary-note" id="summary-note">Enter scores below to begin.</div>
+      <div class="progress-meta"><span>Weighted coverage</span><span id="coverage-pct">0%</span></div>
+      <div class="progress-bar"><div class="progress-fill" id="coverage-fill"></div></div>
+    </div>
+    <div class="summary-right" aria-label="Category breakdown">
+      <div class="weight-row"><span class="name">Lecture Exams</span><span class="value"><span id="cat-pct-lec">&mdash;</span> &middot; 30%</span></div>
+      <div class="weight-row"><span class="name">Lab Exams</span><span class="value"><span id="cat-pct-lab">&mdash;</span> &middot; 30%</span></div>
+      <div class="weight-row"><span class="name">Team-Based Learning</span><span class="value"><span id="cat-pct-tbl">&mdash;</span> &middot; 30%</span></div>
+      <div class="weight-row"><span class="name">Clinical Challenges</span><span class="value"><span id="cat-pct-clin">&mdash;</span> &middot; 10%</span></div>
+      <div class="weight-row bonus-row"><span class="name">Scholar Points</span><span class="value" id="scholar-summary-value">+0.00%</span></div>
+    </div>
+  </section>
+
+  <!-- Lecture Exams -->
+  <section class="section cat" aria-labelledby="lec-head">
+    <div class="section-head">
+      <h2 class="section-title" id="lec-head">Lecture Exams <span class="weight-pill">30% of grade</span></h2>
+      <div class="section-avg">Average: <strong id="avg-lec">&mdash;</strong></div>
+    </div>
+    <div class="grid" id="grid-lec"></div>
+  </section>
+
+  <!-- Lab Exams -->
+  <section class="section cat" aria-labelledby="lab-head">
+    <div class="section-head">
+      <h2 class="section-title" id="lab-head">Lab Exams <span class="weight-pill">30% of grade</span></h2>
+      <div class="section-avg">Average: <strong id="avg-lab">&mdash;</strong></div>
+    </div>
+    <div class="grid" id="grid-lab"></div>
+  </section>
+
+  <!-- TBL -->
+  <section class="section cat" aria-labelledby="tbl-head">
+    <div class="section-head">
+      <h2 class="section-title" id="tbl-head">Team-Based Learning <span class="weight-pill">30% of grade &middot; drop 2 lowest</span></h2>
+      <div class="section-avg">Average: <strong id="avg-tbl">&mdash;</strong></div>
+    </div>
+    <div class="dyn-toolbar">
+      <button type="button" class="btn-add-dyn" id="btn-add-tbl">+ Add TBL Score</button>
+      <span class="section-avg" id="dyn-meta-tbl">No items yet</span>
+    </div>
+    <div class="dyn-list" id="dyn-list-tbl"></div>
+    <div class="dyn-empty" id="dyn-empty-tbl">No TBL scores entered yet. Click the button above to add one.</div>
+    <div class="dyn-summary" id="dyn-summary-tbl">Add items above to start tracking this category.</div>
+  </section>
+
+  <!-- Clinical Challenges -->
+  <section class="section cat" aria-labelledby="clin-head">
+    <div class="section-head">
+      <h2 class="section-title" id="clin-head">Clinical Challenges <span class="weight-pill">10% of grade</span></h2>
+      <div class="section-avg">Average: <strong id="avg-clin">&mdash;</strong></div>
+    </div>
+    <div class="grid" id="grid-clin"></div>
+  </section>
+
+  <!-- Cumulative Finals -->
+  <section class="section cum" aria-labelledby="cum-head">
+    <div class="section-head">
+      <h2 class="section-title" id="cum-head">Cumulative Finals <span class="weight-pill">Replaces lowest exam</span></h2>
+    </div>
+    <div class="cum-tip"><strong>Tip:</strong> Enter <strong>0</strong> in the fields below to see your current baseline grade with no cumulative improvement.</div>
+    <div class="cum-grid">
+      <div class="cum-card">
+        <h3>Cumulative Lecture Final</h3>
+        <div class="cum-input-row"><input type="number" id="cum-lec" min="0" max="100" step="0.01" placeholder="0"><span class="of">%</span></div>
+        <div class="cum-effect" id="cum-effect-lec">Enter a score to see how it affects your lowest lecture exam.</div>
+      </div>
+      <div class="cum-card">
+        <h3>Cumulative Lab Final</h3>
+        <div class="cum-input-row"><input type="number" id="cum-lab" min="0" max="100" step="0.01" placeholder="0"><span class="of">%</span></div>
+        <div class="cum-effect" id="cum-effect-lab">Enter a score to see how it affects your lowest lab exam.</div>
+      </div>
+    </div>
+    <div class="info-note"><strong>How this works:</strong> Each cumulative final partially replaces your lowest score in its category by splitting the difference. If your lowest exam was 60% and your cumulative is 80%, that 60% becomes 70%. If the cumulative is lower than your lowest exam, no replacement is applied. The cumulative finals do not count as additional regular exams.</div>
+  </section>
+
+  <!-- Scholar Points -->
+  <section class="section scholar" aria-labelledby="scholar-head">
+    <div class="section-head">
+      <h2 class="section-title" id="scholar-head">Scholar Points <span class="weight-pill">Up to +3% bonus</span></h2>
+      <div class="section-avg">Earned: <strong id="scholar-total-inline">+0.00%</strong></div>
+    </div>
+    <p class="scholar-intro">Scholar Points reward consistent academic habits that improve success in A&amp;P. Choose one path. Both paths award up to 2% for completion plus 1% if your exam average is at or above 80%, for a maximum of 3%. You may pursue both strategies, but the bonus is only applied once.</p>
+
+    <div class="path-picker" role="radiogroup" aria-label="Scholar Points path selection">
+      <label class="path-option">
+        <input type="radio" name="scholar-path" value="none" id="path-none" checked>
+        <div class="path-option-title">Not pursuing</div>
+        <p class="path-option-sub">Skip Scholar Points entirely.</p>
+      </label>
+      <label class="path-option">
+        <input type="radio" name="scholar-path" value="ssc" id="path-ssc">
+        <div class="path-option-title">Path #1: Science Success Course</div>
+        <p class="path-option-sub">Complete the Science Success course with a passing grade.</p>
+      </label>
+      <label class="path-option">
+        <input type="radio" name="scholar-path" value="openlab" id="path-openlab">
+        <div class="path-option-title">Path #2: Open Lab Hours</div>
+        <p class="path-option-sub">Complete 36 hours of Open Lab participation.</p>
+      </label>
+    </div>
+
+    <!-- Path #1 detail -->
+    <div class="path-detail hidden" id="path-detail-ssc">
+      <h3>Science Success Course</h3>
+      <div class="max">Earn +2% for completion</div>
+      <div class="rules"><strong>To earn:</strong> complete the Science Success course with a passing grade.</div>
+      <div class="ssc-row">
+        <input type="checkbox" id="ssc-complete">
+        <label for="ssc-complete">I have completed the Science Success course with a passing grade.</label>
+      </div>
+    </div>
+
+    <!-- Path #2 detail -->
+    <div class="path-detail hidden" id="path-detail-openlab">
+      <h3>Open Lab Hours</h3>
+      <div class="max">Earn +2% for completing 36 hours</div>
+      <div class="rules">
+        <strong>To earn the full 2%:</strong>
+        <ul>
+          <li>Complete <strong>36 total hours</strong> of Open Lab participation.</li>
+          <li>Minimum of <strong>2 hours per week</strong>.</li>
+          <li>You may miss up to <strong>2 weeks</strong>, but you must still complete all 36 hours.</li>
+        </ul>
+      </div>
+      <div class="hours-input-row">
+        <label for="openlab-hours" style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 14px; color: var(--navy);">Hours completed:</label>
+        <input type="number" id="openlab-hours" min="0" max="100" step="0.5" placeholder="0">
+        <span class="of">/ 36 hours</span>
+      </div>
+      <div class="hours-bar"><div class="hours-bar-fill" id="openlab-bar"></div></div>
+      <div class="hours-status">Status: <span class="pill pending" id="openlab-status">Not yet earned</span></div>
+    </div>
+
+    <!-- Academic Performance Bonus (auto, conditional on path selected) -->
+    <div class="academic-card unavailable" id="academic-card">
+      <h3>Academic Performance Bonus</h3>
+      <div class="max">Adds +1% (combined max +3%)</div>
+      <div class="status" id="academic-status">Choose a Scholar Points path above to unlock this bonus.</div>
+    </div>
+
+    <div class="scholar-total">
+      <span class="label">Total Scholar Points <span class="cap-note">(capped at +3%)</span></span>
+      <span class="value" id="scholar-total-value">+0.00%</span>
+    </div>
+  </section>
+
+  <!-- Target tool -->
+  <section class="section target" aria-labelledby="target-head">
+    <div class="section-head">
+      <h2 class="section-title" id="target-head">What do I need on the rest?</h2>
+    </div>
+    <p class="intro">Pick a goal grade. Any empty exam fields above are treated as still-to-come. This tool shows the average you need across those remaining items, factoring in your current cumulative scores and Scholar Points.</p>
+    <div class="target-controls">
+      <label for="target-input">Goal grade (%)</label>
+      <input type="number" id="target-input" min="0" max="110" step="0.1" placeholder="e.g. 90">
+    </div>
+    <div class="target-result empty" id="target-result" role="status" aria-live="polite">Set a goal grade to see what is required.</div>
+    <div class="target-fineprint">The target calculation uses your current cumulative final scores and Scholar Points as entered. To experiment, change those values above and watch the required average update.</div>
+
+    <!-- Required cumulative final solver (only when all regular exams entered) -->
+    <div class="required-cum-block hidden" id="required-cum-block" aria-live="polite">
+      <h4>Required Cumulative Final Scores</h4>
+      <div id="required-cum-rows"></div>
+    </div>
+  </section>
+
+  <div class="toolbar">
+    <button type="button" class="btn btn-secondary" id="btn-reset">Reset all scores</button>
+    <button type="button" class="btn btn-secondary" id="btn-print">Print summary</button>
+  </div>
+
+  <div class="signature">Dr. Sharilyn Rennie</div>
+
+</main>
+
+<script>
+(function() {
+  'use strict';
+
+  // ===== Configuration =====
+  const CONFIG = {
+    storageKey: 'medmasters-bio431-grade-calc-v1',
+    weights: { lec: 0.30, lab: 0.30, tbl: 0.30, clin: 0.10 },
+    lecCount: 4,
+    labCount: 4,
+    tblPoints: 50,
+    tblDropLowest: 2,
+    clinItems: [
+      { id: 'ecg', label: 'ECG Challenge', points: 100 },
+      { id: 'abg', label: 'ABG Challenge', points: 100 }
+    ],
+    scholar: {
+      maxBonus: 3,
+      pathBonus: 2,
+      academicBonus: 1,
+      academicThreshold: 80,
+      openLabTarget: 36
+    },
+    letterThresholds: { A: 90, B: 80, C: 70, D: 60 }
+  };
+
+  // ===== State =====
+  let tblItems = [];
+  let tblUid = 0;
+
+  function letterGrade(pct) {
+    if (pct === null || isNaN(pct)) return '\u2014';
+    if (pct >= CONFIG.letterThresholds.A) return 'A';
+    if (pct >= CONFIG.letterThresholds.B) return 'B';
+    if (pct >= CONFIG.letterThresholds.C) return 'C';
+    if (pct >= CONFIG.letterThresholds.D) return 'D';
+    return 'F';
+  }
+  function fmt(v, d) { if (v === null || isNaN(v)) return '\u2014'; return v.toFixed(d === undefined ? 2 : d) + '%'; }
+  function escapeHTML(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c])); }
+
+  // ===== Build fixed exam grids =====
+  function buildFixedGrid(catId, count, shortName, defaultPoints) {
+    const container = document.getElementById('grid-' + catId);
+    container.innerHTML = '';
+    for (let i = 1; i <= count; i++) {
+      const idBase = catId + '-' + i;
+      const wrap = document.createElement('div');
+      wrap.className = 'field';
+      wrap.id = idBase + '-field';
+      wrap.innerHTML =
+        '<div class="field-label"><span>' + escapeHTML(shortName) + ' ' + i + '</span><span class="replaced-tag hidden" id="' + idBase + '-tag">Replaced</span></div>' +
+        '<div class="input-row">' +
+          '<input type="number" id="' + idBase + '-earned" min="0" step="0.01" placeholder="earned" aria-label="' + escapeHTML(shortName) + ' ' + i + ' earned">' +
+          '<span class="sep">/</span>' +
+          '<input type="number" id="' + idBase + '-possible" min="0.01" step="0.01" value="' + defaultPoints + '" aria-label="' + escapeHTML(shortName) + ' ' + i + ' possible">' +
+        '</div>' +
+        '<div class="field-pct" id="' + idBase + '-pct"></div>';
+      container.appendChild(wrap);
+    }
+    container.querySelectorAll('input').forEach(el => el.addEventListener('input', onInputChange));
+  }
+
+  // ===== Build named clinical challenges grid =====
+  function buildClinicalGrid() {
+    const container = document.getElementById('grid-clin');
+    container.innerHTML = '';
+    CONFIG.clinItems.forEach(item => {
+      const idBase = 'clin-' + item.id;
+      const wrap = document.createElement('div');
+      wrap.className = 'field';
+      wrap.id = idBase + '-field';
+      wrap.innerHTML =
+        '<div class="field-label"><span>' + escapeHTML(item.label) + '</span></div>' +
+        '<div class="input-row">' +
+          '<input type="number" id="' + idBase + '-earned" min="0" step="0.01" placeholder="earned" aria-label="' + escapeHTML(item.label) + ' earned">' +
+          '<span class="sep">/</span>' +
+          '<input type="number" id="' + idBase + '-possible" min="0.01" step="0.01" value="' + item.points + '" aria-label="' + escapeHTML(item.label) + ' possible">' +
+        '</div>' +
+        '<div class="field-pct" id="' + idBase + '-pct"></div>';
+      container.appendChild(wrap);
+    });
+    container.querySelectorAll('input').forEach(el => el.addEventListener('input', onInputChange));
+  }
+
+  // ===== TBL dynamic list =====
+  function addTblItem(label, value) {
+    let maxNum = 0;
+    tblItems.forEach(it => { const m = (it.label || '').match(/(\d+)\s*$/); if (m) { const n = parseInt(m[1], 10); if (n > maxNum) maxNum = n; } });
+    tblItems.push({ uid: ++tblUid, label: label || ('TBL ' + (maxNum + 1)), value: value || '' });
+    renderTbl();
+    saveState();
+    recalc();
+  }
+  function removeTblItem(uid) {
+    tblItems = tblItems.filter(it => it.uid !== uid);
+    renderTbl();
+    saveState();
+    recalc();
+  }
+  function tblNumericItems() {
+    return tblItems.map(it => { const p = parseFloat(it.value); return { uid: it.uid, label: it.label, points: p, pct: !isNaN(p) ? (p / CONFIG.tblPoints * 100) : NaN }; }).filter(it => !isNaN(it.points));
+  }
+  function tblDroppedUids() {
+    const items = tblNumericItems();
+    if (items.length === 0) return [];
+    const drops = Math.min(CONFIG.tblDropLowest, Math.max(0, items.length - 1));
+    if (drops === 0) return [];
+    const sorted = items.slice().sort((a, b) => a.points - b.points);
+    return sorted.slice(0, drops).map(it => it.uid);
+  }
+  function tblStats() {
+    const items = tblNumericItems();
+    if (items.length === 0) return { avg: null, kept: [], dropped: [], count: 0, drops: 0 };
+    const drops = Math.min(CONFIG.tblDropLowest, Math.max(0, items.length - 1));
+    const sorted = items.slice().sort((a, b) => a.points - b.points);
+    const dropped = sorted.slice(0, drops);
+    const kept = sorted.slice(drops);
+    const totalEarned = kept.reduce((s, it) => s + it.points, 0);
+    const totalPossible = kept.length * CONFIG.tblPoints;
+    const avg = totalPossible > 0 ? (totalEarned / totalPossible * 100) : null;
+    return { avg: avg, kept: kept, dropped: dropped, count: items.length, drops: drops };
+  }
+  function renderTbl() {
+    const list = document.getElementById('dyn-list-tbl');
+    const empty = document.getElementById('dyn-empty-tbl');
+    list.innerHTML = '';
+    if (tblItems.length === 0) { empty.classList.remove('hidden'); list.classList.add('hidden'); return; }
+    empty.classList.add('hidden'); list.classList.remove('hidden');
+    const dropped = tblDroppedUids();
+    tblItems.forEach(it => {
+      const row = document.createElement('div');
+      row.className = 'dyn-row' + (dropped.indexOf(it.uid) !== -1 ? ' dropped' : '');
+      row.dataset.uid = it.uid;
+      row.innerHTML =
+        '<input type="text" class="dyn-label" value="' + escapeHTML(it.label) + '" maxlength="40" aria-label="TBL item label">' +
+        '<div class="dyn-value-wrap">' +
+          '<input type="number" class="dyn-value" min="0" step="0.01" value="' + escapeHTML(it.value) + '" placeholder="0" aria-label="TBL points earned">' +
+          '<span class="dyn-of">/ ' + CONFIG.tblPoints + '</span>' +
+        '</div>' +
+        '<button type="button" class="dyn-remove" aria-label="Remove TBL item">&times;</button>';
+      const labelEl = row.querySelector('.dyn-label');
+      const valEl = row.querySelector('.dyn-value');
+      const rmEl = row.querySelector('.dyn-remove');
+      labelEl.addEventListener('input', () => { it.label = labelEl.value; saveState(); });
+      valEl.addEventListener('input', () => { it.value = valEl.value; saveState(); recalc(); });
+      rmEl.addEventListener('click', () => removeTblItem(it.uid));
+      list.appendChild(row);
+    });
+  }
+
+  // ===== Fixed-category stats with cumulative replacement =====
+  function getFixedItems(catId, count) {
+    const items = [];
+    for (let i = 1; i <= count; i++) {
+      const e = parseFloat(document.getElementById(catId + '-' + i + '-earned').value);
+      const p = parseFloat(document.getElementById(catId + '-' + i + '-possible').value);
+      const eEl = document.getElementById(catId + '-' + i + '-earned');
+      const hasE = !isNaN(e) && eEl.value.trim() !== '';
+      const hasP = !isNaN(p) && p > 0;
+      const complete = hasE && hasP;
+      items.push({ idx: i, earned: complete ? e : null, possible: complete ? p : null, pct: complete ? (e / p * 100) : null, complete: complete });
+    }
+    return items;
+  }
+  function getClinicalItems() {
+    return CONFIG.clinItems.map((item) => {
+      const idBase = 'clin-' + item.id;
+      const e = parseFloat(document.getElementById(idBase + '-earned').value);
+      const p = parseFloat(document.getElementById(idBase + '-possible').value);
+      const eEl = document.getElementById(idBase + '-earned');
+      const hasE = !isNaN(e) && eEl.value.trim() !== '';
+      const hasP = !isNaN(p) && p > 0;
+      const complete = hasE && hasP;
+      return { idx: item.id, label: item.label, earned: complete ? e : null, possible: complete ? p : null, pct: complete ? (e / p * 100) : null, complete: complete };
+    });
+  }
+
+  function fixedCategoryStats(catId, count, cumPct) {
+    const items = catId === 'clin' ? getClinicalItems() : getFixedItems(catId, count);
+    const completed = items.filter(it => it.complete);
+    if (completed.length === 0) return { items, completed: [], kept: [], avg: null, replacement: null, shareDone: 0, sumEarned: 0, sumPossible: 0 };
+    const keptItems = completed.slice();
+    let lowestKeptIdx = -1, lowestPct = Infinity;
+    keptItems.forEach((it, idx) => { if (it.pct < lowestPct) { lowestPct = it.pct; lowestKeptIdx = idx; } });
+    let replacement = null;
+    let sumEarned = 0;
+    let sumPossible = keptItems.reduce((a, it) => a + it.possible, 0);
+    keptItems.forEach((it, idx) => {
+      let earned = it.earned;
+      if (idx === lowestKeptIdx && cumPct !== null && cumPct > it.pct) {
+        const newPct = (it.pct + cumPct) / 2;
+        earned = newPct / 100 * it.possible;
+        replacement = { examIdx: it.idx, origPct: it.pct, newPct: newPct, delta: newPct - it.pct };
+      }
+      sumEarned += earned;
+    });
+    const avg = sumPossible > 0 ? (sumEarned / sumPossible * 100) : null;
+    const shareDone = Math.min(1, keptItems.length / count);
+    return { items, completed, kept: keptItems, avg, replacement, shareDone, sumEarned, sumPossible };
+  }
+
+  function clinicalCategoryStats() {
+    // No cumulative for clinical; simple average
+    const items = getClinicalItems();
+    const completed = items.filter(it => it.complete);
+    if (completed.length === 0) return { items, completed: [], avg: null, shareDone: 0 };
+    const sumEarned = completed.reduce((a, it) => a + it.earned, 0);
+    const sumPossible = completed.reduce((a, it) => a + it.possible, 0);
+    const avg = sumPossible > 0 ? (sumEarned / sumPossible * 100) : null;
+    const shareDone = Math.min(1, completed.length / CONFIG.clinItems.length);
+    return { items, completed, kept: completed, avg, shareDone, sumEarned, sumPossible };
+  }
+
+  // ===== Cumulative final input parsing =====
+  function getCum(catId) {
+    const el = document.getElementById('cum-' + catId);
+    if (!el) return null;
+    const v = parseFloat(el.value);
+    if (isNaN(v) || el.value.trim() === '') return null;
+    return v;
+  }
+
+  // ===== Scholar Points logic =====
+  function getSelectedPath() {
+    const el = document.querySelector('input[name="scholar-path"]:checked');
+    return el ? el.value : 'none';
+  }
+  function computeExamAverage(catStats) {
+    // Pre-bonus exam average across the four weighted categories (using whatever's entered, weighted)
+    let totalCovered = 0, weightedSum = 0;
+    ['lec', 'lab', 'tbl', 'clin'].forEach(cid => {
+      const s = catStats[cid];
+      if (!s || s.avg === null) return;
+      const shareDone = s.shareDone || 1;
+      const covered = CONFIG.weights[cid] * shareDone;
+      totalCovered += covered;
+      weightedSum += covered * s.avg;
+    });
+    return totalCovered > 0 ? (weightedSum / totalCovered) : null;
+  }
+  function computeScholarBonus(preBonusAvg) {
+    const path = getSelectedPath();
+    let pathBonus = 0;
+    if (path === 'ssc') {
+      pathBonus = document.getElementById('ssc-complete').checked ? CONFIG.scholar.pathBonus : 0;
+    } else if (path === 'openlab') {
+      const v = parseFloat(document.getElementById('openlab-hours').value);
+      const hours = isNaN(v) ? 0 : v;
+      pathBonus = hours >= CONFIG.scholar.openLabTarget ? CONFIG.scholar.pathBonus : 0;
+    }
+    let academicEligible = path !== 'none' && preBonusAvg !== null && preBonusAvg >= CONFIG.scholar.academicThreshold;
+    let academicBonus = academicEligible ? CONFIG.scholar.academicBonus : 0;
+    let total = Math.min(pathBonus + academicBonus, CONFIG.scholar.maxBonus);
+    return { path, pathBonus, academicEligible, academicBonus, total, preBonusAvg };
+  }
+
+  function updateScholarUI(scholar) {
+    const path = scholar.path;
+    // Show/hide path detail panels
+    document.getElementById('path-detail-ssc').classList.toggle('hidden', path !== 'ssc');
+    document.getElementById('path-detail-openlab').classList.toggle('hidden', path !== 'openlab');
+
+    // Open lab progress bar and status
+    if (path === 'openlab') {
+      const v = parseFloat(document.getElementById('openlab-hours').value);
+      const hours = isNaN(v) ? 0 : Math.max(0, v);
+      const pct = Math.min(hours / CONFIG.scholar.openLabTarget, 1) * 100;
+      document.getElementById('openlab-bar').style.width = pct.toFixed(0) + '%';
+      const statusEl = document.getElementById('openlab-status');
+      if (hours >= CONFIG.scholar.openLabTarget) {
+        statusEl.textContent = '+' + CONFIG.scholar.pathBonus.toFixed(2) + '% earned (' + hours.toFixed(1) + ' hours complete)';
+        statusEl.className = 'pill earned';
+      } else if (hours > 0) {
+        statusEl.textContent = hours.toFixed(1) + ' / ' + CONFIG.scholar.openLabTarget + ' hours \u00B7 complete all 36 to earn +2%';
+        statusEl.className = 'pill pending';
+      } else {
+        statusEl.textContent = 'Not yet earned';
+        statusEl.className = 'pill pending';
+      }
+    }
+
+    // Academic Performance card
+    const academicCard = document.getElementById('academic-card');
+    const academicStatus = document.getElementById('academic-status');
+    if (path === 'none') {
+      academicCard.classList.add('unavailable');
+      academicStatus.innerHTML = 'Choose a Scholar Points path above to unlock this bonus.';
+    } else {
+      academicCard.classList.remove('unavailable');
+      if (scholar.preBonusAvg === null) {
+        academicStatus.innerHTML = 'Enter exam scores above to check eligibility (requires ' + CONFIG.scholar.academicThreshold + '% pre-bonus average).';
+      } else if (scholar.academicEligible) {
+        academicStatus.innerHTML = 'Your pre-bonus average is <strong>' + scholar.preBonusAvg.toFixed(2) + '%</strong>. <span class="pill earned">+' + CONFIG.scholar.academicBonus.toFixed(2) + '% earned</span>';
+      } else {
+        academicStatus.innerHTML = 'Your pre-bonus average is <strong>' + scholar.preBonusAvg.toFixed(2) + '%</strong>. Needs ' + CONFIG.scholar.academicThreshold + '%+ to earn this bonus. <span class="pill pending">Not yet earned</span>';
+      }
+    }
+
+    // Totals
+    const totalStr = '+' + scholar.total.toFixed(2) + '%';
+    document.getElementById('scholar-total-value').textContent = totalStr;
+    document.getElementById('scholar-total-inline').textContent = totalStr;
+    document.getElementById('scholar-summary-value').textContent = totalStr;
+  }
+
+  // ===== Update displays =====
+  function updateFixedDisplay(catId, stats) {
+    stats.items.forEach(it => {
+      const pctEl = document.getElementById(catId + '-' + it.idx + '-pct');
+      const fieldEl = document.getElementById(catId + '-' + it.idx + '-field');
+      const tagEl = document.getElementById(catId + '-' + it.idx + '-tag');
+      if (!pctEl) return;
+      if (it.complete) {
+        if (stats.replacement && stats.replacement.examIdx === it.idx) {
+          pctEl.innerHTML = '<span class="raw">' + it.pct.toFixed(1) + '%</span><span class="new">' + stats.replacement.newPct.toFixed(1) + '%</span>';
+          pctEl.classList.add('set'); if (fieldEl) fieldEl.classList.add('replaced'); if (tagEl) tagEl.classList.remove('hidden');
+        } else {
+          pctEl.textContent = it.pct.toFixed(1) + '%';
+          pctEl.classList.add('set'); if (fieldEl) fieldEl.classList.remove('replaced'); if (tagEl) tagEl.classList.add('hidden');
+        }
+      } else {
+        pctEl.textContent = '';
+        pctEl.classList.remove('set'); if (fieldEl) fieldEl.classList.remove('replaced'); if (tagEl) tagEl.classList.add('hidden');
+      }
+    });
+  }
+
+  function updateCumEffect(catId, labelLower, stats, cumPct) {
+    const effectEl = document.getElementById('cum-effect-' + catId);
+    if (cumPct === null) { effectEl.className = 'cum-effect'; effectEl.textContent = 'Enter a score to see how it affects your lowest ' + labelLower + ' exam.'; return; }
+    if (stats.completed.length === 0) { effectEl.className = 'cum-effect'; effectEl.textContent = 'Enter your ' + labelLower + ' scores above to see the effect.'; return; }
+    if (!stats.kept || stats.kept.length === 0) { effectEl.className = 'cum-effect'; effectEl.textContent = 'No ' + labelLower + ' scores available for replacement.'; return; }
+    const lowest = stats.kept.reduce((a, b) => a.pct < b.pct ? a : b);
+    if (cumPct > lowest.pct) {
+      const newPct = (lowest.pct + cumPct) / 2;
+      const delta = newPct - lowest.pct;
+      effectEl.className = 'cum-effect applied';
+      effectEl.innerHTML = 'Your lowest ' + labelLower + ' is <strong>' + (catId === 'lec' ? 'Exam' : 'Lab') + ' ' + lowest.idx + '</strong> at <strong>' + lowest.pct.toFixed(1) + '%</strong>. The cumulative raises it to <span class="boost">' + newPct.toFixed(1) + '%</span> (a boost of ' + delta.toFixed(1) + ' points).';
+    } else {
+      effectEl.className = 'cum-effect';
+      effectEl.innerHTML = 'Your cumulative (<strong>' + cumPct.toFixed(1) + '%</strong>) is at or below your lowest ' + labelLower + ' (<strong>' + lowest.pct.toFixed(1) + '%</strong>). No replacement applied.';
+    }
+  }
+
+  function updateTblDisplay(stats) {
+    const avgEl = document.getElementById('avg-tbl');
+    const pctEl = document.getElementById('cat-pct-tbl');
+    avgEl.textContent = fmt(stats.avg);
+    pctEl.textContent = fmt(stats.avg, 1);
+    const metaEl = document.getElementById('dyn-meta-tbl');
+    const summaryEl = document.getElementById('dyn-summary-tbl');
+    if (stats.avg === null) {
+      metaEl.textContent = 'No items yet';
+      summaryEl.innerHTML = 'Add items above to start tracking this category.';
+    } else {
+      metaEl.innerHTML = 'Avg of best <strong>' + stats.kept.length + ' of ' + stats.count + '</strong>: <strong style="color: var(--navy);">' + stats.avg.toFixed(2) + '%</strong>';
+      if (stats.dropped.length > 0) {
+        const names = stats.dropped.map(d => d.label + ' (' + d.points.toFixed(1) + ' / ' + CONFIG.tblPoints + ')').join(', ');
+        summaryEl.innerHTML = '<strong style="color: var(--teal-text);">Dropped ' + stats.dropped.length + ' lowest:</strong> ' + escapeHTML(names);
+      } else {
+        summaryEl.innerHTML = '<strong style="color: var(--teal-text);">No drops applied yet.</strong> Drops apply once you have more entries than the drop count (' + CONFIG.tblDropLowest + ').';
+      }
+    }
+    renderTbl(); // re-render to apply dropped styling
+  }
+
+  // ===== Required cumulative final solver =====
+  function solveRequiredCumulative(target, catStats, scholar) {
+    // Returns { mode, lec, lab } where mode is 'incomplete', 'solveLec', 'solveLab', 'both'
+    // Only meaningful when ALL regular lec and lab exams are entered AND TBL/clin are complete
+    const lec = catStats.lec;
+    const lab = catStats.lab;
+    const tbl = catStats.tbl;
+    const clin = catStats.clin;
+
+    const lecAllDone = lec.completed.length === CONFIG.lecCount;
+    const labAllDone = lab.completed.length === CONFIG.labCount;
+    if (!lecAllDone || !labAllDone) return { mode: 'incomplete' };
+
+    // Helper: compute final grade given specific cum-lec and cum-lab values
+    function gradeWithCums(cumLecVal, cumLabVal) {
+      const lecS = fixedCategoryStats('lec', CONFIG.lecCount, cumLecVal);
+      const labS = fixedCategoryStats('lab', CONFIG.labCount, cumLabVal);
+      const tblAvg = tbl.avg !== null ? tbl.avg : 0;
+      const clinAvg = clin.avg !== null ? clin.avg : 0;
+      const lecAvg = lecS.avg !== null ? lecS.avg : 0;
+      const labAvg = labS.avg !== null ? labS.avg : 0;
+      const tblCovered = tbl.avg !== null ? CONFIG.weights.tbl : 0;
+      const clinCovered = clin.avg !== null ? CONFIG.weights.clin : 0;
+      const totalCovered = CONFIG.weights.lec + CONFIG.weights.lab + tblCovered + clinCovered;
+      const weighted = lecAvg * CONFIG.weights.lec + labAvg * CONFIG.weights.lab + tblAvg * tblCovered + clinAvg * clinCovered;
+      const preBonus = totalCovered > 0 ? (weighted / totalCovered) : 0;
+      // Bonus recalculation (academic depends on preBonus)
+      const path = scholar.path;
+      let pathBonus = scholar.pathBonus;
+      let acad = (path !== 'none' && preBonus >= CONFIG.scholar.academicThreshold) ? CONFIG.scholar.academicBonus : 0;
+      const bonus = Math.min(pathBonus + acad, CONFIG.scholar.maxBonus);
+      return preBonus + bonus;
+    }
+
+    const currentCumLec = getCum('lec') !== null ? getCum('lec') : 0;
+    const currentCumLab = getCum('lab') !== null ? getCum('lab') : 0;
+
+    // Solve cumulative lec given current cumulative lab (binary search)
+    function solveLec(currentLab) {
+      let lo = 0, hi = 110;
+      // If achievable at 110, find minimum needed
+      if (gradeWithCums(110, currentLab) < target) return Infinity;
+      if (gradeWithCums(0, currentLab) >= target) return 0;
+      for (let i = 0; i < 60; i++) {
+        const mid = (lo + hi) / 2;
+        if (gradeWithCums(mid, currentLab) >= target) hi = mid; else lo = mid;
+      }
+      return hi;
+    }
+    function solveLab(currentLec) {
+      let lo = 0, hi = 110;
+      if (gradeWithCums(currentLec, 110) < target) return Infinity;
+      if (gradeWithCums(currentLec, 0) >= target) return 0;
+      for (let i = 0; i < 60; i++) {
+        const mid = (lo + hi) / 2;
+        if (gradeWithCums(currentLec, mid) >= target) hi = mid; else lo = mid;
+      }
+      return hi;
+    }
+    function solveBothEqual() {
+      let lo = 0, hi = 110;
+      if (gradeWithCums(110, 110) < target) return Infinity;
+      if (gradeWithCums(0, 0) >= target) return 0;
+      for (let i = 0; i < 60; i++) {
+        const mid = (lo + hi) / 2;
+        if (gradeWithCums(mid, mid) >= target) hi = mid; else lo = mid;
+      }
+      return hi;
+    }
+
+    return {
+      mode: 'solvable',
+      neededLec: solveLec(currentCumLab),
+      neededLab: solveLab(currentCumLec),
+      neededBoth: solveBothEqual(),
+      currentCumLec: currentCumLec,
+      currentCumLab: currentCumLab,
+      hasCumLec: getCum('lec') !== null,
+      hasCumLab: getCum('lab') !== null
+    };
+  }
+
+  function updateRequiredCumulative(target, catStats, scholar) {
+    const block = document.getElementById('required-cum-block');
+    const rowsEl = document.getElementById('required-cum-rows');
+    if (isNaN(target)) { block.classList.add('hidden'); return; }
+    const solved = solveRequiredCumulative(target, catStats, scholar);
+    if (solved.mode === 'incomplete') { block.classList.add('hidden'); return; }
+    block.classList.remove('hidden');
+
+    function fmtNeed(v, otherEntered, otherVal) {
+      if (v === Infinity) return '<span class="need impossible">Not achievable</span>';
+      if (v <= 0) return '<span class="need locked-in">Already met (0%)</span>';
+      return '<span class="need">' + v.toFixed(2) + '%</span>';
+    }
+
+    let html = '';
+    html += '<div class="required-cum-row"><strong>Cumulative Lecture only</strong> (given lab cumulative = ' + solved.currentCumLab.toFixed(1) + '%' + (solved.hasCumLab ? '' : ', not yet entered') + '): need ' + fmtNeed(solved.neededLec) + '</div>';
+    html += '<div class="required-cum-row"><strong>Cumulative Lab only</strong> (given lecture cumulative = ' + solved.currentCumLec.toFixed(1) + '%' + (solved.hasCumLec ? '' : ', not yet entered') + '): need ' + fmtNeed(solved.neededLab) + '</div>';
+    html += '<div class="required-cum-row"><strong>Both cumulative finals at same score</strong>: need ' + fmtNeed(solved.neededBoth) + '</div>';
+    rowsEl.innerHTML = html;
+  }
+
+  // ===== Main recalc =====
+  function recalc() {
+    const lecCum = getCum('lec');
+    const labCum = getCum('lab');
+    const lecStats = fixedCategoryStats('lec', CONFIG.lecCount, lecCum);
+    const labStats = fixedCategoryStats('lab', CONFIG.labCount, labCum);
+    const tblS = tblStats();
+    const tblCalcStats = { avg: tblS.avg, shareDone: tblS.kept.length > 0 ? 1 : 0, completed: tblNumericItems(), kept: tblS.kept, count: tblS.count, dropped: tblS.dropped };
+    const clinStats = clinicalCategoryStats();
+    const catStats = { lec: lecStats, lab: labStats, tbl: tblCalcStats, clin: clinStats };
+
+    // Update fixed displays
+    updateFixedDisplay('lec', lecStats);
+    updateFixedDisplay('lab', labStats);
+    // For clinical, use id-based item idx (string ids)
+    clinStats.items.forEach(it => {
+      const pctEl = document.getElementById('clin-' + it.idx + '-pct');
+      const fieldEl = document.getElementById('clin-' + it.idx + '-field');
+      if (!pctEl) return;
+      if (it.complete) { pctEl.textContent = it.pct.toFixed(1) + '%'; pctEl.classList.add('set'); }
+      else { pctEl.textContent = ''; pctEl.classList.remove('set'); }
+    });
+
+    // Update averages
+    document.getElementById('avg-lec').textContent = fmt(lecStats.avg);
+    document.getElementById('cat-pct-lec').textContent = fmt(lecStats.avg, 1);
+    document.getElementById('avg-lab').textContent = fmt(labStats.avg);
+    document.getElementById('cat-pct-lab').textContent = fmt(labStats.avg, 1);
+    document.getElementById('avg-clin').textContent = fmt(clinStats.avg);
+    document.getElementById('cat-pct-clin').textContent = fmt(clinStats.avg, 1);
+    updateTblDisplay(tblS);
+
+    // Update cumulative effects
+    updateCumEffect('lec', 'lecture', lecStats, lecCum);
+    updateCumEffect('lab', 'lab', labStats, labCum);
+
+    // Pre-bonus average
+    const preBonusAvg = computeExamAverage(catStats);
+
+    // Scholar Points
+    const scholar = computeScholarBonus(preBonusAvg);
+    updateScholarUI(scholar);
+
+    // Final summary
+    const finalGrade = preBonusAvg !== null ? (preBonusAvg + scholar.total) : null;
+    const sumPctEl = document.getElementById('summary-pct');
+    const sumLetterEl = document.getElementById('summary-letter');
+    const sumNoteEl = document.getElementById('summary-note');
+    let totalCovered = 0;
+    ['lec', 'lab', 'tbl', 'clin'].forEach(cid => {
+      const s = catStats[cid];
+      if (s && s.avg !== null) totalCovered += CONFIG.weights[cid] * (s.shareDone || 1);
+    });
+    if (finalGrade === null) {
+      sumPctEl.textContent = '\u2014';
+      sumLetterEl.textContent = '\u2014';
+      sumNoteEl.textContent = 'Enter scores below to begin.';
+    } else {
+      sumPctEl.textContent = finalGrade.toFixed(2) + '%';
+      sumLetterEl.textContent = letterGrade(finalGrade);
+      const covPct = Math.round(totalCovered * 100);
+      const bonusNote = scholar.total > 0 ? (' Includes +' + scholar.total.toFixed(2) + '% Scholar Points.') : '';
+      sumNoteEl.textContent = (totalCovered >= 0.999 ? 'All categories accounted for. This is your projected final grade.' : 'Based on ' + covPct + '% of the course completed.') + bonusNote;
+    }
+    const covRounded = Math.round(totalCovered * 100);
+    document.getElementById('coverage-pct').textContent = covRounded + '%';
+    document.getElementById('coverage-fill').style.width = covRounded + '%';
+
+    // Target tool
+    updateTarget(catStats, scholar);
+  }
+
+  // ===== Target tool =====
+  function updateTarget(catStats, scholar) {
+    const resultEl = document.getElementById('target-result');
+    const target = parseFloat(document.getElementById('target-input').value);
+    if (isNaN(target)) { resultEl.className = 'target-result empty'; resultEl.textContent = 'Set a goal grade to see what is required.'; document.getElementById('required-cum-block').classList.add('hidden'); return; }
+
+    // Locked-in vs remaining: per-item weighting
+    let lockedContribution = 0, remainingWeight = 0, remainingCount = 0;
+
+    // Lecture: per-item weight = w(lec) / count
+    const lecPerItem = CONFIG.weights.lec / CONFIG.lecCount;
+    catStats.lec.items.forEach(it => {
+      if (it.complete) {
+        let pct = it.pct;
+        if (catStats.lec.replacement && catStats.lec.replacement.examIdx === it.idx) pct = catStats.lec.replacement.newPct;
+        lockedContribution += lecPerItem * pct;
+      } else { remainingWeight += lecPerItem; remainingCount++; }
+    });
+    // Lab
+    const labPerItem = CONFIG.weights.lab / CONFIG.labCount;
+    catStats.lab.items.forEach(it => {
+      if (it.complete) {
+        let pct = it.pct;
+        if (catStats.lab.replacement && catStats.lab.replacement.examIdx === it.idx) pct = catStats.lab.replacement.newPct;
+        lockedContribution += labPerItem * pct;
+      } else { remainingWeight += labPerItem; remainingCount++; }
+    });
+    // TBL: if any TBL entered, treat as locked at current avg; else treat all as remaining
+    if (catStats.tbl.avg !== null) lockedContribution += CONFIG.weights.tbl * catStats.tbl.avg;
+    else remainingWeight += CONFIG.weights.tbl;
+    // Clinical: per-item
+    const clinPerItem = CONFIG.weights.clin / CONFIG.clinItems.length;
+    catStats.clin.items.forEach(it => {
+      if (it.complete) lockedContribution += clinPerItem * it.pct;
+      else { remainingWeight += clinPerItem; remainingCount++; }
+    });
+
+    resultEl.className = 'target-result';
+    const bonusText = scholar.total > 0 ? (' (factoring in your current +' + scholar.total.toFixed(2) + '% Scholar Points)') : '';
+
+    if (remainingWeight <= 0.001) {
+      const finalGrade = lockedContribution + scholar.total;
+      const diff = finalGrade - target;
+      if (diff >= 0) resultEl.innerHTML = 'Everything is entered. Your final grade is <strong>' + finalGrade.toFixed(2) + '%</strong>, which meets your goal of <strong>' + target.toFixed(2) + '%</strong>.';
+      else resultEl.innerHTML = 'Everything is entered. Your final grade is <strong>' + finalGrade.toFixed(2) + '%</strong>, which is <strong>' + Math.abs(diff).toFixed(2) + ' points</strong> below your goal of <strong>' + target.toFixed(2) + '%</strong>.';
+    } else {
+      const preBonusTarget = target - scholar.total;
+      const neededAvg = (preBonusTarget - lockedContribution) / remainingWeight;
+      if (neededAvg <= 0) {
+        resultEl.innerHTML = 'You have already locked in your goal of <strong>' + target.toFixed(2) + '%</strong>' + bonusText + '. You could score <span class="need locked-in">0%</span> on remaining work and still hit it.';
+      } else if (neededAvg > 100) {
+        resultEl.innerHTML = 'To finish at <strong>' + target.toFixed(2) + '%</strong>' + bonusText + ', you would need an average of <span class="need impossible">' + neededAvg.toFixed(2) + '%</span>, which is not achievable. Try a different goal or experiment with the cumulative scores above.';
+      } else {
+        const letter = letterGrade(neededAvg);
+        resultEl.innerHTML = 'To finish the course at <strong>' + target.toFixed(2) + '%</strong>' + bonusText + ', you need to average <span class="need">' + neededAvg.toFixed(2) + '%</span> (a ' + letter + ') across your remaining work.';
+      }
+    }
+
+    // Required cumulative finals (only if all regular exams entered)
+    updateRequiredCumulative(target, catStats, scholar);
+  }
+
+  // ===== Event handlers =====
+  function onInputChange() { saveState(); recalc(); }
+
+  // ===== Persistence =====
+  function saveState() {
+    try {
+      const inputs = {};
+      document.querySelectorAll('input[type="number"]').forEach(el => { if (el.id && el.value !== '') inputs[el.id] = el.value; });
+      const selectedPath = getSelectedPath();
+      const sscComplete = document.getElementById('ssc-complete').checked;
+      const data = { inputs, tblItems, tblUid, selectedPath, sscComplete };
+      localStorage.setItem(CONFIG.storageKey, JSON.stringify(data));
+    } catch (e) {}
+  }
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(CONFIG.storageKey);
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      if (Array.isArray(data.tblItems)) tblItems = data.tblItems;
+      if (typeof data.tblUid === 'number') tblUid = data.tblUid;
+      renderTbl();
+      if (data.inputs) {
+        Object.keys(data.inputs).forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.value = data.inputs[id];
+        });
+      }
+      if (data.selectedPath) {
+        const radio = document.querySelector('input[name="scholar-path"][value="' + data.selectedPath + '"]');
+        if (radio) radio.checked = true;
+      }
+      if (data.sscComplete) document.getElementById('ssc-complete').checked = true;
+    } catch (e) {}
+  }
+
+  // ===== Reset =====
+  function resetAll() {
+    if (!confirm('Clear all entered scores? This cannot be undone.')) return;
+    document.querySelectorAll('input[type="number"]').forEach(el => {
+      // Reset to default points value for "possible" fields; clear earned/cumulative fields
+      if (el.id.endsWith('-possible')) {
+        if (el.id.indexOf('clin-ecg') !== -1 || el.id.indexOf('clin-abg') !== -1) el.value = 100;
+        else el.value = 100;
+      } else {
+        el.value = '';
+      }
+    });
+    tblItems = [];
+    renderTbl();
+    document.getElementById('path-none').checked = true;
+    document.getElementById('ssc-complete').checked = false;
+    try { localStorage.removeItem(CONFIG.storageKey); } catch (e) {}
+    recalc();
+  }
+
+  // ===== Iframe height sender =====
+  function iframeHeightSender() {
+    const id = 'bio431-grade-calculator';
+    function send() { try { window.parent.postMessage({ type: 'resize', id: id, height: document.documentElement.scrollHeight }, '*'); } catch (e) {} }
+    window.addEventListener('load', send);
+    window.addEventListener('resize', send);
+    if (typeof ResizeObserver !== 'undefined') { new ResizeObserver(send).observe(document.body); }
+    document.addEventListener('input', () => setTimeout(send, 60));
+    document.addEventListener('click', () => setTimeout(send, 60));
+    document.addEventListener('change', () => setTimeout(send, 60));
+  }
+
+  // ===== Init =====
+  function init() {
+    buildFixedGrid('lec', CONFIG.lecCount, 'Exam', 100);
+    buildFixedGrid('lab', CONFIG.labCount, 'Lab', 100);
+    buildClinicalGrid();
+
+    // Wire static inputs
+    document.getElementById('cum-lec').addEventListener('input', onInputChange);
+    document.getElementById('cum-lab').addEventListener('input', onInputChange);
+    document.getElementById('target-input').addEventListener('input', onInputChange);
+    document.getElementById('ssc-complete').addEventListener('change', () => { saveState(); recalc(); });
+    document.getElementById('openlab-hours').addEventListener('input', onInputChange);
+    document.querySelectorAll('input[name="scholar-path"]').forEach(el => el.addEventListener('change', () => { saveState(); recalc(); }));
+
+    // TBL add button
+    document.getElementById('btn-add-tbl').addEventListener('click', () => addTblItem());
+
+    // Reset/Print
+    document.getElementById('btn-reset').addEventListener('click', resetAll);
+    document.getElementById('btn-print').addEventListener('click', () => window.print());
+
+    loadState();
+    recalc();
+    iframeHeightSender();
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>
