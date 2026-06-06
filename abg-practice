@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ABG Interpretation Practice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Surfaces */
+    --white: #ffffff;
+    --off-white: #fafaf9;
+    --navy-tint: #EDF1F3;
+    --terra-tint: #F4E4DA;
+
+    /* Text & structure */
+    --navy: #1E3D4C;
+    --navy-deep: #142a36;
+    --navy-soft: #5a7280;
+    --navy-mute: #8a9ba6;
+
+    /* Accent */
+    --terra: #C2734D;
+    --terra-dark: #A0522D;
+
+    /* Lines */
+    --line: #E2E6E9;
+    --line-soft: #EEF1F3;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--white);
+    color: var(--navy);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+  h1, h2, h3, h4 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 0 0 0.5em 0;
+    letter-spacing: -0.01em;
+  }
+  .wrap {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 32px 24px;
+  }
+  .header {
+    text-align: center;
+    margin-bottom: 36px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--line);
+  }
+  .header h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 8px;
+  }
+  .header p {
+    color: var(--navy-soft);
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 400;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  @media (max-width: 900px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+  .card {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 26px;
+  }
+  .card h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--line);
+    letter-spacing: 0.005em;
+  }
+  .card h3 {
+    font-size: 1rem;
+    color: var(--terra-dark);
+    margin-top: 0;
+    font-weight: 600;
+  }
+
+  /* ABG values */
+  .abg-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .abg-tile {
+    background: var(--off-white);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 20px 14px;
+    text-align: center;
+  }
+  .abg-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    color: var(--navy-soft);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  .abg-value {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--navy);
+    letter-spacing: -0.02em;
+  }
+  .abg-unit {
+    font-size: 0.75rem;
+    color: var(--navy-soft);
+    margin-top: 6px;
+    font-weight: 500;
+  }
+
+  /* Reference ranges */
+  .ref-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--line-soft);
+    font-size: 0.92rem;
+  }
+  .ref-row:last-child { border-bottom: none; }
+  .ref-row strong { font-weight: 600; color: var(--navy); }
+  .ref-row span { color: var(--navy-soft); }
+  .formulas-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    color: var(--terra-dark);
+    text-transform: uppercase;
+    text-align: right;
+    margin: 20px 0 8px 0;
+    font-weight: 600;
+  }
+
+  /* Classification grid */
+  .class-table {
+    display: grid;
+    grid-template-columns: 70px 1fr 1fr 1fr;
+    gap: 8px;
+    align-items: center;
+    margin-top: 12px;
+  }
+  .class-header {
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    color: var(--navy-soft);
+    text-transform: uppercase;
+    text-align: center;
+    padding-bottom: 6px;
+    font-weight: 600;
+  }
+  .class-row-label {
+    font-weight: 600;
+    font-size: 0.92rem;
+    color: var(--navy);
+  }
+  .class-cell {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 11px 6px;
+    text-align: center;
+    font-size: 0.88rem;
+    color: var(--navy);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-weight: 500;
+  }
+  .class-cell:hover {
+    border-color: var(--terra);
+    background: var(--off-white);
+  }
+  .class-cell:focus {
+    outline: 2px solid var(--terra);
+    outline-offset: 2px;
+  }
+  .class-cell.selected-acidic {
+    background: var(--terra-tint);
+    border-color: var(--terra-dark);
+    color: var(--terra-dark);
+    font-weight: 600;
+  }
+  .class-cell.selected-normal {
+    background: var(--navy);
+    border-color: var(--navy);
+    color: var(--white);
+    font-weight: 600;
+  }
+  .class-cell.selected-alkaline {
+    background: var(--navy-tint);
+    border-color: var(--navy);
+    color: var(--navy);
+    font-weight: 600;
+  }
+  .class-note {
+    font-size: 0.85rem;
+    color: var(--navy-soft);
+    margin-top: 14px;
+    line-height: 1.5;
+  }
+
+  /* Interpretation */
+  .field { margin-bottom: 16px; }
+  .field-label {
+    display: block;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--navy-soft);
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  select {
+    width: 100%;
+    padding: 12px 14px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--navy);
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  select:focus {
+    outline: 2px solid var(--terra);
+    outline-offset: 1px;
+    border-color: var(--terra);
+  }
+  .button-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 22px;
+  }
+  button {
+    padding: 13px 16px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.92rem;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    border: 1px solid var(--terra);
+    letter-spacing: 0.01em;
+  }
+  .btn-primary {
+    background: var(--terra);
+    color: var(--white);
+  }
+  .btn-primary:hover { background: var(--terra-dark); border-color: var(--terra-dark); }
+  .btn-secondary {
+    background: var(--white);
+    color: var(--terra-dark);
+  }
+  .btn-secondary:hover { background: var(--terra-tint); }
+  .btn-new {
+    background: var(--navy);
+    color: var(--white);
+    border-color: var(--navy);
+    grid-column: 1 / -1;
+    margin-top: 4px;
+  }
+  .btn-new:hover { background: var(--navy-deep); border-color: var(--navy-deep); }
+  button:focus {
+    outline: 2px solid var(--navy);
+    outline-offset: 2px;
+  }
+
+  /* Feedback + explanation */
+  .feedback {
+    margin-top: 20px;
+    padding: 14px 18px;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    display: none;
+  }
+  .feedback.show { display: block; }
+  .feedback.correct {
+    background: var(--navy-tint);
+    border: 1px solid var(--navy);
+    color: var(--navy);
+  }
+  .feedback.incorrect {
+    background: var(--terra-tint);
+    border: 1px solid var(--terra-dark);
+    color: var(--terra-dark);
+  }
+  .explanation {
+    margin-top: 24px;
+    padding: 26px;
+    background: var(--off-white);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--terra);
+    border-radius: 8px;
+    display: none;
+  }
+  .explanation.show { display: block; }
+  .exp-step {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line-soft);
+    font-size: 0.95rem;
+    color: var(--navy);
+  }
+  .exp-step:last-child { border-bottom: none; }
+  .exp-label {
+    color: var(--terra-dark);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    display: inline-block;
+    margin-right: 4px;
+  }
+  .exp-step strong { color: var(--navy); font-weight: 700; }
+
+  /* Full-width section */
+  .full-row {
+    margin-top: 24px;
+  }
+  sub {
+    font-size: 0.7em;
+    vertical-align: sub;
+  }
+  sup {
+    font-size: 0.7em;
+    vertical-align: super;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="header">
+    <h1>ABG Interpretation Practice</h1>
+    <p>Classify each value, determine the primary disorder, and assess compensation status.</p>
+  </div>
+
+  <div class="grid">
+
+    <!-- LEFT COLUMN -->
+    <div>
+      <!-- Case values -->
+      <div class="card">
+        <h2>Case ABG Values</h2>
+        <div class="abg-grid">
+          <div class="abg-tile">
+            <div class="abg-label">pH</div>
+            <div class="abg-value" id="val-ph">7.41</div>
+          </div>
+          <div class="abg-tile">
+            <div class="abg-label">PaCO<sub>2</sub></div>
+            <div class="abg-value" id="val-paco2">40</div>
+            <div class="abg-unit">mmHg</div>
+          </div>
+          <div class="abg-tile">
+            <div class="abg-label">HCO<sub>3</sub><sup>-</sup></div>
+            <div class="abg-value" id="val-hco3">24</div>
+            <div class="abg-unit">mEq/L</div>
+          </div>
+          <div class="abg-tile">
+            <div class="abg-label">PaO<sub>2</sub></div>
+            <div class="abg-value" id="val-pao2">90</div>
+            <div class="abg-unit">mmHg</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reference ranges -->
+      <div class="card" style="margin-top: 24px;">
+        <h2>Normal Reference Ranges</h2>
+        <div class="ref-row"><strong>pH</strong><span>7.35 to 7.45</span></div>
+        <div class="ref-row"><strong>PaCO<sub>2</sub></strong><span>35 to 45 mmHg</span></div>
+        <div class="ref-row"><strong>HCO<sub>3</sub><sup>-</sup></strong><span>22 to 26 mEq/L</span></div>
+        <div class="ref-row"><strong>PaO<sub>2</sub></strong><span>80 to 100 mmHg</span></div>
+
+        <div class="formulas-label">Compensation Formulas</div>
+        <div class="ref-row"><strong>Metabolic Acidosis</strong><span>Winter's: PaCO<sub>2</sub> = 1.5 &times; HCO<sub>3</sub><sup>-</sup> + 8 &plusmn;2</span></div>
+        <div class="ref-row"><strong>Metabolic Alkalosis</strong><span>PaCO<sub>2</sub> = 0.7 &times; (HCO<sub>3</sub><sup>-</sup> &minus; 24) + 40 &plusmn;5</span></div>
+        <div class="ref-row"><strong>Resp Acidosis</strong><span>HCO<sub>3</sub><sup>-</sup> &uarr; 3.5 per 10 mmHg CO<sub>2</sub> (chronic)</span></div>
+        <div class="ref-row"><strong>Resp Alkalosis</strong><span>HCO<sub>3</sub><sup>-</sup> &darr; 5 per 10 mmHg CO<sub>2</sub> (chronic)</span></div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div>
+      <!-- Classification grid -->
+      <div class="card">
+        <h2>Classification Grid</h2>
+        <p style="margin: 0 0 12px 0; color: var(--navy-soft); font-size: 0.9rem;">
+          Click each cell to classify the value as Acidic, Normal, or Alkaline.
+        </p>
+        <div class="class-table" id="classTable">
+          <div></div>
+          <div class="class-header">Acidic</div>
+          <div class="class-header">Normal</div>
+          <div class="class-header">Alkaline</div>
+
+          <div class="class-row-label">pH</div>
+          <div class="class-cell" data-row="ph" data-col="acidic" tabindex="0">&lt; 7.35</div>
+          <div class="class-cell" data-row="ph" data-col="normal" tabindex="0">7.35 to 7.45</div>
+          <div class="class-cell" data-row="ph" data-col="alkaline" tabindex="0">&gt; 7.45</div>
+
+          <div class="class-row-label">PaCO<sub>2</sub></div>
+          <div class="class-cell" data-row="paco2" data-col="acidic" tabindex="0">&gt; 45</div>
+          <div class="class-cell" data-row="paco2" data-col="normal" tabindex="0">35 to 45</div>
+          <div class="class-cell" data-row="paco2" data-col="alkaline" tabindex="0">&lt; 35</div>
+
+          <div class="class-row-label">HCO<sub>3</sub><sup>-</sup></div>
+          <div class="class-cell" data-row="hco3" data-col="acidic" tabindex="0">&lt; 22</div>
+          <div class="class-cell" data-row="hco3" data-col="normal" tabindex="0">22 to 26</div>
+          <div class="class-cell" data-row="hco3" data-col="alkaline" tabindex="0">&gt; 26</div>
+        </div>
+        <p class="class-note">
+          Note: For PaCO<sub>2</sub>, elevated is acidic and decreased is alkaline (inverse of pH direction).
+        </p>
+      </div>
+
+      <!-- Interpretation -->
+      <div class="card" style="margin-top: 24px;">
+        <h2>Your Interpretation</h2>
+        <div class="field">
+          <label class="field-label" for="sel-disorder">Primary Disorder</label>
+          <select id="sel-disorder">
+            <option value="">Select one...</option>
+            <option value="metabolic_acidosis">Metabolic Acidosis</option>
+            <option value="metabolic_alkalosis">Metabolic Alkalosis</option>
+            <option value="respiratory_acidosis">Respiratory Acidosis</option>
+            <option value="respiratory_alkalosis">Respiratory Alkalosis</option>
+            <option value="normal">Normal (no disorder)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="field-label" for="sel-comp">Compensation Status</label>
+          <select id="sel-comp">
+            <option value="">Select one...</option>
+            <option value="uncompensated">Uncompensated</option>
+            <option value="partially">Partially Compensated</option>
+            <option value="fully">Fully Compensated</option>
+            <option value="na">Not applicable</option>
+          </select>
+        </div>
+        <div class="button-row">
+          <button class="btn-primary" id="btnCheck">Check Answer</button>
+          <button class="btn-secondary" id="btnExplain">Show Explanation</button>
+          <button class="btn-new" id="btnNew">Generate New Case</button>
+        </div>
+        <div class="feedback" id="feedback"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Explanation (full width) -->
+  <div class="full-row">
+    <div class="explanation" id="explanation"></div>
+  </div>
+
+</div>
+
+<script>
+/* ============================================================
+   ABG CLASSIFIER (strict categorical framework)
+   Single source of truth for grading AND case generation.
+   ============================================================ */
+
+const REF = {
+  pH:    { low: 7.35, high: 7.45, mid: 7.40 },
+  paco2: { low: 35,   high: 45,   mid: 40   },
+  hco3:  { low: 22,   high: 26,   mid: 24   }
+};
+
+function classifyValues(pH, paco2, hco3) {
+  const phStatus =
+    pH < REF.pH.low   ? 'acidic'   :
+    pH > REF.pH.high  ? 'alkaline' : 'normal';
+
+  const paco2Status =
+    paco2 > REF.paco2.high ? 'acidic'   :
+    paco2 < REF.paco2.low  ? 'alkaline' : 'normal';
+
+  const hco3Status =
+    hco3 < REF.hco3.low  ? 'acidic'   :
+    hco3 > REF.hco3.high ? 'alkaline' : 'normal';
+
+  return { phStatus, paco2Status, hco3Status };
+}
+
+function identifyDisorder(pH, paco2, hco3) {
+  const { phStatus, paco2Status, hco3Status } = classifyValues(pH, paco2, hco3);
+
+  if (phStatus === 'normal') {
+    const bothNormal = paco2Status === 'normal' && hco3Status === 'normal';
+    if (bothNormal) return { disorder: 'normal', driver: null };
+
+    const phLeaning = pH < REF.pH.mid ? 'acidic' : 'alkaline';
+
+    if (paco2Status === phLeaning && hco3Status !== phLeaning) {
+      return { disorder: paco2Status === 'acidic' ? 'respiratory_acidosis' : 'respiratory_alkalosis', driver: 'paco2' };
+    }
+    if (hco3Status === phLeaning && paco2Status !== phLeaning) {
+      return { disorder: hco3Status === 'acidic' ? 'metabolic_acidosis' : 'metabolic_alkalosis', driver: 'hco3' };
+    }
+    if (paco2Status === phLeaning && hco3Status === phLeaning) {
+      const paco2Delta = Math.abs(paco2 - REF.paco2.mid) / REF.paco2.mid;
+      const hco3Delta  = Math.abs(hco3  - REF.hco3.mid)  / REF.hco3.mid;
+      if (paco2Delta >= hco3Delta) {
+        return { disorder: paco2Status === 'acidic' ? 'respiratory_acidosis' : 'respiratory_alkalosis', driver: 'paco2' };
+      }
+      return { disorder: hco3Status === 'acidic' ? 'metabolic_acidosis' : 'metabolic_alkalosis', driver: 'hco3' };
+    }
+    return { disorder: 'normal', driver: null };
+  }
+
+  if (paco2Status === phStatus && hco3Status !== phStatus) {
+    return { disorder: paco2Status === 'acidic' ? 'respiratory_acidosis' : 'respiratory_alkalosis', driver: 'paco2' };
+  }
+  if (hco3Status === phStatus && paco2Status !== phStatus) {
+    return { disorder: hco3Status === 'acidic' ? 'metabolic_acidosis' : 'metabolic_alkalosis', driver: 'hco3' };
+  }
+  if (paco2Status === phStatus && hco3Status === phStatus) {
+    const paco2Delta = Math.abs(paco2 - REF.paco2.mid) / REF.paco2.mid;
+    const hco3Delta  = Math.abs(hco3  - REF.hco3.mid)  / REF.hco3.mid;
+    if (paco2Delta >= hco3Delta) {
+      return { disorder: paco2Status === 'acidic' ? 'respiratory_acidosis' : 'respiratory_alkalosis', driver: 'paco2' };
+    }
+    return { disorder: hco3Status === 'acidic' ? 'metabolic_acidosis' : 'metabolic_alkalosis', driver: 'hco3' };
+  }
+  if (paco2Status === phStatus) {
+    return { disorder: paco2Status === 'acidic' ? 'respiratory_acidosis' : 'respiratory_alkalosis', driver: 'paco2' };
+  }
+  if (hco3Status === phStatus) {
+    return { disorder: hco3Status === 'acidic' ? 'metabolic_acidosis' : 'metabolic_alkalosis', driver: 'hco3' };
+  }
+  return { disorder: 'normal', driver: null };
+}
+
+function classifyCompensation(pH, paco2, hco3, driver) {
+  const { phStatus, paco2Status, hco3Status } = classifyValues(pH, paco2, hco3);
+  if (driver === null) return 'na';
+
+  const compensatorStatus = driver === 'paco2' ? hco3Status : paco2Status;
+
+  if (compensatorStatus === 'normal') return 'uncompensated';
+
+  if (phStatus !== 'normal') return 'partially';
+  return 'fully';
+}
+
+function interpret(pH, paco2, hco3) {
+  const values = classifyValues(pH, paco2, hco3);
+  const { disorder, driver } = identifyDisorder(pH, paco2, hco3);
+  const compensation = classifyCompensation(pH, paco2, hco3, driver);
+  return { ...values, disorder, driver, compensation };
+}
+
+/* ============================================================
+   HENDERSON-HASSELBALCH VALIDATOR
+   ============================================================ */
+
+function phFromHH(hco3, paco2) {
+  return 6.1 + Math.log10(hco3 / (0.03 * paco2));
+}
+
+/* ============================================================
+   CASE GENERATOR (H-H validated, targets specific scenario)
+   ============================================================ */
+
+const SCENARIOS = {
+  metabolic_acidosis: {
+    uncompensated: { hco3: [14, 21],  paco2: [36, 44], expectedPh: 'acidic' },
+    partially:     { hco3: [12, 19],  paco2: [24, 34], expectedPh: 'acidic' },
+    fully:         { hco3: [16, 21],  paco2: [26, 33], expectedPh: 'normal-acidic' }
+  },
+  metabolic_alkalosis: {
+    uncompensated: { hco3: [28, 36],  paco2: [36, 44], expectedPh: 'alkaline' },
+    partially:     { hco3: [32, 44],  paco2: [46, 54], expectedPh: 'alkaline' },
+    fully:         { hco3: [28, 38],  paco2: [46, 54], expectedPh: 'normal-alkaline' }
+  },
+  respiratory_acidosis: {
+    uncompensated: { hco3: [22, 26],  paco2: [50, 62], expectedPh: 'acidic' },
+    partially:     { hco3: [28, 36],  paco2: [55, 70], expectedPh: 'acidic' },
+    fully:         { hco3: [30, 38],  paco2: [50, 60], expectedPh: 'normal-acidic' }
+  },
+  respiratory_alkalosis: {
+    uncompensated: { hco3: [22, 26],  paco2: [22, 32], expectedPh: 'alkaline' },
+    partially:     { hco3: [16, 21],  paco2: [20, 30], expectedPh: 'alkaline' },
+    fully:         { hco3: [17, 21],  paco2: [26, 32], expectedPh: 'normal-alkaline' }
+  }
+};
+
+function phInExpected(pH, expected) {
+  if (expected === 'acidic')          return pH < REF.pH.low;
+  if (expected === 'alkaline')        return pH > REF.pH.high;
+  if (expected === 'normal-acidic')   return pH >= REF.pH.low  && pH <  REF.pH.mid;
+  if (expected === 'normal-alkaline') return pH >  REF.pH.mid  && pH <= REF.pH.high;
+  return false;
+}
+
+function randInRange(min, max, step) {
+  step = step || 1;
+  const steps = Math.floor((max - min) / step);
+  return min + Math.round(Math.random() * steps) * step;
+}
+
+function generateCase(disorder, compensation) {
+  if (disorder === 'normal') {
+    const hco3  = randInRange(22, 26, 1);
+    const paco2 = randInRange(37, 43, 1);
+    const pH    = Math.round(phFromHH(hco3, paco2) * 100) / 100;
+    const pao2  = randInRange(85, 99, 1);
+    return { pH, paco2, hco3, pao2, groundTruth: { disorder: 'normal', compensation: 'na' } };
+  }
+
+  const spec = SCENARIOS[disorder][compensation];
+  let pH, paco2, hco3;
+  let attempts = 0;
+  const maxAttempts = 200;
+
+  do {
+    hco3  = randInRange(spec.hco3[0],  spec.hco3[1],  1);
+    paco2 = randInRange(spec.paco2[0], spec.paco2[1], 1);
+    pH    = Math.round(phFromHH(hco3, paco2) * 100) / 100;
+    attempts++;
+    if (attempts > maxAttempts) break;
+  } while (!phInExpected(pH, spec.expectedPh));
+
+  const pao2 = randInRange(80, 100, 1);
+  return { pH, paco2, hco3, pao2, groundTruth: { disorder, compensation } };
+}
+
+function generateRandomCase() {
+  const disorders = ['metabolic_acidosis', 'metabolic_alkalosis', 'respiratory_acidosis', 'respiratory_alkalosis'];
+  const compensations = ['uncompensated', 'partially', 'fully'];
+  const disorder = disorders[Math.floor(Math.random() * disorders.length)];
+  const compensation = compensations[Math.floor(Math.random() * compensations.length)];
+  return generateCase(disorder, compensation);
+}
+
+/* ============================================================
+   EXPLANATION BUILDER
+   ============================================================ */
+
+function disorderLabel(d) {
+  return {
+    metabolic_acidosis: 'Metabolic Acidosis',
+    metabolic_alkalosis: 'Metabolic Alkalosis',
+    respiratory_acidosis: 'Respiratory Acidosis',
+    respiratory_alkalosis: 'Respiratory Alkalosis',
+    normal: 'Normal (no disorder)'
+  }[d];
+}
+
+function compLabel(c) {
+  return {
+    uncompensated: 'Uncompensated',
+    partially: 'Partially Compensated',
+    fully: 'Fully Compensated',
+    na: 'Not applicable'
+  }[c];
+}
+
+function buildExplanation(pH, paco2, hco3) {
+  const result = interpret(pH, paco2, hco3);
+  const { phStatus, paco2Status, hco3Status, disorder, driver, compensation } = result;
+
+  const phText =
+    phStatus === 'acidic'   ? `${pH} is acidemic (below 7.35)` :
+    phStatus === 'alkaline' ? `${pH} is alkalemic (above 7.45)` :
+    `${pH} is within the normal range (7.35 to 7.45)`;
+
+  let driverText;
+  if (disorder === 'normal') {
+    driverText = 'All values are within reference ranges. No primary acid-base disorder.';
+  } else {
+    const d = driver === 'paco2' ?
+      { name: 'PaCO<sub>2</sub>', val: paco2, unit: 'mmHg', status: paco2Status, interp: paco2Status === 'acidic' ? 'elevated (respiratory acidotic driver)' : 'low (respiratory alkalotic driver)' } :
+      { name: 'HCO<sub>3</sub><sup>-</sup>', val: hco3,  unit: 'mEq/L', status: hco3Status,  interp: hco3Status  === 'acidic' ? 'low (metabolic acidotic driver)' : 'elevated (metabolic alkalotic driver)' };
+    driverText = `${d.name} is ${d.val} ${d.unit}, ${d.interp}. This makes the disorder a <strong>${disorderLabel(disorder)}</strong>.`;
+  }
+
+  let compText;
+  if (disorder === 'normal') {
+    compText = 'No compensation assessment needed.';
+  } else {
+    const compensator = driver === 'paco2' ? 'HCO<sub>3</sub><sup>-</sup>' : 'PaCO<sub>2</sub>';
+    const compVal = driver === 'paco2' ? hco3 : paco2;
+    const compRange = driver === 'paco2' ? '22 to 26 mEq/L' : '35 to 45 mmHg';
+
+    if (compensation === 'uncompensated') {
+      compText = `The compensator ${compensator} is ${compVal}, which is within its normal range (${compRange}). No compensation has begun yet.`;
+    } else if (compensation === 'partially') {
+      compText = `The compensator ${compensator} is ${compVal}, outside its normal range (${compRange}) in the expected compensatory direction. However, pH has not yet returned to the normal range, so compensation is partial.`;
+    } else if (compensation === 'fully') {
+      compText = `The compensator ${compensator} is ${compVal}, outside its normal range (${compRange}) in the expected compensatory direction, and pH has returned to the normal range. Compensation is complete.`;
+    }
+  }
+
+  let expectedText = '';
+  if (disorder === 'metabolic_acidosis') {
+    const expected = 1.5 * hco3 + 8;
+    expectedText = `Winter's formula expects PaCO<sub>2</sub> of ${(expected - 2).toFixed(1)} to ${(expected + 2).toFixed(1)} mmHg. Measured: ${paco2}.`;
+  } else if (disorder === 'metabolic_alkalosis') {
+    const expected = 0.7 * (hco3 - 24) + 40;
+    expectedText = `Expected PaCO<sub>2</sub> of ${(expected - 5).toFixed(1)} to ${(expected + 5).toFixed(1)} mmHg. Measured: ${paco2}.`;
+  } else if (disorder === 'respiratory_acidosis') {
+    const deltaCo2 = paco2 - 40;
+    const expectedRise = (deltaCo2 / 10) * 3.5;
+    expectedText = `Chronic compensation expects HCO<sub>3</sub><sup>-</sup> to rise ~${expectedRise.toFixed(1)} mEq/L from baseline 24 (to ~${(24 + expectedRise).toFixed(1)}). Measured: ${hco3}.`;
+  } else if (disorder === 'respiratory_alkalosis') {
+    const deltaCo2 = 40 - paco2;
+    const expectedFall = (deltaCo2 / 10) * 5;
+    expectedText = `Chronic compensation expects HCO<sub>3</sub><sup>-</sup> to fall ~${expectedFall.toFixed(1)} mEq/L from baseline 24 (to ~${(24 - expectedFall).toFixed(1)}). Measured: ${hco3}.`;
+  }
+
+  const phHH = phFromHH(hco3, paco2);
+  const hhNote = Math.abs(phHH - pH) < 0.03
+    ? `Henderson-Hasselbalch check: calculated pH is ${phHH.toFixed(2)}, consistent with reported pH ${pH}.`
+    : `Henderson-Hasselbalch check: calculated pH is ${phHH.toFixed(2)}, but reported pH is ${pH}. Values may be inconsistent.`;
+
+  return `
+    <div class="exp-step">
+      <span class="exp-label">Step 1, pH status:</span> ${phText}.
+    </div>
+    <div class="exp-step">
+      <span class="exp-label">Step 2, primary driver:</span> ${driverText}
+    </div>
+    <div class="exp-step">
+      <span class="exp-label">Step 3, compensation:</span> ${compText}
+    </div>
+    ${expectedText ? `<div class="exp-step"><span class="exp-label">Expected compensation:</span> ${expectedText}</div>` : ''}
+    <div class="exp-step">
+      <span class="exp-label">Internal consistency:</span> ${hhNote}
+    </div>
+    <div class="exp-step" style="padding-top: 14px;">
+      <span class="exp-label">Answer:</span> <strong>${disorderLabel(disorder)}${compensation !== 'na' ? ', ' + compLabel(compensation) : ''}</strong>
+    </div>
+  `;
+}
+
+/* ============================================================
+   UI STATE + WIRING
+   ============================================================ */
+
+let currentCase = null;
+
+function loadCase(caseData) {
+  currentCase = caseData;
+  document.getElementById('val-ph').textContent    = caseData.pH.toFixed(2);
+  document.getElementById('val-paco2').textContent = caseData.paco2;
+  document.getElementById('val-hco3').textContent  = caseData.hco3;
+  document.getElementById('val-pao2').textContent  = caseData.pao2;
+
+  document.getElementById('sel-disorder').value = '';
+  document.getElementById('sel-comp').value = '';
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('explanation').className = 'explanation';
+  document.getElementById('explanation').innerHTML = '';
+
+  document.querySelectorAll('.class-cell').forEach(cell => {
+    cell.classList.remove('selected-acidic', 'selected-normal', 'selected-alkaline');
+  });
+}
+
+function checkAnswer() {
+  if (!currentCase) return;
+  const userDisorder = document.getElementById('sel-disorder').value;
+  const userComp = document.getElementById('sel-comp').value;
+
+  if (!userDisorder || !userComp) {
+    const fb = document.getElementById('feedback');
+    fb.className = 'feedback show incorrect';
+    fb.textContent = 'Please select both a primary disorder and a compensation status.';
+    return;
+  }
+
+  const truth = currentCase.groundTruth;
+  const disorderCorrect = userDisorder === truth.disorder;
+  const compCorrect = userComp === truth.compensation;
+
+  const fb = document.getElementById('feedback');
+  if (disorderCorrect && compCorrect) {
+    fb.className = 'feedback show correct';
+    fb.innerHTML = `Correct. <strong>${disorderLabel(truth.disorder)}${truth.compensation !== 'na' ? ', ' + compLabel(truth.compensation) : ''}</strong>.`;
+  } else {
+    fb.className = 'feedback show incorrect';
+    let msg = 'Not quite. ';
+    if (!disorderCorrect && !compCorrect)      msg += 'Both the primary disorder and compensation status need review.';
+    else if (!disorderCorrect)                  msg += 'The primary disorder is off. Compensation status is correct.';
+    else                                        msg += 'The primary disorder is correct. Compensation status needs review.';
+    fb.innerHTML = msg;
+  }
+}
+
+function showExplanation() {
+  if (!currentCase) return;
+  const exp = document.getElementById('explanation');
+  exp.innerHTML = buildExplanation(currentCase.pH, currentCase.paco2, currentCase.hco3);
+  exp.className = 'explanation show';
+  exp.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function wireClassTable() {
+  document.querySelectorAll('.class-cell').forEach(cell => {
+    cell.addEventListener('click', () => toggleClassCell(cell));
+    cell.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggleClassCell(cell);
+      }
+    });
+  });
+}
+function toggleClassCell(cell) {
+  const row = cell.dataset.row;
+  const col = cell.dataset.col;
+  document.querySelectorAll(`.class-cell[data-row="${row}"]`).forEach(c => {
+    c.classList.remove('selected-acidic', 'selected-normal', 'selected-alkaline');
+  });
+  cell.classList.add('selected-' + col);
+}
+
+document.getElementById('btnCheck').addEventListener('click', checkAnswer);
+document.getElementById('btnExplain').addEventListener('click', showExplanation);
+document.getElementById('btnNew').addEventListener('click', () => loadCase(generateRandomCase()));
+wireClassTable();
+
+loadCase(generateRandomCase());
+
+/* ============================================================
+   IFRAME HEIGHT SENDER (Kajabi embed support)
+   ============================================================ */
+(function() {
+  const frameId = window.name || 'abg-interpreter';
+  function sendHeight() {
+    const h = Math.max(
+      document.body.scrollHeight,
+      document.documentElement.scrollHeight,
+      document.body.offsetHeight,
+      document.documentElement.offsetHeight
+    );
+    try {
+      window.parent.postMessage({ type: 'resize', id: frameId, height: h }, '*');
+    } catch (e) {}
+  }
+  const ro = new ResizeObserver(sendHeight);
+  ro.observe(document.body);
+  window.addEventListener('load', sendHeight);
+  window.addEventListener('resize', sendHeight);
+  setTimeout(sendHeight, 100);
+  setTimeout(sendHeight, 500);
+})();
+</script>
+</body>
+</html>
